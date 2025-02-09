@@ -20,19 +20,20 @@ const config = {
     paths: {
         src: {
             html:               'src/html/*.html',
-            js:                 ['src/js/*.ts', PRODUCTION ? '!src/js/tests.ts' : null].filter(Boolean)
+            js:                 ['src/js/*.ts', '!src/js/types.ts', PRODUCTION ? '!src/js/tests.ts' : null].filter(Boolean),
+            dts:                ['src/js/**/*.ts','!src/js/tests.ts'],
+            jswatch:            'src/js/*.ts'
         },
         dest: {
             html:               'dist',
-            js:                 'dist/js',
-            cjs:                'dist/cjs'
+            js:                 'dist/js' 
         }
     },
     rollupConfigLib: {
         output: {
             name: '$be',
-            format: 'iife',
-            sourcemap: !PRODUCTION 
+            format: 'iife', 
+            sourcemap: !PRODUCTION
         },
         plugins: [
             tsInit,

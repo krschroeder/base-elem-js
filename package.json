@@ -13,7 +13,6 @@
   "license": "MIT",
   "author": "Kevin Schroeder <kevin.r.schroeder@gmail.com>",
   "main": "dist/js/base-elem.js",
-  "module": "dist/cjs/base-elem.js",
   "scripts": {
     "start": "gulp",
     "build": "gulp --production"

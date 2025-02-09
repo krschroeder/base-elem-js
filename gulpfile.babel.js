@@ -36,7 +36,7 @@ const buildJS = () =>
     src(config.paths.src.js)
     .pipe(sourcemaps.init())
     .pipe(rollupEach(config.rollupConfigLib))
-    .pipe(rename({ extname: '.js' }))
+    .pipe(rename({ extname: PRODUCTION ? '.min.js' : '.js' }))
     .pipe(gulpif(!PRODUCTION, sourcemaps.write('.')))
     .pipe(dest(config.paths.dest.js))
 ;
@@ -46,7 +46,7 @@ const buildModuleJS = (done) => {
         return src(config.paths.src.js)
             .pipe(sourcemaps.init())
             .pipe(rollupEach(config.rollupConfigModule))
-            .pipe(rename({ extname: '.m.js' }))
+            .pipe(rename({ extname: '.js' }))
             .pipe(gulpif(!PRODUCTION, sourcemaps.write('.')))
             .pipe(dest(config.paths.dest.js))
         ;
@@ -59,13 +59,13 @@ const buildJsDeclarations = (done) => {
 		const tsProject = typescript.createProject('tsconfig.json',{
 			declaration: true,
 			emitDeclarationOnly: true, 
-            sourceMap: false
+            sourceMap: false,
+            outFile: 'base-elem.d.ts',
 		});
 	 
-		return src(config.paths.src.js)
+		return src(config.paths.src.dts)
 			.pipe(tsProject())
 			.pipe(dest(config.paths.dest.js))
-			.pipe(dest(config.paths.dest.cjs));
 	}
 	done();
 }
@@ -109,7 +109,7 @@ const watchTask = (done) => {
     // Not sure why but, still needs fixed.
     if (!PRODUCTION) {
         watch(config.paths.src.html, series(buildHTML, reload));
-        watch(config.paths.src.js, series(buildJS, reload));
+        watch(config.paths.src.jswatch, series(buildJS, reload));
        
     }
 
