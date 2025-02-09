@@ -1,6 +1,6 @@
 {
     "include": ["src/js/**/*.ts"],
-    "exclude": ["src/js/tests.ts"],
+    // "exclude": ["src/js/tests.ts"],
     "compilerOptions": {
         "module": "esnext",
         "moduleResolution": "node",
@@ -8,7 +8,7 @@
         "jsx": "preserve",
     
         "resolveJsonModule": true,
-        "sourceMap": false,
+        "sourceMap": true,
         "esModuleInterop": true,
         "verbatimModuleSyntax": true,
         "skipLibCheck": true,

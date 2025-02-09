@@ -1,9 +1,9 @@
-
+ 
 type FindBy = 'id' | 'class' | 'tag';
 type AppendMethod = 'append' | 'prepend' | 'after' | 'before';
 type ClassOrId = '#' | '.';
 type EventFn = (ev: any, elem?: HTMLElement) => void;
-type Selector = string | HTMLElement | HTMLElement[] | BaseElem;
+export type Selector = string | HTMLElement | HTMLElement[] | BaseElem;
 
 interface CSSProperties extends CSSStyleDeclaration {
     [key: `--${string}`]: string | null;
@@ -25,7 +25,7 @@ const
 ;
 
 const eventFunctionCache: Map<string, EventFn> = new Map();
-
+ 
 const 
     // Props
     CSS_ACTION_STATES = Object.freeze({
@@ -292,10 +292,10 @@ const
             }, duration);
         };
         
-        return {
+        return [
             cssAnimate,
             cssState
-        }
+        ];
     }
 ;
 
@@ -377,7 +377,7 @@ const BaseStatic = {
     useCssAnimate
 };
 
-class BaseElem {
+export class BaseElem {
     elem: HTMLElement[] | HTMLElement = [];
 
     constructor(selector?: Selector, base?: HTMLElement) {

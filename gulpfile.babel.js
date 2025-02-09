@@ -12,14 +12,11 @@ import {
 import gulpif                   from 'gulp-if';
 
 import sourcemaps               from 'gulp-sourcemaps';
-import babel                    from 'gulp-babel';
-import uglify                   from 'gulp-uglify';
-import named                    from 'vinyl-named';
-import webpack                  from 'webpack';
-import webpackStream            from 'webpack-stream';
 import typescript               from 'gulp-typescript';
 import rename                   from 'gulp-rename';
 import config                   from './gulpfile.config';
+import rollupEach               from 'gulp-rollup-each'; 
+import path, { format }                     from 'path';
 
 const PRODUCTION = config.PRODUCTION;
 
@@ -35,32 +32,26 @@ const buildHTML = (done) => {
     done();
 }
 
- 
-
 const buildJS = () =>
     src(config.paths.src.js)
-    .pipe(named())
     .pipe(sourcemaps.init())
-    .pipe(webpackStream(config.webpackConfig, webpack))
-    // .pipe(gulpif(PRODUCTION, uglify()
-    //     .on('error', e => { console.log(e); })
-    // ))
+    .pipe(rollupEach(config.rollupConfigLib))
+    .pipe(rename({ extname: '.js' }))
     .pipe(gulpif(!PRODUCTION, sourcemaps.write('.')))
     .pipe(dest(config.paths.dest.js))
 ;
 
-const buildCJs = (done) => {
-	if (PRODUCTION) {
-		const tsProject = typescript.createProject('tsconfig.json', {
-            sourceMap: false    
-        });
-	 
-		return src(config.paths.src.js)
-			.pipe(tsProject())
-			.pipe(babel())
-			.pipe(dest(config.paths.dest.cjs));
-	}
-	done();
+const buildModuleJS = (done) => {
+    if (PRODUCTION) {
+        return src(config.paths.src.js)
+            .pipe(sourcemaps.init())
+            .pipe(rollupEach(config.rollupConfigModule))
+            .pipe(rename({ extname: '.m.js' }))
+            .pipe(gulpif(!PRODUCTION, sourcemaps.write('.')))
+            .pipe(dest(config.paths.dest.js))
+        ;
+    }
+    done();
 }
 
 const buildJsDeclarations = (done) => {
@@ -107,8 +98,8 @@ const mainTask = series(
     clean,
     series(   
         buildHTML,
-        buildCJs,
         buildJsDeclarations,
+        buildModuleJS,
         buildJS
     )
 );
