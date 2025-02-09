@@ -377,7 +377,7 @@ const BaseStatic = {
     useCssAnimate
 };
 
-export class BaseElem {
+class BaseElem {
     elem: HTMLElement[] | HTMLElement = [];
 
     constructor(selector?: Selector, base?: HTMLElement) {

@@ -1,20 +1,17 @@
 {
-  "compilerOptions": {
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "target": "esnext",
-    "jsx": "preserve",
-
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "verbatimModuleSyntax": true,
-    "noImplicitThis": false,
-    "skipLibCheck": true,
-
-    "strict": true,
-    "strictNullChecks": false,
-
-    "baseUrl": "./"
-  }
+    "include": ["src/js/**/*.ts"],
+    "exclude": ["src/js/tests.ts"],
+    "compilerOptions": {
+        "module": "esnext",
+        "moduleResolution": "node",
+        "target": "esnext",
+        "jsx": "preserve",
+    
+        "resolveJsonModule": true,
+        "sourceMap": false,
+        "esModuleInterop": true,
+        "verbatimModuleSyntax": true,
+        "skipLibCheck": true,
+        "strictNullChecks": false,
+      }
 }

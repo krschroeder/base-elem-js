@@ -12,66 +12,16 @@ import {
 import gulpif                   from 'gulp-if';
 
 import sourcemaps               from 'gulp-sourcemaps';
-
+import babel                    from 'gulp-babel';
 import uglify                   from 'gulp-uglify';
 import named                    from 'vinyl-named';
 import webpack                  from 'webpack';
 import webpackStream            from 'webpack-stream';
+import typescript               from 'gulp-typescript';
+import rename                   from 'gulp-rename';
+import config                   from './gulpfile.config';
 
-import yargs                    from 'yargs';
-import { hideBin }              from 'yargs/helpers';
-
-const args = yargs(hideBin(process.argv)).argv;
-
- 
-//
-// Config
-//
-const 
-    PRODUCTION = args.production,
-    excludeWebpack = /(node_modules\/)/
-;
-
-const config = {
-    server: {
-        port: 8000,
-        server: 'dist'
-    },
-    paths: {
-        src: {
-            html:               'src/html/*.html',
-            js:                 'src/js/*.ts'
-        },
-        dest: {
-            html:               'dist',
-            js:                 'dist/js'
-        }
-    },
-    webpackConfig: {
-        mode: (PRODUCTION ? "production" : "development"),
-        target: ["web", "es6"],
-        output: {
-            library: "baseElem"
-        },
-        module: {
-            rules: [
-                {
-                    test: /\.(ts|js)x?$/,
-                    exclude: excludeWebpack,
-                    loader: "babel-loader"
-                }
-            ]
-        },
-        plugins: [
-            new webpack.DefinePlugin({
-                ENV_CONFIG: {
-                    production: JSON.stringify(PRODUCTION)
-                }
-            })
-        ]
-    } 
-};
-
+const PRODUCTION = config.PRODUCTION;
 
 //
 // Build
@@ -92,12 +42,42 @@ const buildJS = () =>
     .pipe(named())
     .pipe(sourcemaps.init())
     .pipe(webpackStream(config.webpackConfig, webpack))
-    .pipe(gulpif(PRODUCTION, uglify()
-        .on('error', e => { console.log(e); })
-    ))
+    // .pipe(gulpif(PRODUCTION, uglify()
+    //     .on('error', e => { console.log(e); })
+    // ))
     .pipe(gulpif(!PRODUCTION, sourcemaps.write('.')))
     .pipe(dest(config.paths.dest.js))
 ;
+
+const buildCJs = (done) => {
+	if (PRODUCTION) {
+		const tsProject = typescript.createProject('tsconfig.json', {
+            sourceMap: false    
+        });
+	 
+		return src(config.paths.src.js)
+			.pipe(tsProject())
+			.pipe(babel())
+			.pipe(dest(config.paths.dest.cjs));
+	}
+	done();
+}
+
+const buildJsDeclarations = (done) => {
+	if (PRODUCTION) {
+		const tsProject = typescript.createProject('tsconfig.json',{
+			declaration: true,
+			emitDeclarationOnly: true, 
+            sourceMap: false
+		});
+	 
+		return src(config.paths.src.js)
+			.pipe(tsProject())
+			.pipe(dest(config.paths.dest.js))
+			.pipe(dest(config.paths.dest.cjs));
+	}
+	done();
+}
  
 
 const clean = () => rimraf(config.paths.dest.html);
@@ -127,6 +107,8 @@ const mainTask = series(
     clean,
     series(   
         buildHTML,
+        buildCJs,
+        buildJsDeclarations,
         buildJS
     )
 );

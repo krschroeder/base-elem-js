@@ -2,14 +2,6 @@
   "name": "base-elem-js",
   "version": "1.0.0",
   "description": "A super light weight package for querying the DOM, adding event listeners, removing them, making and manipulating elements and more.",
-  "keywords": [
-    "jQuery",
-    "Cash",
-    "Zepto",
-    "DOM querying",
-    "Element manipulation",
-    "Element creation"
-  ],
   "homepage": "https://github.com/krschroeder/base-elem-js#readme",
   "bugs": {
     "url": "https://github.com/krschroeder/base-elem-js/issues"
@@ -20,11 +12,11 @@
   },
   "license": "MIT",
   "author": "Kevin Schroeder <kevin.r.schroeder@gmail.com>",
-  "main": "dist/base-elem.js",
+  "main": "dist/js/base-elem.js",
+  "module": "dist/cjs/base-elem.js",
   "scripts": {
     "start": "gulp",
-    "build": "gulp --production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gulp --production"
   },
   "devDependencies": {
     "@babel/core": "^7.26.8",
@@ -34,11 +26,14 @@
     "babel-loader": "^9.2.1",
     "browser-sync": "^3.0.3",
     "gulp": "^5.0.0",
+    "gulp-babel": "^8.0.0",
     "gulp-if": "^3.0.0",
+    "gulp-rename": "^2.0.0",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-uglify": "^3.0.2",
     "rimraf": "^6.0.1",
+    "typescript": "^5.7.3",
     "vinyl-named": "^1.1.0",
     "webpack": "^5.97.1",
     "webpack-stream": "^7.0.0",
