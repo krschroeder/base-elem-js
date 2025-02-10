@@ -1,4 +1,4 @@
-import $be from './base-elem';
+import $be from './base-elem-js';
 
 declare global {
     

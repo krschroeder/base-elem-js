@@ -60,7 +60,7 @@ const buildJsDeclarations = (done) => {
 			declaration: true,
 			emitDeclarationOnly: true, 
             sourceMap: false,
-            outFile: 'base-elem.d.ts',
+            outFile: 'base-elem-js.d.ts',
 		});
 	 
 		return src(config.paths.src.dts)

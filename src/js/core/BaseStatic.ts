@@ -255,7 +255,10 @@ const
         }
     },
 
-    useCssAnimate = (elems: HTMLElement | HTMLElement[], baseCss: string = '' ) => {
+    useCssAnimate = (elems: HTMLElement | HTMLElement[], baseCss: string = '' ): [
+        (start: boolean, duration?: number, endFn?: () => void) => void,
+        CSSActionStates
+    ] => {
         const transition = useTransition();
        
         const cssState = cssActionStates(baseCss);
