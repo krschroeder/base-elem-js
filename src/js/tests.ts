@@ -22,6 +22,9 @@ $be(div).on('click', (ev, elem) => {
     console.log('clicked', elem.textContent);
 },'h2');
 $be(document.body).insert(div);
+const $ulSpan = $be('ul').findOne('span');
+
+console.log($ulSpan)
 
 $be(div).insert('<p>Some more copy</p>', 'before');
 $be(div).insert('<p>Copy Prepended</p>', 'prepend');

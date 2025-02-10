@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is a lightweight utility for DOM manipulation, including querying elements, adding/removing classes, setting attributes, and handling events. It is designed to work with a collection of elements or a single element.
+`base-elem-js` is a lightweight utility for DOM manipulation, including querying elements, adding/removing classes, setting attributes, and handling events. The minified package comes in at 4.67kb! It is designed to work with a collection of elements or a single element.
 
 ## Usage
 
@@ -14,7 +14,7 @@ import $be from 'base-elem-js;
 
 To come, in the meantime check the [Home Page](https://github.com/krschroeder/base-elem-js#readme). -->
 
-## $be Methods
+## Base Elem Methods ($be().*)
 ```typescript
 find(selector: string, filter?: (elem: any, i: number) => boolean): BaseElem
 ```
@@ -126,7 +126,7 @@ $div.insert('<p>Some more copy</p>', 'before');
 $div.insert('<p>Copy Prepended</p>', 'prepend');
 ```
 
-## Base Elem Static
+## Base Elem Static ($be.static)
 
 ```typescript
 make(tag: string, attrs?: Record<string, any>, html?: string): HTMLElement

@@ -22,7 +22,7 @@ const config = {
             html:               'src/html/*.html',
             js:                 ['src/js/*.ts', '!src/js/types.ts', PRODUCTION ? '!src/js/tests.ts' : null].filter(Boolean),
             dts:                ['src/js/**/*.ts','!src/js/tests.ts'],
-            jswatch:            'src/js/*.ts'
+            jswatch:            'src/js/**/*.ts'
         },
         dest: {
             html:               'dist',

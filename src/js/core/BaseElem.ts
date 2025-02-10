@@ -82,8 +82,9 @@ class BaseElem {
 
     findOne(selector: string): BaseElem {
         if (isArr(this.elem)) {
-            const elem = this.elem.map(elem => findOne(selector, elem)).filter(e => e)[0];
-            return new BaseElem(elem);
+            const elem = this.elem.map(elem => findOne(selector, elem));
+            
+            return new BaseElem(elem[0] !== null ? elem[0] : []);
         } else {
             return new BaseElem(findOne(selector, this.elem));
         }
