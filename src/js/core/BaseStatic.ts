@@ -100,6 +100,8 @@ const
                 }
             }
         }
+
+        return null;
     },
 
     addClass = (elem: HTMLElement, cssNames: string | string[]) => {

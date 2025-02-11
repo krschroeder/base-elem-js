@@ -95,9 +95,22 @@ class BaseElem {
         return this;
     }
 
-    css(attrs: Partial<CSSProperties> | string): BaseElem {
+    css(attrs: Partial<CSSProperties> | string): BaseElem | string {
+
         this.#elemOrElems(elem => css(elem, attrs));
-        
+        const attrIsStr = typeof attrs === 'string';
+
+        if (isArr(this.elem)) {
+            if(attrIsStr) {
+                return css(this.elem[0], attrs);
+            } else {
+                this.elem.forEach(elem => css(elem, attrs));
+            }
+        } else {
+            const strVal = css(this.elem, attrs);
+
+            if (strVal) return strVal;
+        }
         return this;
     }
 

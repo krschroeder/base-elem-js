@@ -8,8 +8,11 @@ declare global {
 }
 
 const bes = $be.static;
+const $h1 = $be('h1');
 
-$be('h1').css({color: 'green'});
+$h1.css({color: 'green'});
+
+ 
 
 const $behidden = $be('.hidden').css({display: 'block'}).attr({hidden: null});
 
