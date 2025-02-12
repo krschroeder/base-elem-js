@@ -35,9 +35,9 @@ each(fn: (elem: HTMLElement, i: number) => void): BaseElem
 Iterates over each element and applies the provided function.
 
 ```typescript
-css(attrs: Partial<CSSProperties> | string): BaseElem
+css(attrs: Partial<CSSProperties> | string): BaseElem | string
 ```
-Sets or gets CSS properties for the current elements.
+Sets or gets CSS properties for the current elements. If only passing a string, will return the property value.
 
 ```typescript
 addClass(cssNames: string | string[]): BaseElem
@@ -100,6 +100,7 @@ off(evtName: string, config: boolean | AddEventListenerOptions = false): BaseEle
 ```
 Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name.
 
+
 ## Examples
 
 ```typescript
@@ -125,6 +126,13 @@ $be(document.body).insert(div);
 $div.insert('<p>Some more copy</p>', 'before');
 $div.insert('<p>Copy Prepended</p>', 'prepend');
 ```
+## Extending library
+The BaseElem class can be refrenced for extension as seen below.
+
+```typescript
+$be.BaseElem.prototype.foo = bar();
+```
+
 
 ## Base Elem Static ($be.static)
 

@@ -16,7 +16,7 @@ $h1.css({color: 'green'});
 
 const $behidden = $be('.hidden').css({display: 'block'}).attr({hidden: null});
 
-console.log(bes.isHidden($behidden.elem[0]));
+console.log(bes.isHidden($behidden.elem[0]),$behidden.css('display'));
 
 console.log('has "what" class',$be('ul').find('li').hasClass('what'));
 
@@ -27,7 +27,8 @@ $be(div).on('click', (ev, elem) => {
 $be(document.body).insert(div);
 const $ulSpan = $be('ul').findOne('span');
 
-console.log($ulSpan)
+console.log($ulSpan);
+console.log($be.BaseElem, $be)
 
 $be(div).insert('<p>Some more copy</p>', 'before');
 $be(div).insert('<p>Copy Prepended</p>', 'prepend');

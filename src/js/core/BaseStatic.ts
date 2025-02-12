@@ -82,7 +82,7 @@ const
         }
     },
 
-    css = (elem: HTMLElement, attrs: Partial<CSSProperties> | string) => {
+    css = (elem: HTMLElement, attrs: Partial<CSSProperties> | string): string => {
 
         if (typeof attrs === 'string') {  
             const styles = getComputedStyle(elem); 
@@ -101,7 +101,7 @@ const
             }
         }
 
-        return null;
+        return '';
     },
 
     addClass = (elem: HTMLElement, cssNames: string | string[]) => {

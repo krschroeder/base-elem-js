@@ -6,5 +6,6 @@ import BaseElem from './core/BaseElem';
 const $be = (selector?: Selector, base?: HTMLElement) => new BaseElem(selector, base);
 
 $be.static = BaseStatic;
+$be.BaseElem = BaseElem;
 
 export default $be;
