@@ -21,9 +21,17 @@ console.log(bes.isHidden($behidden.elem[0]),$behidden.css('display'));
 console.log('has "what" class',$be('ul').find('li').hasClass('what'));
 
 const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
-$be(div).on('click', (ev, elem) => {
+$be(div).on('click.div', (ev, elem: HTMLElement) => {
     console.log('clicked', elem.textContent);
+    $be(div).off('click.div');
 },'h2');
+
+$be(div).on('click.again', (ev, elem: HTMLElement) => {
+    console.log('clicked again', elem.textContent);
+    $be(div).off('click.again');
+});
+
+
 $be(document.body).insert(div);
 const $ulSpan = $be('ul').findOne('span');
 

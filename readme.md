@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is a lightweight utility for DOM manipulation, including querying elements, adding/removing classes, setting attributes, and handling events. The minified package comes in at 4.67kb! It is designed to work with a collection of elements or a single element.
+`base-elem-js` is a lightweight utility for DOM manipulation, including querying elements, adding/removing classes, setting attributes, and handling events. The minified package comes in at ~5kb! It is designed to work with a collection of elements or a single element.
 
 ## Usage
 

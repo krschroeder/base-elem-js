@@ -103,7 +103,7 @@ class BaseElem {
         const attrIsStr = typeof attrs === 'string';
 
         if (isArr(this.elem)) {
-            if(!attrIsStr) {
+            if(attrIsStr) {
                 return css(this.elem[0], attrs);
             } else {
                 this.elem.forEach(elem => css(elem, attrs));

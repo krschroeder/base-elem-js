@@ -1,12 +1,11 @@
  import type {
     FindBy,
-    AppendMethod,
     ClassOrId,
     EventFn,
-    Selector,
     CSSActionStates,
     CSSActionStatesObj,
-    CSSProperties
+    CSSProperties,
+    EventElem
 } from '../types';
  
 
@@ -17,7 +16,10 @@ const
     isArr = Array.isArray
 ;
 
-const eventFunctionCache: Map<string, EventFn> = new Map();
+type EventCache = Map<string,EventFn>;
+const eventFnCache:WeakMap<EventElem,EventCache> = new WeakMap();
+
+// const eventFunctionCache: Map<string, EventFn> = new Map();
  
 const 
     // Props
@@ -160,7 +162,7 @@ const
         return elem;
     },
 
-    htmlParse = (htmlStr: string, ): ChildNode[] => {
+    htmlParse = (htmlStr: string ): ChildNode[] => {
   
         const doc = (new DOMParser()).parseFromString(htmlStr, 'text/html');
         const elList = Array.from(doc.body.childNodes);
@@ -195,11 +197,16 @@ const
                 if (delegateElem) fn(e, delegateElem);
                
             } else {
-                fn(e);
+                fn(e, baseEl);
             }
         };
 
-        eventFunctionCache.set(evtName, evtFn );
+        // eventFunctionCache.set(evtName, evtFn );
+        if (eventFnCache.has(baseEl)) {
+            eventFnCache.get(baseEl).set(evtName, evtFn)
+        } else {
+            eventFnCache.set(baseEl, new Map([[evtName, evtFn]]));
+        }
         
         baseEl.addEventListener(evt, evtFn, config);
     },
@@ -213,16 +220,28 @@ const
         const eventNamesToRm = evtName.split(' ').filter(e => e);
 
         for (const eventNameToRm of eventNamesToRm) {
-            if (eventFunctionCache.has(eventNameToRm)) {
+            if (eventFnCache.has(target)) {
+
+                const tgtFnMap = eventFnCache.get(target);
                
                 target.removeEventListener(
                     eventNameToRm.split('.')[0], 
-                    eventFunctionCache.get(eventNameToRm),
+                    tgtFnMap.get(eventNameToRm),
                     config
                 );
         
-                eventFunctionCache.delete(eventNameToRm);
+                tgtFnMap.delete(eventNameToRm);
             }
+            // if (eventFnCache.has(eventNameToRm)) {
+               
+            //     target.removeEventListener(
+            //         eventNameToRm.split('.')[0], 
+            //         eventFnCache.get(eventNameToRm),
+            //         config
+            //     );
+        
+            //     eventFnCache.delete(eventNameToRm);
+            // }
         }
     },
     // 
