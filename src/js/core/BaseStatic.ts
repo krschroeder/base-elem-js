@@ -18,8 +18,9 @@ const
 
 type EventCache = Map<string,EventFn>;
 const eventFnCache:WeakMap<EventElem,EventCache> = new WeakMap();
-
-// const eventFunctionCache: Map<string, EventFn> = new Map();
+interface OnEvent extends Event {
+    synthTarget?: HTMLElement;
+}
  
 const 
     // Props
@@ -191,17 +192,18 @@ const
         const evtFn = (e: Event) => {
             if (delegateEl && baseEl instanceof HTMLElement) {
                 
-                const delegateElems = baseEl.querySelectorAll(delegateEl);
-                const delegateElem = getDelegatedElem(baseEl, delegateElems, e.target as HTMLElement);
+                const delegateElems = find(delegateEl, baseEl);
+                // if isTrusted then its a native click
+                const elTarget = e.isTrusted ? e.target : (e['__synthTarget'] ?? e.target);
+
+                const delegateElem = getDelegatedElem(baseEl, delegateElems, elTarget);
                 
                 if (delegateElem) fn(e, delegateElem);
-               
             } else {
                 fn(e, baseEl);
             }
         };
 
-        // eventFunctionCache.set(evtName, evtFn );
         if (eventFnCache.has(baseEl)) {
             eventFnCache.get(baseEl).set(evtName, evtFn)
         } else {
@@ -209,7 +211,6 @@ const
         }
         
         baseEl.addEventListener(evt, evtFn, config);
-        // if (nameSpace) baseEl.addEventListener(evtName, evtFn, config);
     },
   
     off = (
@@ -223,31 +224,41 @@ const
         for (const eventNameToRm of eventNamesToRm) {
             if (eventFnCache.has(target)) {
 
-                const tgtFnMap = eventFnCache.get(target),
-                [evt, nameSpace = ''] = eventNameToRm.split('.'),
-                fn = tgtFnMap.get(eventNameToRm);
+                const 
+                    tgtFnMap = eventFnCache.get(target),
+                    evt = eventNameToRm.split('.')[0],
+                    fn = tgtFnMap.get(eventNameToRm)
+                ;
 
                 target.removeEventListener( evt, fn, config);
-                // if (nameSpace) target.removeEventListener(eventNameToRm, fn, config);
-        
                 tgtFnMap.delete(eventNameToRm);
             }
         }
     },
 
     trigger = (
-        target: EventElem = document.body,
+        target: HTMLElement = document.body,
         evtName: string,
-        opts?: EventInit
+        delegateEl: string = null,
+        config: boolean | AddEventListenerOptions = false
     ) => {
-        if (evtName.split('.').length > 1) {
-            if (eventFnCache.has(target)) {
-                const fn = eventFnCache.get(target).get(evtName);
-                if (fn) fn(target, target)
+        const delegateEls = delegateEl ? find(delegateEl, target) : null; 
+        if (delegateEls && delegateEls.length === 0) return;
+        
+
+        const [evt, nameSpace = ''] = evtName.split('.');
+        if (nameSpace && eventFnCache.has(target)) {
+            const fn = eventFnCache.get(target).get(evtName);
+            if (fn) {
+                const evt = new Event(evtName);
+                oa(evt, {__synthTarget: delegateEls[0]});
+                target.addEventListener(evtName, fn, config);
+                target.dispatchEvent(evt);
+                target.removeEventListener(evtName, fn, config)
             }
+            
         } else {
-            const ev = new Event(evtName, opts);
-            target.dispatchEvent(ev);
+            target.dispatchEvent(new Event(evtName));
         }
     },
     // 
@@ -360,16 +371,14 @@ const rmObjectNullVals = (obj: Record<string, string>) => {
 
 const getDelegatedElem = (
     baseElem: HTMLElement, 
-    delegateElems: NodeListOf<Element> | null, 
-    clickEl: HTMLElement
+    delegateElems: HTMLElement[] | null, 
+    evtTarget: HTMLElement
 ): HTMLElement => {
     if (delegateElems.length) {
-        const rootElems = Array.from(delegateElems);
-        
-        for(let i = 0, l = rootElems.length; i < l; i++) {
-            const rootEl = rootElems[i] as HTMLElement;
-            if (clickEl === rootEl) return rootEl;
-            let currentElement = clickEl.parentElement;
+        for(let i = 0, l = delegateElems.length; i < l; i++) {
+            const rootEl = delegateElems[i] as HTMLElement;
+            if (evtTarget === rootEl) return rootEl;
+            let currentElement = evtTarget.parentElement;
             
             while (currentElement) {
                 if (currentElement === rootEl) return rootEl;

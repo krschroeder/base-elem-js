@@ -26,8 +26,8 @@ const $div = $be(div);
 $div.on('click.div', (ev, elem: HTMLHeadingElement) => {
     console.log('clicked', elem.textContent);
     $div.insert(`<p>clicking yo!!</p>`);
-    $be(div).off('click.div');
-});
+    
+}, 'h2');
 
  
 // synthetic event
@@ -39,9 +39,9 @@ $div.on('syntheticEvent', (ev: Event, elem: HTMLDivElement) => {
 }).trigger('syntheticEvent')
 
 setTimeout(() => {
-    $div.trigger('click.div');
+    $div.trigger('click.div', 'h2');
     console.log('set time out on click')
-}, 500)
+}, 1000)
 
 
 $be(document.body).insert(div);

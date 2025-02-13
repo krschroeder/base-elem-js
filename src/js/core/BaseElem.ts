@@ -201,8 +201,8 @@ class BaseElem {
         return this;
     }
 
-    trigger(evtName: string, config?: EventInit): BaseElem {
-        this.#elemOrElems(elem => trigger(elem, evtName, config));
+    trigger(evtName: string, delgateEl?: string): BaseElem {
+        this.#elemOrElems(elem => trigger(elem, evtName, delgateEl));
         return this;
     }
 
