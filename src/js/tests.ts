@@ -21,15 +21,27 @@ console.log(bes.isHidden($behidden.elem[0]),$behidden.css('display'));
 console.log('has "what" class',$be('ul').find('li').hasClass('what'));
 
 const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
-$be(div).on('click.div', (ev, elem: HTMLElement) => {
-    console.log('clicked', elem.textContent);
-    $be(div).off('click.div');
-},'h2');
+const $div = $be(div);
 
-$be(div).on('click.again', (ev, elem: HTMLElement) => {
-    console.log('clicked again', elem.textContent);
-    $be(div).off('click.again');
+$div.on('click.div', (ev, elem: HTMLHeadingElement) => {
+    console.log('clicked', elem.textContent);
+    $div.insert(`<p>clicking yo!!</p>`);
+    $be(div).off('click.div');
 });
+
+ 
+// synthetic event
+
+$div.on('syntheticEvent', (ev: Event, elem: HTMLDivElement) => {
+    console.log(ev);
+    $div.insert(`<p>Some HTML inserted by a synthetic event (${elem.nodeName})</p>`);
+    // $div.off('syntheticEvent')
+}).trigger('syntheticEvent')
+
+setTimeout(() => {
+    $div.trigger('click.div');
+    console.log('set time out on click')
+}, 500)
 
 
 $be(document.body).insert(div);

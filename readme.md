@@ -10,6 +10,13 @@ To use the `base-elem-js` utility, you need to import it as follows:
 import $be from 'base-elem-js;
 ```
 
+### Use via a CDN
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js"></script>
+```
+ 
+
 <!-- ## Features
 
 To come, in the meantime check the [Home Page](https://github.com/krschroeder/base-elem-js#readme). -->
@@ -96,6 +103,11 @@ Adds an event listener to the current elements. Namespace the events with a '.',
 
 
 ```typescript
+trigger(evtName: string, config?: EventInit): BaseElem
+```
+Triggers native events as well as synthetic events.
+
+```typescript
 off(evtName: string, config: boolean | AddEventListenerOptions = false): BaseElem
 ```
 Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name.
@@ -135,6 +147,12 @@ $be.BaseElem.prototype.foo = bar();
 
 
 ## Base Elem Static ($be.static)
+
+
+```typescript
+trigger(target: HTMLElement | Window | Document, evtName: string, config?: EventInit): BaseElem
+```
+Triggers native events as well as synthetic events.
 
 ```typescript
 make(tag: string, attrs?: Record<string, any>, html?: string): HTMLElement

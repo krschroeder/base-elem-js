@@ -23,6 +23,7 @@ const {
     htmlParse,
     off,
     on,
+    trigger,
     rmClass,
     tgClass
 } = BaseStatic
@@ -197,6 +198,11 @@ class BaseElem {
         config: boolean | AddEventListenerOptions = false
     ): BaseElem {
         this.#elemOrElems(elem => on(elem, evtName, fn, delegateEl, config));
+        return this;
+    }
+
+    trigger(evtName: string, config?: EventInit): BaseElem {
+        this.#elemOrElems(elem => trigger(elem, evtName, config));
         return this;
     }
 

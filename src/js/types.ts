@@ -2,7 +2,7 @@ export type FindBy = 'id' | 'class' | 'tag';
 export type AppendMethod = 'append' | 'prepend' | 'after' | 'before';
 export type ClassOrId = '#' | '.';
 export type EventElem = HTMLElement | Document | Window;
-export type EventFn = (ev: any, elem?: EventElem) => void;
+export type EventFn = <EE>(ev: any, elem?: EventElem | EE) => void;
 export type Selector = string | HTMLElement | HTMLElement[];
 
 export interface CSSProperties extends CSSStyleDeclaration {

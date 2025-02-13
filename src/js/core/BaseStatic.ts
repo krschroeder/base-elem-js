@@ -181,13 +181,13 @@ const
     // Event
     // 
     on = (
-        baseEl: HTMLElement | Window = document.body,
+        baseEl: EventElem = document.body,
         evtName: `${Event['type']}.${string}` | string, 
         fn: EventFn, 
         delegateEl: string = null,
         config: boolean | AddEventListenerOptions = false
     ): void => {
-        const evt = evtName.split('.')[0] as Event['type'];
+        const [evt, nameSpace = ''] = evtName.split('.');
         const evtFn = (e: Event) => {
             if (delegateEl && baseEl instanceof HTMLElement) {
                 
@@ -209,10 +209,11 @@ const
         }
         
         baseEl.addEventListener(evt, evtFn, config);
+        // if (nameSpace) baseEl.addEventListener(evtName, evtFn, config);
     },
   
     off = (
-        target: HTMLElement | Window = document.body,
+        target: EventElem = document.body,
         evtName: string, 
         config: boolean | AddEventListenerOptions = false
     ): void => {
@@ -222,26 +223,31 @@ const
         for (const eventNameToRm of eventNamesToRm) {
             if (eventFnCache.has(target)) {
 
-                const tgtFnMap = eventFnCache.get(target);
-               
-                target.removeEventListener(
-                    eventNameToRm.split('.')[0], 
-                    tgtFnMap.get(eventNameToRm),
-                    config
-                );
+                const tgtFnMap = eventFnCache.get(target),
+                [evt, nameSpace = ''] = eventNameToRm.split('.'),
+                fn = tgtFnMap.get(eventNameToRm);
+
+                target.removeEventListener( evt, fn, config);
+                // if (nameSpace) target.removeEventListener(eventNameToRm, fn, config);
         
                 tgtFnMap.delete(eventNameToRm);
             }
-            // if (eventFnCache.has(eventNameToRm)) {
-               
-            //     target.removeEventListener(
-            //         eventNameToRm.split('.')[0], 
-            //         eventFnCache.get(eventNameToRm),
-            //         config
-            //     );
-        
-            //     eventFnCache.delete(eventNameToRm);
-            // }
+        }
+    },
+
+    trigger = (
+        target: EventElem = document.body,
+        evtName: string,
+        opts?: EventInit
+    ) => {
+        if (evtName.split('.').length > 1) {
+            if (eventFnCache.has(target)) {
+                const fn = eventFnCache.get(target).get(evtName);
+                if (fn) fn(target, target)
+            }
+        } else {
+            const ev = new Event(evtName, opts);
+            target.dispatchEvent(ev);
         }
     },
     // 
@@ -398,6 +404,7 @@ const BaseStatic = {
     offset,
     off,
     on,
+    trigger,
     rmClass,
     tgClass,
     useTransition,
