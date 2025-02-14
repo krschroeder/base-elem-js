@@ -114,7 +114,7 @@ Triggers native events as well as synthetic events. Can also trigger namespaced 
 ## Examples
 
 ```typescript
-import $be from './base-elem-js';
+import $be from "base-elem-js";
 
 const bes = $be.static;
 
@@ -128,7 +128,7 @@ console.log('has "what" class',$be('ul').find('li').hasClass('what'));
 
 const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
 const $div = $be(div);
-$div.on('click', (ev, elem) => {
+$div.on('click.myClickName', (ev, elem) => {
     console.log('clicked', elem.textContent);
 },'h2');
 $be(document.body).insert(div);
@@ -241,10 +241,10 @@ trigger( target: HTMLElement, evtName: string, delegateEl?: string, config?: boo
 ```
 Trigger native, synthetic and namespaced navtive events.
 
-## Base Element Static
+## Base Element Static Examples
 
 ```typescript
-import $bs from './core/BaseStatic';
+import $bs from "base-elem-js";
 
 const bes = $bs.static;
 
@@ -266,3 +266,77 @@ bes.text(div, 'New text');
 
 bes.insert(div, '<p>Inserted content</p>', 'before');
 ```
+
+## Animate/Transition Static Methods
+This library includes a couple extra functions to help with transitions and simple animations.
+
+### useCssAnimate
+The `useCssAnimate` function is a utility for handling CSS animations on HTML elements. It provides a way to start and end CSS animations with a specified duration and optional callback function.
+
+
+```typescript
+const [cssAnimate, cssState] = useCssAnimate(elems: HTMLElement | HTMLElement[], baseCss: string = '');
+```
+
+Adds the following CSS classes to and element or elements
+
+- `[custom name]-starting` or `starting` (if second param is empty) at the start of the animation
+- `[custom name]-ending` or `ending` as the animation is ending
+- `[custom name]-active` or `active` if the animation is active. Inactive state would be left without this class
+
+#### Returns
+`[(start: boolean, duration?: number, endFn?: () => void) => void, CSSActionStates]`: A tuple containing: A function to start the animation. An object representing the CSS action states. 
+
+#### Example
+```typescript
+const [cssAnimate, cssState] = useCssAnimate(element, 'my-animation');
+
+// To start the animation
+cssAnimate(true, 500, () => {
+    console.log('Animation started');
+});
+
+// To end the animation
+cssAnimate(false, 500, () => {
+    console.log('Animation ended');
+});
+
+console.log(cssState.starting) // returns the name of the starting class
+console.log(cssState.ending) // returns the name of the ending class
+console.log(cssState.active) // returns the name of the active class
+```
+
+### useTransition
+The `useTransition` function is a utility for managing transitions. It provides a way to handle the start and end of transitions with a specified duration.
+
+#### Returns
+Function: A function that takes three parameters:
+`startFn ((...args: any) => void)`: A function to be called when the transition starts.
+`endFn ((...args: any) => void)`: A function to be called when the transition ends.
+`duration (number, optional)`: The duration of the transition in milliseconds. Default is 300ms.
+
+```typescript
+const transition = useTransition();
+
+const startTransition = () => {
+    console.log('Transition started');
+};
+
+const endTransition = () => {
+    console.log('Transition ended');
+};
+
+// Start the transition with a duration of 400ms
+transition(startTransition, endTransition, 400);
+```
+
+#### Internal Functionality
+The `useTransition` function maintains the state of the transition using a boolean flag (inTransition) and a timeout (tto). It also keeps track of the current end transition function (currEndTransitionFn).
+
+When the returned function is called:
+
+- If a transition is already in progress, it clears the current timeout and calls the current end transition function.
+- It then calls the provided startFn to start the transition.
+- It sets a timeout to call the provided endFn after the specified duration, marking the transition as complete.
+
+This ensures that transitions are properly managed and do not overlap.
