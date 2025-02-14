@@ -2,6 +2,7 @@
     FindBy,
     ClassOrId,
     EventFn,
+    EventName,
     CSSActionStates,
     CSSActionStatesObj,
     CSSProperties,
@@ -15,6 +16,8 @@ const
     oa = Object.assign,
     isArr = Array.isArray
 ;
+
+ 
 
 type EventCache = Map<string,EventFn>;
 const eventFnCache:WeakMap<EventElem,EventCache> = new WeakMap();
@@ -183,7 +186,7 @@ const
     // 
     on = (
         baseEl: EventElem = document.body,
-        evtName: `${Event['type']}.${string}` | string, 
+        evtName: EventName, 
         fn: EventFn, 
         delegateEl: string = null,
         config: boolean | AddEventListenerOptions = false
@@ -212,10 +215,10 @@ const
         
         baseEl.addEventListener(evt, evtFn, config);
     },
-  
+   
     off = (
         target: EventElem = document.body,
-        evtName: string, 
+        evtName: EventName, 
         config: boolean | AddEventListenerOptions = false
     ): void => {
 

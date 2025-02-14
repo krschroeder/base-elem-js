@@ -23,21 +23,26 @@ console.log('has "what" class',$be('ul').find('li').hasClass('what'));
 const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
 const $div = $be(div);
 
-$div.on('click.div', (ev, elem: HTMLHeadingElement) => {
-    console.log('clicked', elem.textContent);
-    $div.insert(`<p>clicking yo!!</p>`);
+$div.on(['click.clicky','mouseover'], (ev: MouseEvent, elem: HTMLHeadingElement) => {
+    console.log(ev.type, elem.textContent);
+    $div.insert(`<p>Event: ${ev.type}</p>`);
+
+    if (ev.type === 'mouseover') {
+        $div.off('mouseover');
+    }
     
 }, 'h2');
 
  
 // synthetic event
 
-$div.on('syntheticEvent', (ev: Event, elem: HTMLDivElement) => {
+$div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
     console.log(ev);
     $div.insert(`<p>Some HTML inserted by a synthetic event (${elem.nodeName})</p>`);
-    // $div.off('syntheticEvent')
-}).trigger('syntheticEvent')
-
+  
+}).trigger('[syntheticEvent]')
+ 
+const $li = $be('ul').findOne('l1');
 setTimeout(() => {
     $div.trigger('click.div', 'h2');
     console.log('set time out on click')

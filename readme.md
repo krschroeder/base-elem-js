@@ -97,17 +97,23 @@ text(text: string): BaseElem
 Sets the inner text of the current elements.
 
 ```typescript
-on(evtName: `${Event['type']}.${string}` | string, fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false): BaseElem
+// types for the Event
+type SyntheticEvent = `[${string}]`;
+type NativeEvent = keyof HTMLElementEventMap;
+type EventName = `${NativeEvent}.${string}` | NativeEvent | SyntheticEvent;
+
+on(evtName: EventName | EventName[], fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false): BaseElem
 ```
-Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`.
+Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`. Pass in an array or single value for the `evtName` parameter. For a __synthetic event__ pass it in `[]`, so `[syntheticEventName]`, this is essentially for the best Typescript support (otherwise string would invalidate the type checking of the event name).
 
 ```typescript
-off(evtName: string, config: boolean | AddEventListenerOptions = false): BaseElem
+// see EventName type right above
+off(evtName: EventName | EventName[], config: boolean | AddEventListenerOptions = false): BaseElem
 ```
-Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name.
+Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name. Can also pass in an array of strings for the `evtName` param.
 
 ```typescript
-trigger(evtName: string, delgateEl?: string): BaseElem
+trigger(evtName: EventName, delgateEl?: string): BaseElem
 ```
 Triggers native events as well as synthetic events. Can also trigger namespaced events such as `click.myClickName`. 
 

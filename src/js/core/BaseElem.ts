@@ -1,9 +1,10 @@
 import type {
-    FindBy,
     AppendMethod,
+    CSSProperties,
+    EventName,
     EventFn,
-    Selector,
-    CSSProperties
+    FindBy,
+    Selector
 } from '../types';
 
 import BaseStatic from './BaseStatic';
@@ -191,12 +192,18 @@ class BaseElem {
     }
 
     on(
-        evtName: `${Event['type']}.${string}` | string, 
+        evtName: EventName | EventName[], 
         fn: EventFn, 
         delegateEl: string = null,
         config: boolean | AddEventListenerOptions = false
     ): BaseElem {
-        this.#elemOrElems(elem => on(elem, evtName, fn, delegateEl, config));
+        if (isArr(evtName)) {
+            for (const evName of evtName) {
+                this.#elemOrElems(elem => on(elem, evName, fn, delegateEl, config));
+            }
+        } else {
+            this.#elemOrElems(elem => on(elem, evtName, fn, delegateEl, config));
+        }
         return this;
     }
 
@@ -205,8 +212,15 @@ class BaseElem {
         return this;
     }
 
-    off(evtName: string, config: boolean | AddEventListenerOptions = false): BaseElem {
-        this.#elemOrElems(elem => off(elem, evtName, config));
+    off(evtName: EventName | EventName[], config: boolean | AddEventListenerOptions = false): BaseElem {
+
+        if (isArr(evtName)) {
+            for (const evName of evtName) {
+                this.#elemOrElems(elem => off(elem, evName, config));
+            }
+        } else {
+            this.#elemOrElems(elem => off(elem, evtName, config));
+        }
         return this;
     }
 }
