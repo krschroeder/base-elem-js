@@ -101,17 +101,15 @@ on(evtName: `${Event['type']}.${string}` | string, fn: EventFn, delegateEl: stri
 ```
 Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`.
 
-
-```typescript
-trigger(evtName: string, config?: EventInit): BaseElem
-```
-Triggers native events as well as synthetic events.
-
 ```typescript
 off(evtName: string, config: boolean | AddEventListenerOptions = false): BaseElem
 ```
 Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name.
 
+```typescript
+trigger(evtName: string, delgateEl?: string): BaseElem
+```
+Triggers native events as well as synthetic events. Can also trigger namespaced events such as `click.myClickName`. 
 
 ## Examples
 
@@ -147,12 +145,6 @@ $be.BaseElem.prototype.foo = bar();
 
 
 ## Base Elem Static ($be.static)
-
-
-```typescript
-trigger(target: HTMLElement | Window | Document, evtName: string, config?: EventInit): BaseElem
-```
-Triggers native events as well as synthetic events.
 
 ```typescript
 make(tag: string, attrs?: Record<string, any>, html?: string): HTMLElement
@@ -233,6 +225,21 @@ Sets the inner HTML of the element.
 text(elem: HTMLElement, text: string): void
 ```
 Sets the inner text of the element.
+
+```typescript
+on(baseEl: EventElem, evtName: `${Event['type']}.${string}` | string, fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false)
+```
+Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`.
+
+```typescript
+off(evtName: string, config: boolean | AddEventListenerOptions = false);
+```
+Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name.
+
+```typescript
+trigger( target: HTMLElement, evtName: string, delegateEl?: string, config?: boolean | AddEventListenerOptions);
+```
+Trigger native, synthetic and namespaced navtive events.
 
 ## Base Element Static
 

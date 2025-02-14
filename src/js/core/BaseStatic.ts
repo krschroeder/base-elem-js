@@ -188,7 +188,7 @@ const
         delegateEl: string = null,
         config: boolean | AddEventListenerOptions = false
     ): void => {
-        const [evt, nameSpace = ''] = evtName.split('.');
+        const evt = evtName.split('.')[0];
         const evtFn = (e: Event) => {
             if (delegateEl && baseEl instanceof HTMLElement) {
                 

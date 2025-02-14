@@ -46,11 +46,10 @@ class BaseElem {
     }
 
     #elemOrElems(fn: (elem: HTMLElement, i:number) => void): void {
-        if (isArr(this.elem)) {
-            this.elem.forEach(fn);
-        } else {
-            fn(this.elem, 0);
-        }
+        isArr(this.elem) ? 
+            this.elem.forEach(fn) : 
+            fn(this.elem, 0)
+        ;
     }
 
     find(selector: string, filter?: (elem: any, i: number) => boolean): BaseElem {
