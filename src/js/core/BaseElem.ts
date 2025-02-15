@@ -38,7 +38,7 @@ class BaseElem {
             this.elem = find(selector, base);
 
         } else if (selector instanceof BaseElem){
-            this.elem = selector.elem;
+            this.elem = isArr(selector.elem) ? [...selector.elem] : selector.elem;
         } else {
             //not checking type for HTMLElement[]
             this.elem = selector;
@@ -47,10 +47,13 @@ class BaseElem {
     }
 
     #elemOrElems(fn: (elem: HTMLElement, i:number) => void): void {
-        isArr(this.elem) ? 
-            this.elem.forEach(fn) : 
-            fn(this.elem, 0)
-        ;
+        if (isArr(this.elem)) {
+            let i = 0, elem;
+            while (elem = this.elem[i]) {
+                fn(elem, i++);
+            }
+          
+        } else fn(this.elem, 0);
     }
 
     find(selector: string, filter?: (elem: any, i: number) => boolean): BaseElem {
@@ -99,20 +102,11 @@ class BaseElem {
     css(attrs: string): string;
     css(attrs: Partial<CSSProperties>): BaseElem;
     css(attrs: Partial<CSSProperties> | string): string | BaseElem {
-
-        this.#elemOrElems(elem => css(elem, attrs));
-        const attrIsStr = typeof attrs === 'string';
-
-        if (isArr(this.elem)) {
-            if(attrIsStr) {
-                return css(this.elem[0], attrs);
-            } else {
-                this.elem.forEach(elem => css(elem, attrs));
-            }
+        if (typeof attrs === 'string') {
+            const elem = isArr(this.elem) ? this.elem[0] : this.elem;
+            return css(elem, attrs);
         } else {
-            const strVal = css(this.elem, attrs);
-
-            if (strVal) return strVal;
+            this.#elemOrElems(elem => css(elem, attrs));
         }
         return this;
     }
@@ -144,8 +138,17 @@ class BaseElem {
         ;
     }
 
-    attr(attrs: Record<string,string> | string): BaseElem {
-        this.#elemOrElems(elem => attr(elem, attrs));
+    attr(attrs: string): string;
+    attr(attrs: Record<string,string> ): BaseElem;
+    attr(attrs: Record<string,string> | string): BaseElem | string {
+
+        if (typeof attrs === 'string') {
+            const elem = isArr(this.elem) ? this.elem[0] : this.elem;
+            return attr(elem, attrs);
+
+        } else {
+            this.#elemOrElems(elem => attr(elem, attrs));
+        }
 
         return this;
     }

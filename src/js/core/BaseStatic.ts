@@ -21,10 +21,7 @@ const
 
 type EventCache = Map<string,EventFn>;
 const eventFnCache:WeakMap<EventElem,EventCache> = new WeakMap();
-interface OnEvent extends Event {
-    synthTarget?: HTMLElement;
-}
- 
+
 const 
     // Props
     CSS_ACTION_STATES = Object.freeze({
@@ -50,7 +47,7 @@ const
     // 
     // Finding Elems
     // 
-    findBy = (type:FindBy, find: string, base: HTMLElement | Document = d)=> {
+    findBy = (type:FindBy, find: string, base: HTMLElement | Document = d) => {
 
         if (type === 'class') return Array.from(base.getElementsByClassName(find)) as HTMLElement[];
         if (type === 'id')    return d.getElementById(find) as HTMLElement;
@@ -73,6 +70,7 @@ const
     attr = (elem: HTMLElement, attrs: Record<string,string> | string) => {
 
         if (typeof attrs === 'string') {
+            if (attrs === 'value') return (elem as HTMLInputElement).value;
             return elem.getAttribute(attrs);
         } else {
 
@@ -82,7 +80,7 @@ const
                     elem.removeAttribute(key)
                 } else {
     
-                    elem.setAttribute(key, attrs[key])
+                    elem.setAttribute(key, val);
                 }
             }
         }
@@ -169,10 +167,11 @@ const
     htmlParse = (htmlStr: string ): ChildNode[] => {
   
         const doc = (new DOMParser()).parseFromString(htmlStr, 'text/html');
-        const elList = Array.from(doc.body.childNodes);
-    
         // remove scripts, even though they're non-exectable with the DOMParser
-        return elList.filter(el => el.nodeName.toLowerCase() !== 'script');
+        const scripts = find('script',doc.body);
+        if (scripts) scripts.forEach(s => s.remove());
+        const elList = Array.from(doc.body.childNodes);
+        return elList;
     },
 
     empty = (elem: HTMLElement) => {
