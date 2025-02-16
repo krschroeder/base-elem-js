@@ -1,15 +1,17 @@
 export type FindBy = 'id' | 'class' | 'tag';
 export type AppendMethod = 'append' | 'prepend' | 'after' | 'before';
 export type ClassOrId = '#' | '.';
-export type EventElem = HTMLElement | Document | Window;
-export type EventFn = <EE>(ev: any, elem?: EventElem | EE) => void;
-export type SelectorElem = HTMLElement | Window | Document;
-export type SelectorElems = SelectorElem | HTMLElement[];
+export type SelectorElem = HTMLElement | Document | Window;
+export type EventFn = <EE>(ev: any, elem?: SelectorElem | EE) => void;
+// export type SelectorElem = [Window] | [Document];
+export type SelectorElems = [Window | Document | HTMLElement] | HTMLElement[];
 export type Selector = string | SelectorElems;
+export type SelectorRoot = HTMLElement[] | HTMLElement | Window | Document;
 export type SyntheticEvent = `[${string}]`;
-export type NativeEvent = keyof HTMLElementEventMap;
+export type NativeEvents = keyof HTMLElementEventMap;
 export type WindowEvents = keyof WindowEventHandlersEventMap;
-export type EventName = `${NativeEvent | WindowEvents}.${string}` | NativeEvent | WindowEvents | SyntheticEvent;
+export type DocEvents = keyof DocumentEventMap;
+export type EventName = `${NativeEvents | WindowEvents | DocEvents}.${string}` | NativeEvents | WindowEvents | DocEvents | SyntheticEvent;
  
 
 export interface CSSProperties extends CSSStyleDeclaration {

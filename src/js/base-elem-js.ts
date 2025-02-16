@@ -1,8 +1,8 @@
 import type { 
     Selector, 
-    EventElem, 
-    SelectorElem,
+    SelectorElem, 
     SelectorElems,
+    SelectorRoot,
     EventFn, 
     EventName, 
     SyntheticEvent, 
@@ -15,7 +15,7 @@ import type {
 import BaseStatic from './core/BaseStatic';
 import BaseElem from './core/BaseElem';
  
-const $be = (selector?: Selector | BaseElem, base?: HTMLElement) => new BaseElem(selector, base);
+const $be = (selector?: string | SelectorRoot | BaseElem, base?: HTMLElement) => new BaseElem(selector, base);
 
 $be.static = BaseStatic;
 $be.BaseElem = BaseElem;
@@ -26,12 +26,13 @@ export type {
     BaseElem, 
     CSSActionStates, 
     CSSActionStatesObj,
-    EventElem, 
+    SelectorElem as EventElem, 
     EventFn, 
     EventName, 
     FindBy,
     SyntheticEvent, 
     Selector,
     SelectorElem,
-    SelectorElems
+    SelectorElems,
+    SelectorRoot
 };

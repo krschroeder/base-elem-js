@@ -6,7 +6,6 @@
     CSSActionStates,
     CSSActionStatesObj,
     CSSProperties,
-    EventElem,
     SelectorElem
 } from '../types';
  
@@ -21,7 +20,7 @@ const
  
 
 type EventCache = Map<string,EventFn>;
-const eventFnCache:WeakMap<EventElem,EventCache> = new WeakMap();
+const eventFnCache:WeakMap<SelectorElem,EventCache> = new WeakMap();
 
 const 
     // Props
@@ -185,7 +184,7 @@ const
     // Event
     // 
     on = (
-        baseEl: EventElem = document.body,
+        baseEl: SelectorElem = document.body,
         evtName: EventName, 
         fn: EventFn, 
         delegateEl: string = null,
@@ -217,7 +216,7 @@ const
     },
    
     off = (
-        target: EventElem = document.body,
+        target: SelectorElem = document.body,
         evtName: EventName, 
         config: boolean | AddEventListenerOptions = false
     ): void => {
@@ -240,7 +239,7 @@ const
     },
 
     trigger = (
-        target: SelectorElem = document.body,
+        target: HTMLElement | Window | Document = document.body,
         evtName: string,
         delegateEl: string = null,
         config: boolean | AddEventListenerOptions = false

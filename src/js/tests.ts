@@ -17,7 +17,7 @@ $h1.css({color: 'green'});
 
 const $behidden = $be('.hidden').css({display: 'block'}).attr({hidden: null});
 
-console.log(bes.isHidden($behidden.elem[0]),$behidden.css('display'), $behidden.attr('data-something'));
+console.log(bes.isHidden($behidden.elem[0] as HTMLElement),$behidden.css('display'), $behidden.attr('data-something'));
 console.log('has "what" class',$be('ul').find('li').hasClass('what'));
 
 const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
@@ -51,6 +51,14 @@ setTimeout(() => {
 
 $be(document.body).insert(div);
 const $ulSpan = $be('ul').findOne('span');
+
+$be(window).on('load.loaded', (ev, elem) => {
+    console.log('loaded', ev)
+});
+
+$be(document).on('DOMContentLoaded', (ev, elem) => {
+    console.log('content loaded', ev)
+})
 
 console.log($ulSpan);
 console.log($be.BaseElem, $be)
