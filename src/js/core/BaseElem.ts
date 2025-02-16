@@ -4,7 +4,9 @@ import type {
     EventName,
     EventFn,
     FindBy,
-    Selector
+    SelectorElems,
+    Selector,
+    SelectorElem
 } from '../types';
 
 import BaseStatic from './BaseStatic';
@@ -30,7 +32,7 @@ const {
 } = BaseStatic
 
 class BaseElem {
-    elem: HTMLElement[] | HTMLElement = [];
+    elem: SelectorElems = [];
 
     constructor(selector?: Selector | BaseElem, base?: HTMLElement) {
         if(typeof selector === 'string') {
@@ -46,7 +48,7 @@ class BaseElem {
         return this;
     }
 
-    #elemOrElems(fn: (elem: HTMLElement, i:number) => void): void {
+    #elemOrElems(fn: (elem: SelectorElems, i:number) => void): void {
         if (isArr(this.elem)) {
             let i = 0, elem;
             while (elem = this.elem[i]) {
@@ -62,7 +64,7 @@ class BaseElem {
             return new BaseElem(filter ? elems.filter(filter) : elems);
 
         } else {
-            const elems = find(selector, this.elem);
+            const elems = find(selector, (this.elem as HTMLElement | Document));
             return new BaseElem(filter ? elems.filter(filter) : elems);
         }
         
@@ -73,7 +75,7 @@ class BaseElem {
             const elems = this.elem.map(elem => findBy(type, selector, elem )).flat();
             return new BaseElem(filter ? elems.filter(filter) : elems);
         } else {
-            const elems = findBy(type, selector, this.elem);
+            const elems = findBy(type, selector, (this.elem as HTMLElement | Document));
 
             if (isArr(elems)) { 
 
@@ -90,8 +92,20 @@ class BaseElem {
             
             return new BaseElem(elem[0] !== null ? elem[0] : []);
         } else {
-            return new BaseElem(findOne(selector, this.elem));
+            return new BaseElem(findOne(selector, (this.elem as HTMLElement | Document)));
         }
+    }
+
+    filter(fn: (elem: HTMLElement, i: number) => boolean): BaseElem {
+        if (isArr(this.elem)) {
+            return new BaseElem (this.elem.filter(fn));
+        } else {
+            return new BaseElem(fn(this.elem as HTMLElement, 0) ? this.elem : []);
+        }
+    }
+
+    toArray() {
+        return isArr(this.elem) ? this.elem : [this.elem];
     }
 
     each(fn: (elem: HTMLElement, i: number) => void): BaseElem {
@@ -103,35 +117,35 @@ class BaseElem {
     css(attrs: Partial<CSSProperties>): BaseElem;
     css(attrs: Partial<CSSProperties> | string): string | BaseElem {
         if (typeof attrs === 'string') {
-            const elem = isArr(this.elem) ? this.elem[0] : this.elem;
+            const elem = (isArr(this.elem) ? this.elem[0] : this.elem) as HTMLElement;
             return css(elem, attrs);
         } else {
-            this.#elemOrElems(elem => css(elem, attrs));
+            this.#elemOrElems(elem => css(elem as HTMLElement, attrs));
         }
         return this;
     }
 
     addClass(cssNames: string | string[]): BaseElem {
-        this.#elemOrElems(elem => addClass(elem, cssNames));
+        this.#elemOrElems(elem => addClass(elem as HTMLElement, cssNames));
 
         return this;
     }
 
     rmClass(cssNames: string | string[]): BaseElem {
-        this.#elemOrElems(elem => rmClass(elem, cssNames));
+        this.#elemOrElems(elem => rmClass(elem as HTMLElement, cssNames));
 
         return this;
     }
 
     tgClass(cssNames: string | string[], toggle?: boolean): BaseElem {
-        this.#elemOrElems(elem => tgClass(elem, cssNames, toggle));
+        this.#elemOrElems(elem => tgClass(elem as HTMLElement, cssNames, toggle));
 
         return this;
     }
 
     hasClass(cssNames: string | string[], method: 'some' | 'every' = 'some'): boolean {
         return !isArr(this.elem) ? 
-            hasClass(this.elem, cssNames) : 
+            hasClass(this.elem as HTMLElement, cssNames) : 
             method === 'some' ? 
             this.elem.some(elem => hasClass(elem, cssNames)): 
             this.elem.every(elem => hasClass(elem, cssNames))
@@ -144,10 +158,10 @@ class BaseElem {
 
         if (typeof attrs === 'string') {
             const elem = isArr(this.elem) ? this.elem[0] : this.elem;
-            return attr(elem, attrs);
+            return attr(elem as HTMLElement, attrs);
 
         } else {
-            this.#elemOrElems(elem => attr(elem, attrs));
+            this.#elemOrElems(elem => attr(elem as HTMLElement, attrs));
         }
 
         return this;
@@ -159,7 +173,7 @@ class BaseElem {
     }
 
     remove(): BaseElem {
-        this.#elemOrElems(elem => elem.remove());
+        this.#elemOrElems(elem => (elem as HTMLElement).remove());
         return this;
     }
 
@@ -167,8 +181,8 @@ class BaseElem {
         html: string | HTMLElement | HTMLElement[], 
         method: AppendMethod = 'append'
     ): BaseElem {
-        this.#elemOrElems(elem => {
-            const elems = typeof html === 'string' ? htmlParse(html) : isArr(html) ? html : [html];
+        this.#elemOrElems((elem: HTMLElement) => {
+            const elems = (typeof html === 'string' ? htmlParse(html) : isArr(html) ? html : [html]) as HTMLElement[];
            
             if (method === 'append') elem.append(...elems);
             if (method === 'prepend') elem.prepend(...elems);
@@ -179,7 +193,7 @@ class BaseElem {
     }
 
     html(html: string): BaseElem {
-        this.#elemOrElems(elem => {
+        this.#elemOrElems((elem: HTMLElement) => {
             empty(elem);
             elem.append(...htmlParse(html));
         });
@@ -187,7 +201,7 @@ class BaseElem {
     }
 
     text(text: string): BaseElem {
-        this.#elemOrElems(elem => {
+        this.#elemOrElems((elem: HTMLElement) => {
             empty(elem);
             elem.append(new Text(text));
         });
@@ -202,16 +216,16 @@ class BaseElem {
     ): BaseElem {
         if (isArr(evtName)) {
             for (const evName of evtName) {
-                this.#elemOrElems(elem => on(elem, evName, fn, delegateEl, config));
+                this.#elemOrElems((elem: SelectorElem) => on(elem, evName, fn, delegateEl, config));
             }
         } else {
-            this.#elemOrElems(elem => on(elem, evtName, fn, delegateEl, config));
+            this.#elemOrElems((elem: SelectorElem) => on(elem, evtName, fn, delegateEl, config));
         }
         return this;
     }
 
     trigger(evtName: string, delgateEl?: string): BaseElem {
-        this.#elemOrElems(elem => trigger(elem, evtName, delgateEl));
+        this.#elemOrElems((elem: SelectorElem) => trigger(elem, evtName, delgateEl));
         return this;
     }
 
@@ -219,10 +233,10 @@ class BaseElem {
 
         if (isArr(evtName)) {
             for (const evName of evtName) {
-                this.#elemOrElems(elem => off(elem, evName, config));
+                this.#elemOrElems((elem: SelectorElem) => off(elem, evName, config));
             }
         } else {
-            this.#elemOrElems(elem => off(elem, evtName, config));
+            this.#elemOrElems((elem: SelectorElem) => off(elem, evtName, config));
         }
         return this;
     }

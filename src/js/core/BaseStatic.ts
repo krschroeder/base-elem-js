@@ -6,7 +6,8 @@
     CSSActionStates,
     CSSActionStatesObj,
     CSSProperties,
-    EventElem
+    EventElem,
+    SelectorElem
 } from '../types';
  
 
@@ -239,12 +240,12 @@ const
     },
 
     trigger = (
-        target: HTMLElement = document.body,
+        target: SelectorElem = document.body,
         evtName: string,
         delegateEl: string = null,
         config: boolean | AddEventListenerOptions = false
     ) => {
-        const delegateEls = delegateEl ? find(delegateEl, target) : null; 
+        const delegateEls = delegateEl ? find(delegateEl, target instanceof Window ? document.body : target) : null; 
         if (delegateEls && delegateEls.length === 0) return;
         
 

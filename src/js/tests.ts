@@ -39,6 +39,9 @@ $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
  
 const $li = $be('ul').find('li');
 
+const $liWhat = $li.filter((elem, i) => bes.hasClass(elem, 'what'));
+
+console.log('li with class "what"', $liWhat);
 
 setTimeout(() => {
     $div.trigger('click.div', 'h2');

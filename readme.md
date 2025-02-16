@@ -37,6 +37,16 @@ findOne(selector: string): BaseElem
 Finds the first element matching the selector within the current elements and returns a new BaseElem instance.
 
 ```typescript
+filter(fn: (elem: HTMLElement, i: number) => boolean): BaseElem
+```
+Finds elements based on the filtering function within the current elements and returns a new BaseElem instance.
+
+```typescript
+toArray(): HTMLElement[]
+```
+Returns an array of elements;
+
+```typescript
 each(fn: (elem: HTMLElement, i: number) => void): BaseElem
 ```
 Iterates over each element and applies the provided function.
