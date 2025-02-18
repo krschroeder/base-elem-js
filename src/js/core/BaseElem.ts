@@ -43,12 +43,7 @@ class BaseElem {
             this.elem = [...selector.elem];
         } else {
             //not checking type for HTMLElement[]
-            if (isArr(selector)) {
-
-                this.elem = selector;
-            } else {
-                this.elem = [selector];
-            }
+            this.elem = isArr(selector) ? selector : [selector];
         }
         return this;
     }
@@ -58,6 +53,31 @@ class BaseElem {
         while (elem = this.elem[i]) {
             fn(elem, i++);
         }   
+    }
+
+    #strOrObj <T>(attrs: T, fn: (elem: HTMLElement, attrs: T) => string = () => ''): string {
+
+        if (typeof attrs === 'string') {
+            const elem = this.elem[0] as HTMLElement;
+            return fn(elem, attrs);
+        } else {
+            this.#iterate(elem => fn(elem, attrs));
+        }
+        return '';
+    }
+
+    #content(fn:(content: string) => string | Node | ChildNode[], content?: string) {
+        if (content) {
+            this.#iterate((elem: HTMLElement) => {
+                empty(elem);
+                const nodes = fn(content);
+                isArr(nodes) ? elem.append(...nodes): elem.append(nodes);
+            });
+        } else {
+            // return copy
+            return this.elem[0];
+        }
+        return null;
     }
 
     find(selector: string, filter?: (elem: any, i: number) => boolean): BaseElem {
@@ -94,12 +114,9 @@ class BaseElem {
     css(attrs: string): string;
     css(attrs: Partial<CSSProperties>): BaseElem;
     css(attrs: Partial<CSSProperties> | string): string | BaseElem {
-        if (typeof attrs === 'string') {
-            const elem = this.elem[0] as HTMLElement;
-            return css(elem, attrs);
-        } else {
-            this.#iterate(elem => css(elem, attrs));
-        }
+
+        const val = this.#strOrObj(attrs, css);
+        if (val) return val;
         return this;
     }
 
@@ -133,15 +150,8 @@ class BaseElem {
     attr(attrs: string): string;
     attr(attrs: Record<string,string> ): BaseElem;
     attr(attrs: Record<string,string> | string): BaseElem | string {
-
-        if (typeof attrs === 'string') {
-            const elem = isArr(this.elem) ? this.elem[0] : this.elem;
-            return attr(elem as HTMLElement, attrs);
-
-        } else {
-            this.#iterate(elem => attr(elem as HTMLElement, attrs));
-        }
-
+        const val = this.#strOrObj(attrs, attr);
+        if (val) return val;
         return this;
     }
 
@@ -162,27 +172,31 @@ class BaseElem {
         this.#iterate((elem: HTMLElement) => {
             const elems = (typeof html === 'string' ? htmlParse(html) : isArr(html) ? html : [html]) as HTMLElement[];
            
-            if (method === 'append') elem.append(...elems);
-            if (method === 'prepend') elem.prepend(...elems);
-            if (method === 'after') elem.after(...elems);
-            if (method === 'before') elem.before(...elems);
+            if (method === 'append')    elem.append(...elems);
+            if (method === 'prepend')   elem.prepend(...elems);
+            if (method === 'after')     elem.after(...elems);
+            if (method === 'before')    elem.before(...elems);
         });
         return this;
     }
+    
+    html(): string;
+    html(html: string): BaseElem;
+    html(html?: string): BaseElem | string {
 
-    html(html: string): BaseElem {
-        this.#iterate((elem: HTMLElement) => {
-            empty(elem);
-            elem.append(...htmlParse(html));
-        });
+        const retEl = this.#content(htmlParse, html);
+        if (retEl) return (retEl as HTMLElement).innerHTML.trim();
+
         return this;
     }
 
-    text(text: string): BaseElem {
-        this.#iterate((elem: HTMLElement) => {
-            empty(elem);
-            elem.append(new Text(text));
-        });
+    text(): string;
+    text(text: string): BaseElem;
+    text(text?: string): BaseElem | string {
+
+        const retEl = this.#content((text: string) => new Text(text), text);
+        if (retEl) return (retEl as HTMLElement).textContent.trim();
+       
         return this;
     }
 
@@ -192,6 +206,7 @@ class BaseElem {
         delegateEl: string = null,
         config: boolean | AddEventListenerOptions = false
     ): BaseElem {
+
         if (isArr(evtName)) {
             for (const evName of evtName) {
                 this.#iterate((elem: SelectorElem) => on(elem, evName, fn, delegateEl, config));

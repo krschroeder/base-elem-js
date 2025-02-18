@@ -97,20 +97,22 @@ insert(html: string | HTMLElement | HTMLElement[], method: AppendMethod = 'appen
 Inserts HTML or elements into the current elements using the specified method (append, prepend, after, before).
 
 ```typescript
-html(html: string): BaseElem
+html(html?: string): BaseElem | string;
 ```
-Sets the inner HTML of the current elements.
+Sets the inner HTML of the current elements. Left blank it will return the innerHTML.
 
 ```typescript
-text(text: string): BaseElem
+text(text?: string): BaseElem | string;
 ```
-Sets the inner text of the current elements.
+Sets the inner text of the current elements. Left blank it will return the textContent.
 
 ```typescript
 // types for the Event
-type SyntheticEvent = `[${string}]`;
-type NativeEvent = keyof HTMLElementEventMap;
-type EventName = `${NativeEvent}.${string}` | NativeEvent | SyntheticEvent;
+export type NativeEvents = keyof HTMLElementEventMap;
+export type WindowEvents = keyof WindowEventHandlersEventMap;
+export type DocEvents = keyof DocumentEventMap;
+export type EventName = `${NativeEvents | WindowEvents | DocEvents}.${string}` | NativeEvents | WindowEvents | DocEvents | SyntheticEvent;
+ 
 
 on(evtName: EventName | EventName[], fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false): BaseElem
 ```

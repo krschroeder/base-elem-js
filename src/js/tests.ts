@@ -15,10 +15,18 @@ $h1.css({color: 'green'});
 
  
 
-const $behidden = $be('.hidden').css({display: 'block'}).attr({hidden: null});
+const $behidden = $be('.hidden').css({display: 'flex', height: '40px'}).attr({hidden: null});
+const $ul = $be('ul');
 
-console.log(bes.isHidden($behidden.elem[0] as HTMLElement),$behidden.css('display'), $behidden.attr('data-something'));
-console.log('has "what" class',$be('ul').find('li').hasClass('what'));
+console.log(
+    bes.isHidden($behidden.elem[0] as HTMLElement),
+    `css display: ${$behidden.css('display')}`, 
+    `data attr: ${$behidden.attr('data-something')}`
+);
+
+// $behidden.css({display: null})
+
+console.log('has "what" class',$ul.find('li').hasClass('what'));
 
 const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
 const $div = $be(div);
@@ -37,7 +45,10 @@ $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
   
 }).trigger('[syntheticEvent]')
  
-const $li = $be('ul').find('li');
+const $li = $ul.find('li');
+
+console.log('ul HTML',$ul.text());
+$ul.find('strong').text('Setting some bold text!');
 
 const $liWhat = $li.filter((elem, i) => bes.hasClass(elem, 'what'));
 
