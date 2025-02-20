@@ -23,7 +23,22 @@ To come, in the meantime check the [Home Page](https://github.com/krschroeder/ba
 
 ## Base Elem Methods ($be().*)
 ```typescript
-find(selector: string, filter?: (elem: any, i: number) => boolean): BaseElem
+find(selector: string | (elem: HTMLElement, i: number) => HTMLElement[], filter?: (elem: any, i: number) => boolean): BaseElem
+
+//Example
+
+$be('ul').find('li');
+//returns list of <li>'s
+
+$be('ul').find('li', el => $be.static.hasClass(el,'foo')); 
+//returns only <li> with .foo class
+
+$be('li').find(el => el.closest('ul'));
+// returns the parent element <ul>
+
+$be('li:first-child').find(el => el.nextElementSibling as HTMLLIElement);
+// find the first then get the next element
+
 ```
 Finds elements matching the selector within the current elements and returns a new BaseElem instance.
 ```typescript

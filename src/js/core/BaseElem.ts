@@ -3,7 +3,10 @@ import type {
     CSSProperties,
     EventName,
     EventFn,
+    FilterFn,
     FindBy,
+    MapFn,
+    NearMethod,
     SelectorElems,
     SelectorElem,
     SelectorRoot
@@ -13,6 +16,8 @@ import BaseStatic from './BaseStatic';
 
 // Dom shortcuts
 const isArr = Array.isArray;
+const af = Array.from;
+const isStr = (str: any) => typeof str === 'string';
 
 const {
     addClass,
@@ -35,7 +40,7 @@ class BaseElem {
     elem: SelectorElems = [];
 
     constructor(selector?: string | SelectorRoot | BaseElem, base?: HTMLElement) {
-        if(typeof selector === 'string') {
+        if(isStr(selector)) {
 
             this.elem = find(selector, base);
 
@@ -48,7 +53,7 @@ class BaseElem {
         return this;
     }
 
-    #iterate(fn: (el: HTMLElement, i:number) => void): void {
+    #iterate(fn: (el: HTMLElement, i:number) => void,): void {
         let i = 0, elem;
         while (elem = this.elem[i]) {
             fn(elem, i++);
@@ -57,7 +62,7 @@ class BaseElem {
 
     #strOrObj <T>(attrs: T, fn: (elem: HTMLElement, attrs: T) => string = () => ''): string {
 
-        if (typeof attrs === 'string') {
+        if (isStr(attrs)) {
             const elem = this.elem[0] as HTMLElement;
             return fn(elem, attrs);
         } else {
@@ -80,9 +85,15 @@ class BaseElem {
         return null;
     }
 
-    find(selector: string, filter?: (elem: any, i: number) => boolean): BaseElem {
-        const elems = this.elem.map(elem => find(selector, elem )).flat();
-        return new BaseElem(filter ? elems.filter(filter) : elems);
+    find(selector: string | MapFn, filter?: FilterFn): BaseElem {
+        if (isStr(selector)) {
+
+            const elems = this.elem.map(elem => find(selector, elem)).flat();
+            return new BaseElem(filter ? elems.filter(filter) : elems);
+        } else {
+           
+            return new BaseElem(af(new Set(this.elem.map<ReturnType<typeof selector>>(selector).filter(Boolean))));
+        }
     }
 
     findBy(type: FindBy, selector: string, filter?: (elem: any, i: number) => boolean): BaseElem {
@@ -97,7 +108,7 @@ class BaseElem {
         return new BaseElem(elem);
     }
 
-    filter(fn: (elem: HTMLElement, i: number) => boolean): BaseElem {
+    filter(fn: FilterFn): BaseElem {
         // not error checking for the document or window
         return new BaseElem ((this.elem as HTMLElement[]).filter(fn));
     }
@@ -170,7 +181,7 @@ class BaseElem {
         method: AppendMethod = 'append'
     ): BaseElem {
         this.#iterate((elem: HTMLElement) => {
-            const elems = (typeof html === 'string' ? htmlParse(html) : isArr(html) ? html : [html]) as HTMLElement[];
+            const elems = (isStr(html) ? htmlParse(html) : isArr(html) ? html : [html]) as HTMLElement[];
            
             if (method === 'append')    elem.append(...elems);
             if (method === 'prepend')   elem.prepend(...elems);

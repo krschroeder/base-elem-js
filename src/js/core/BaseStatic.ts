@@ -12,9 +12,11 @@
 
 // Dom shortcuts
 const 
-    d = document,
-    oa = Object.assign,
-    isArr = Array.isArray
+    d       = document,
+    oa      = Object.assign,
+    isArr   = Array.isArray,
+    af      = Array.from,
+    isStr = (str: any) => typeof str === 'string'
 ;
 
  
@@ -49,15 +51,15 @@ const
     // 
     findBy = (type:FindBy, find: string, base: HTMLElement | Document = d) => {
 
-        if (type === 'class') return Array.from(base.getElementsByClassName(find)) as HTMLElement[];
+        if (type === 'class') return af(base.getElementsByClassName(find)) as HTMLElement[];
         if (type === 'id')    return d.getElementById(find) as HTMLElement;
-        if (type === 'tag')   return Array.from(base.getElementsByTagName(find)) as HTMLElement[];
+        if (type === 'tag')   return af(base.getElementsByTagName(find)) as HTMLElement[];
 
         return null;
     },
 
     find = <T extends HTMLElement>(el: string, base: HTMLElement | Document = d): T[] =>  {
-        return Array.from(base.querySelectorAll(el));
+        return af(base.querySelectorAll(el));
     },
     
     findOne = <T = HTMLElement>(el: string, base: HTMLElement | Document = d): T => {
@@ -69,26 +71,22 @@ const
     // 
     attr = (elem: HTMLElement, attrs: Record<string,string> | string) => {
 
-        if (typeof attrs === 'string') {
+        if (isStr(attrs)) {
             if (attrs === 'value') return (elem as HTMLInputElement).value;
             return elem.getAttribute(attrs);
         } else {
-
             for ( const key in attrs ) {
                 const val = attrs[key];
-                if (val === null) {
-                    elem.removeAttribute(key)
-                } else {
-    
+                val === null ? 
+                    elem.removeAttribute(key) : 
                     elem.setAttribute(key, val);
-                }
             }
         }
     },
 
     css = (elem: HTMLElement, attrs: Partial<CSSProperties> | string): string => {
 
-        if (typeof attrs === 'string') {  
+        if (isStr(attrs)) {  
             const styles = getComputedStyle(elem); 
             return styles.getPropertyValue(attrs);
         } else {
@@ -170,7 +168,7 @@ const
         // remove scripts, even though they're non-exectable with the DOMParser
         const scripts = find('script',doc.body);
         if (scripts) scripts.forEach(s => s.remove());
-        const elList = Array.from(doc.body.childNodes);
+        const elList = af(doc.body.childNodes);
         return elList;
     },
 
@@ -197,7 +195,6 @@ const
                 const delegateElems = find(delegateEl, baseEl);
                 // if isTrusted then its a native click
                 const elTarget = e.isTrusted ? e.target : (e['__synthTarget'] ?? e.target);
-
                 const delegateElem = getDelegatedElem(baseEl, delegateElems, elTarget);
                 
                 if (delegateElem) fn(e, delegateElem);
@@ -220,21 +217,15 @@ const
         evtName: EventName, 
         config: boolean | AddEventListenerOptions = false
     ): void => {
+        if (eventFnCache.has(target)) {
+            const 
+                tgtFnMap = eventFnCache.get(target),
+                evt = evtName.split('.')[0],
+                fn = tgtFnMap.get(evtName)
+            ;
 
-        const eventNamesToRm = evtName.split(' ').filter(e => e);
-
-        for (const eventNameToRm of eventNamesToRm) {
-            if (eventFnCache.has(target)) {
-
-                const 
-                    tgtFnMap = eventFnCache.get(target),
-                    evt = eventNameToRm.split('.')[0],
-                    fn = tgtFnMap.get(eventNameToRm)
-                ;
-
-                target.removeEventListener( evt, fn, config);
-                tgtFnMap.delete(eventNameToRm);
-            }
+            target.removeEventListener( evt, fn, config);
+            tgtFnMap.delete(evtName);
         }
     },
 
@@ -345,8 +336,6 @@ const
     },
     isHidden = (el: HTMLElement): boolean => !isVisible(el)
 ;
-
- 
 
 // 
 // Helpers

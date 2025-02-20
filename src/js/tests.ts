@@ -46,6 +46,12 @@ $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
 }).trigger('[syntheticEvent]')
  
 const $li = $ul.find('li');
+const $liOne = $ul.find('li:first-child');
+console.log('first li',$liOne.find(el => el.nextElementSibling as HTMLLIElement));
+console.log('near: parent', $li.find((el) => el.closest('ul')));
+// console.log('near: parent', $li.near('parent'));
+console.log('near: next', $li.find((el) => el.nextElementSibling as HTMLElement));
+// console.log('near: prev', $li.near('prev'));
 
 console.log('ul HTML',$ul.text());
 $ul.find('strong').text('Setting some bold text!');
