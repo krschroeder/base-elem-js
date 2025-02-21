@@ -8,16 +8,8 @@
     CSSProperties,
     SelectorElem
 } from '../types';
- 
 
-// Dom shortcuts
-const 
-    d       = document,
-    oa      = Object.assign,
-    isArr   = Array.isArray,
-    af      = Array.from,
-    isStr = (str: any) => typeof str === 'string'
-;
+import { af, body, d, isArr, isStr, oa } from './helpers';
 
  
 
@@ -164,11 +156,11 @@ const
 
     htmlParse = (htmlStr: string ): ChildNode[] => {
   
-        const doc = (new DOMParser()).parseFromString(htmlStr, 'text/html');
+        const root = (new DOMParser()).parseFromString(htmlStr, 'text/html').body;
         // remove scripts, even though they're non-exectable with the DOMParser
-        const scripts = find('script',doc.body);
+        const scripts = find('script',root);
         if (scripts) scripts.forEach(s => s.remove());
-        const elList = af(doc.body.childNodes);
+        const elList = af(root.childNodes);
         return elList;
     },
 
@@ -182,7 +174,7 @@ const
     // Event
     // 
     on = (
-        baseEl: SelectorElem = document.body,
+        baseEl: SelectorElem = body,
         evtName: EventName, 
         fn: EventFn, 
         delegateEl: string = null,
@@ -213,7 +205,7 @@ const
     },
    
     off = (
-        target: SelectorElem = document.body,
+        target: SelectorElem = body,
         evtName: EventName, 
         config: boolean | AddEventListenerOptions = false
     ): void => {
@@ -230,12 +222,12 @@ const
     },
 
     trigger = (
-        target: HTMLElement | Window | Document = document.body,
+        target: HTMLElement | Window | Document = body,
         evtName: string,
         delegateEl: string = null,
         config: boolean | AddEventListenerOptions = false
     ) => {
-        const delegateEls = delegateEl ? find(delegateEl, target instanceof Window ? document.body : target) : null; 
+        const delegateEls = delegateEl ? find(delegateEl, target instanceof Window ? body : target) : null; 
         if (delegateEls && delegateEls.length === 0) return;
         
 

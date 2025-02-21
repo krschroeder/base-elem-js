@@ -6,18 +6,14 @@ import type {
     FilterFn,
     FindBy,
     MapFn,
-    NearMethod,
     SelectorElems,
     SelectorElem,
     SelectorRoot
 } from '../types';
 
 import BaseStatic from './BaseStatic';
-
-// Dom shortcuts
-const isArr = Array.isArray;
-const af = Array.from;
-const isStr = (str: any) => typeof str === 'string';
+import { isArr, isStr } from './helpers';
+ 
 
 const {
     addClass,
@@ -53,11 +49,30 @@ class BaseElem {
         return this;
     }
 
-    #iterate(fn: (el: HTMLElement, i:number) => void,): void {
+    // 
+    // Private Methods
+    // 
+    
+    #iterate(fn: (el: HTMLElement, i:number) => void): void {
         let i = 0, elem;
         while (elem = this.elem[i]) {
             fn(elem, i++);
         }   
+    }
+
+    #map <T extends HTMLElement>(fn: (el: HTMLElement, i:number) => T | HTMLElement, unique: boolean = true) {
+        let i = 0, elem;
+        const elems:(T | HTMLElement)[] = [];
+        while (elem = this.elem[i]) {
+            const res = fn(elem, i++);
+
+            if (!res) continue; // only truthy value
+           
+            if (unique) {
+                if (!elems.find(el => el === res)) elems.push(res);
+            } else elems.push(res);
+        }  
+        return elems; 
     }
 
     #strOrObj <T>(attrs: T, fn: (elem: HTMLElement, attrs: T) => string = () => ''): string {
@@ -85,6 +100,10 @@ class BaseElem {
         return null;
     }
 
+    // 
+    // Public Methods
+    // 
+
     find(selector: string | MapFn, filter?: FilterFn): BaseElem {
         if (isStr(selector)) {
 
@@ -92,7 +111,7 @@ class BaseElem {
             return new BaseElem(filter ? elems.filter(filter) : elems);
         } else {
            
-            return new BaseElem(af(new Set(this.elem.map<ReturnType<typeof selector>>(selector).filter(Boolean))));
+            return new BaseElem(this.#map<ReturnType<typeof selector>>(selector, true))
         }
     }
 
