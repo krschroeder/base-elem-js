@@ -49,30 +49,14 @@ class BaseElem {
         return this;
     }
 
-    // 
+    // ---------------
     // Private Methods
-    // 
-    
+    // ---------------
     #iterate(fn: (el: HTMLElement, i:number) => void): void {
         let i = 0, elem;
         while (elem = this.elem[i]) {
             fn(elem, i++);
         }   
-    }
-
-    #map <T extends HTMLElement>(fn: (el: HTMLElement, i:number) => T | HTMLElement, unique: boolean = true) {
-        let i = 0, elem;
-        const elems:(T | HTMLElement)[] = [];
-        while (elem = this.elem[i]) {
-            const res = fn(elem, i++);
-
-            if (!res) continue; // only truthy value
-           
-            if (unique) {
-                if (!elems.find(el => el === res)) elems.push(res);
-            } else elems.push(res);
-        }  
-        return elems; 
     }
 
     #strOrObj <T>(attrs: T, fn: (elem: HTMLElement, attrs: T) => string = () => ''): string {
@@ -100,10 +84,9 @@ class BaseElem {
         return null;
     }
 
-    // 
-    // Public Methods
-    // 
-
+    // ---------
+    // Selectors
+    // ---------
     find(selector: string | MapFn, filter?: FilterFn): BaseElem {
         if (isStr(selector)) {
 
@@ -111,7 +94,7 @@ class BaseElem {
             return new BaseElem(filter ? elems.filter(filter) : elems);
         } else {
            
-            return new BaseElem(this.#map<ReturnType<typeof selector>>(selector, true))
+            return new BaseElem(this.map<ReturnType<typeof selector>>(selector, true))
         }
     }
 
@@ -132,8 +115,26 @@ class BaseElem {
         return new BaseElem ((this.elem as HTMLElement[]).filter(fn));
     }
 
+    // -------------------
+    // Array and iteration
+    // -------------------
     toArray() {
         return [...this.elem];
+    }
+
+    map <T>(fn: (el: HTMLElement, i:number) => T, unique: boolean = false): (HTMLElement | T)[] {
+        let i = 0, elem;
+        const elems:(T | HTMLElement)[] = [];
+        while (elem = this.elem[i]) {
+            const res = fn(elem, i++);
+
+            if (!res) continue; // only truthy value
+           
+            if (unique) {
+                if (!elems.find(el => el === res)) elems.push(res);
+            } else elems.push(res);
+        }  
+        return elems; 
     }
 
     each(fn: (elem: HTMLElement, i: number) => void): BaseElem {
@@ -141,6 +142,9 @@ class BaseElem {
         return this;
     }
 
+    // ---------------------
+    // Attributes and styles
+    // ---------------------
     css(attrs: string): string;
     css(attrs: Partial<CSSProperties>): BaseElem;
     css(attrs: Partial<CSSProperties> | string): string | BaseElem {
@@ -185,6 +189,9 @@ class BaseElem {
         return this;
     }
 
+    // ------------------------------
+    // Removal and Appending Elements
+    // ------------------------------
     empty(): BaseElem {
         this.#iterate(empty);
         return this;
@@ -230,6 +237,9 @@ class BaseElem {
         return this;
     }
 
+    // ------
+    // Events
+    // ------
     on(
         evtName: EventName | EventName[], 
         fn: EventFn, 

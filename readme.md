@@ -1,19 +1,27 @@
 # Base Elem Js
 
-`base-elem-js` is a lightweight utility for DOM manipulation, including querying elements, adding/removing classes, setting attributes, and handling events. The minified package comes in at ~5kb! It is designed to work with a collection of elements or a single element.
+`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __~5.4kb__ which is about __93.7%__ smaller than jQuery 3.7.1! 
 
 ## Usage
-
 To use the `base-elem-js` utility, you need to import it as follows:
 
 ```typescript
-import $be from 'base-elem-js;
+import $be from 'base-elem-js';
 ```
 
 ### Use via a CDN
+Or you can simply add to your project via a CDN.
 
 ```html
+<!-- latest -->
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.min.js"></script>
+
+<!-- unminified latest-->
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
+
+<!-- by version -->
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.6.0"></script>
 ```
  
 
@@ -21,12 +29,11 @@ import $be from 'base-elem-js;
 
 To come, in the meantime check the [Home Page](https://github.com/krschroeder/base-elem-js#readme). -->
 
-## Base Elem Methods ($be().*)
+## Base Elem Methods
 ```typescript
 find(selector: string | (elem: HTMLElement, i: number) => HTMLElement[], filter?: (elem: any, i: number) => boolean): BaseElem
 
-//Example
-
+// Examples
 $be('ul').find('li');
 //returns list of <li>'s
 
@@ -40,87 +47,134 @@ $be('li:first-child').find(el => el.nextElementSibling as HTMLLIElement);
 // find the first then get the next element
 
 ```
+
+### findBy
 Finds elements matching the selector within the current elements and returns a new BaseElem instance.
 ```typescript
 findBy(type: FindBy, selector: string, filter?: (elem: any, i: number) => boolean): BaseElem
+
+// Examples
+const $siteHeader = $be.findBy('id','site-header'); 
+//returns the <header id="site-header" /> element.
+
+$siteHeader.findBy('tag','li'); 
+//returns all the <li> items in the $siteHeader
+
 ```
 Finds elements by type (id, class, or tag) within the current elements and returns a new BaseElem instance.
 
+### findOne
 ```typescript
 findOne(selector: string): BaseElem
 ```
 Finds the first element matching the selector within the current elements and returns a new BaseElem instance.
 
+### filter
 ```typescript
 filter(fn: (elem: HTMLElement, i: number) => boolean): BaseElem
 ```
 Finds elements based on the filtering function within the current elements and returns a new BaseElem instance.
 
+### toArray
 ```typescript
 toArray(): HTMLElement[]
 ```
-Returns an array of elements;
+Returns a copy of the array of elements from the instance.
 
+### each
 ```typescript
 each(fn: (elem: HTMLElement, i: number) => void): BaseElem
 ```
 Iterates over each element and applies the provided function.
 
+### css
 ```typescript
-css(attrs: Partial<CSSProperties> | string): BaseElem | string
+css(attrs: Partial<CSSProperties> | string): BaseElem | string;
+
+// Examples
+const $h1 = $be('h1');
+
+$h1.css({color: 'green'}); // set the color green
+$h1.css('color'); //returns the color 'green'
+
 ```
 Sets or gets CSS properties for the current elements. If only passing a string, will return the property value.
 
+### addClass
 ```typescript
 addClass(cssNames: string | string[]): BaseElem
 ```
 Adds the specified class(es) to the current elements.
 
+### rmClass
 ```typescript
 rmClass(cssNames: string | string[]): BaseElem
 ```
 Removes the specified class(es) from the current elements.
 
+### tgClass
 ```typescript
 tgClass(cssNames: string | string[], toggle?: boolean): BaseElem
 ```
 Toggles the specified class(es) on the current elements.
 
+
+### hasClass
 ```typescript
 hasClass(cssNames: string | string[], method: 'some' | 'every' = 'some'): boolean
 ```
 Checks if the current elements have the specified class(es).
 
+### attr
 ```typescript
 attr(attrs: Record<string, string> | string): BaseElem
 ```
 Sets or gets attributes for the current elements.
 
+### empty
 ```typescript
 empty(): BaseElem
 ```
 Empties the content of the current elements.
 
+### remove
 ```typescript
 remove(): BaseElem
 ```
 Removes the current elements from the DOM.
 
+### insert
 ```typescript
 insert(html: string | HTMLElement | HTMLElement[], method: AppendMethod = 'append'): BaseElem
+
+// Examples
+const $body = $be.findOne(document.body);
+
+$body.find('h1').insert('<p>Some more copy</p>', 'before');
+$body.insert('<p>Copy Prepended</p>', 'prepend');
+
 ```
 Inserts HTML or elements into the current elements using the specified method (append, prepend, after, before).
 
+### html
 ```typescript
 html(html?: string): BaseElem | string;
+
+// Examples
+const $h1 = $be.find('h1');
+$h1.html();//gets the inner html of the <h1>
+$h1.html('<em>Light Weight Babbbbay</em>!');
+
 ```
 Sets the inner HTML of the current elements. Left blank it will return the innerHTML.
 
+### text
 ```typescript
 text(text?: string): BaseElem | string;
 ```
 Sets the inner text of the current elements. Left blank it will return the textContent.
 
+### on
 ```typescript
 // types for the Event
 export type NativeEvents = keyof HTMLElementEventMap;
@@ -129,176 +183,225 @@ export type DocEvents = keyof DocumentEventMap;
 export type EventName = `${NativeEvents | WindowEvents | DocEvents}.${string}` | NativeEvents | WindowEvents | DocEvents | SyntheticEvent;
  
 
-on(evtName: EventName | EventName[], fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false): BaseElem
-```
-Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`. Pass in an array or single value for the `evtName` parameter. For a __synthetic event__ pass it in `[]`, so `[syntheticEventName]`, this is essentially for the best Typescript support (otherwise string would invalidate the type checking of the event name).
+on(evtName: EventName | EventName[], fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false): BaseElem;
 
+// Examples
+const $div = $be(div);
+
+// attach a click event on a <div> and delegate the event to its <button> elements
+$div.on('click.myClickName', (ev, elem) => {
+    console.log('clicked', elem.textContent);
+},'button');
+
+// attach multiple events
+$div.on(['mousemove.myMoveName', 'click.myClickName2'], (ev, elem) => {
+    // your code here
+},'button');
+
+$div.on('[syntheticEventName]', (ev, elem) => {
+    console.log('synthetic event!', ev.type, elem)
+})
+
+```
+Adds an event listener to the current elements. It's recommended to namespace the events with a '.', for example `click.myClickName`. This method is not designed to keep track of multiple events o the same name, so namespacing is important if you seek to potentially remove an event. Pass in an array or single value for the `evtName` parameter. For a __synthetic event__ pass it in `[]`, so `[syntheticEventName]`, this is essentially for the best Typescript support (otherwise string would invalidate the type checking of the event name).
+
+### off
 ```typescript
 // see EventName type right above
-off(evtName: EventName | EventName[], config: boolean | AddEventListenerOptions = false): BaseElem
+off(evtName: EventName | EventName[], config: boolean | AddEventListenerOptions = false): BaseElem;
+
+// Examples
+$div.off('click.myClickName');
+//remove one event
+
+$div.off(['mousemove.myMoveName', 'click.myClickName']);
+//removes multiple events
+
 ```
 Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name. Can also pass in an array of strings for the `evtName` param.
 
+
+### trigger
 ```typescript
-trigger(evtName: EventName, delgateEl?: string): BaseElem
+trigger(evtName: EventName, delgateEl?: string): BaseElem;
+
+// Examples
+$div.trigger('click.myClickName','button');
+
+$div.trigger('[syntheticEventName]');
+
 ```
 Triggers native events as well as synthetic events. Can also trigger namespaced events such as `click.myClickName`. 
 
-## Examples
-
-```typescript
-import $be from "base-elem-js";
-
-const bes = $be.static;
-
-$be('h1').css({color: 'green'});
-
-const $hidden = $be('.hidden').css({display: 'block'}).attr({hidden: null});
-
-console.log(bes.isHidden($hidden.elem[0]));
-
-console.log('has "what" class',$be('ul').find('li').hasClass('what'));
-
-const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
-const $div = $be(div);
-$div.on('click.myClickName', (ev, elem) => {
-    console.log('clicked', elem.textContent);
-},'h2');
-$be(document.body).insert(div);
-
-$div.insert('<p>Some more copy</p>', 'before');
-$div.insert('<p>Copy Prepended</p>', 'prepend');
-```
 ## Extending library
 The BaseElem class can be refrenced for extension as seen below.
 
 ```typescript
-$be.BaseElem.prototype.foo = bar();
+$be.BaseElem.prototype.superbPlugin = superbPlugin();
 ```
 
 
 ## Base Elem Static ($be.static)
 
+### make
 ```typescript
-make(tag: string, attrs?: Record<string, any>, html?: string): HTMLElement
+make(tag: string, attrs?: Record<string, any>, html?: string): HTMLElement;
+
+// Example
+const div = bes.make('div', { id: 'test', className: 'test' }, 
+    `<h2>Hello Make!</h2>
+    <p>Some copy goes here</p>`
+);
+document.body.appendChild(div);
+
 ```
 Creates a new HTML element with the specified tag, attributes, and inner HTML content.
 
+
+### isHidden
 ```typescript
 isHidden(elem: HTMLElement): boolean
 ```
 Checks if the specified element is hidden (i.e., has display: none or visibility: hidden).
 
+
+### isVisible
 ```typescript
 isVisible(elem: HTMLElement): boolean
 ```
 Checks if the specified element is visible (i.e., does not have display: none or visibility: hidden).
 
+
+### find
 ```typescript
 find(selector: string, base: HTMLElement = document): HTMLElement[]
 ```
 Finds elements matching the selector within the specified base element.
 
+
+### findBy
 ```typescript
 findBy(type: FindBy, selector: string, base: HTMLElement = document): HTMLElement[]
 ```
 Finds elements by type (id, class, or tag) within the specified base element.
 
+
+### findOne
 ```typescript
 findOne(selector: string, base: HTMLElement = document): HTMLElement
 ```
 Finds the first element matching the selector within the specified base element.
 
+### map
 ```typescript
-addClass(elem: HTMLElement, cssNames: string | string[]): void
+map<T>(fn: (el: HTMLElement, i: number) => T, unique: boolean = true): (T | HTMLElement)[];
+
+// Examples
+
+const ulsList = $be('li').map(el => $li.map(el => el.closest('ul')));
+// returns array of <ul>'s.
+
+// do something more meaningful than this
+$(ulsList).addClass('some-neat-class');
+
+const liTextList = $be('li').map(el => el.textContent);
+//return's list of text of each <li>
+
+```
+The map method returns an array of the results of applying the function to each element. Optionally, it can ensure that the results are unique. This is designed to primarily return elements, so by default it filters out 'falsy' values, so be aware!
+
+### addClass
+```typescript
+addClass(elem: HTMLElement, cssNames: string | string[]): void;
+
+// Examples
+const div = bes.findOne('div');
+
+// add a single class
+bes.addClass(div, 'new-class');
+
+// add multiple
+bes.addClass(div, ['new-class', 'another']);
+
 ```
 Adds the specified class(es) to the element.
 
+### rmClass
 ```typescript
 rmClass(elem: HTMLElement, cssNames: string | string[]): void
 ```
 Removes the specified class(es) from the element.
 
+### tgClass
 ```typescript
 tgClass(elem: HTMLElement, cssNames: string | string[], toggle?: boolean): void
 ```
 Toggles the specified class(es) on the element.
 
+### hasClass
 ```typescript
 hasClass(elem: HTMLElement, cssNames: string | string[], method: 'some' | 'every' = 'some'): boolean
 ```
 Checks if the element has the specified class(es).
 
+### attr
 ```typescript
 attr(elem: HTMLElement, attrs: Record<string, string> | string): void
 ```
 Sets or gets attributes for the element.
 
+### empty
 ```typescript
 empty(elem: HTMLElement): void
 ```
 Empties the content of the element.
 
+### remove
 ```typescript
 remove(elem: HTMLElement): void
 ```
 Removes the element from the DOM.
 
+### insert
 ```typescript
-insert(elem: HTMLElement, html: string | HTMLElement | HTMLElement[], method: AppendMethod = 'append'): void
+insert(elem: HTMLElement, html: string | HTMLElement | HTMLElement[], method: AppendMethod = 'append'): void;
+
+// Example
+bes.insert(div, '<p>Inserted content</p>', 'before');
 ```
 Inserts HTML or elements into the specified element using the specified method (append, prepend, after, before).
 
+### html
 ```typescript
 html(elem: HTMLElement, html: string): void
 ```
 Sets the inner HTML of the element.
 
+### text
 ```typescript
 text(elem: HTMLElement, text: string): void
 ```
 Sets the inner text of the element.
 
+### on
 ```typescript
 on(baseEl: EventElem, evtName: `${Event['type']}.${string}` | string, fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false)
 ```
 Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`.
 
+
+### off
 ```typescript
 off(evtName: string, config: boolean | AddEventListenerOptions = false);
 ```
 Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name.
 
+### trigger
 ```typescript
 trigger( target: HTMLElement, evtName: string, delegateEl?: string, config?: boolean | AddEventListenerOptions);
 ```
 Trigger native, synthetic and namespaced navtive events.
 
-## Base Element Static Examples
-
-```typescript
-import $bs from "base-elem-js";
-
-const bes = $bs.static;
-
-const div = bes.make('div', { id: 'test', className: 'test' }, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
-document.body.appendChild(div);
-
-bes.addClass(div, 'new-class');
-bes.rmClass(div, 'test');
-bes.tgClass(div, 'toggle-class');
-
-console.log(bes.hasClass(div, 'new-class'));
-
-bes.attr(div, { 'data-test': 'value' });
-console.log(bes.attr(div, 'data-test'));
-
-bes.empty(div);
-bes.html(div, '<p>New content</p>');
-bes.text(div, 'New text');
-
-bes.insert(div, '<p>Inserted content</p>', 'before');
-```
 
 ## Animate/Transition Static Methods
 This library includes a couple extra functions to help with transitions and simple animations.

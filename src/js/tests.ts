@@ -51,10 +51,18 @@ console.log('first li',$liOne.find(el => el.nextElementSibling as HTMLLIElement)
 console.log('near: parent', $li.find((el) => el.closest('ul')));
 // console.log('near: parent', $li.near('parent'));
 console.log('near: next', $li.find((el) => el.nextElementSibling as HTMLElement));
-// console.log('near: prev', $li.near('prev'));
+
+const foo = $li.map(el => el.closest('ul'));
+
+$be(foo).addClass('red')
+console.log('li text', $li.map(el => el.textContent));
 
 console.log('ul HTML',$ul.text());
 $ul.find('strong').text('Setting some bold text!');
+
+$ul.on('[syntheticEventName]', (ev, elem) => {
+    console.log('synthetic event!', ev.type, elem)
+}).trigger('[syntheticEventName]');
 
 const $liWhat = $li.filter((elem, i) => bes.hasClass(elem, 'what'));
 
