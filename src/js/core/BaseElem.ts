@@ -123,7 +123,7 @@ class BaseElem {
     }
 
     map <T>(fn: (el: HTMLElement, i:number) => T, unique: boolean = false): (HTMLElement | T)[] {
-        let i = 0, elem;
+        let i = 0, elem, prevRes;
         const elems:(T | HTMLElement)[] = [];
         while (elem = this.elem[i]) {
             const res = fn(elem, i++);
@@ -131,7 +131,8 @@ class BaseElem {
             if (!res) continue; // only truthy value
            
             if (unique) {
-                if (!elems.find(el => el === res)) elems.push(res);
+                if (res !== prevRes || !elems.find(el => el === res)) elems.push(res);
+                prevRes = res;
             } else elems.push(res);
         }  
         return elems; 

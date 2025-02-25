@@ -21,10 +21,10 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.6.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.6.2"></script>
 ```
  
-
+<!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
 <!-- ## Features
 
 To come, in the meantime check the [Home Page](https://github.com/krschroeder/base-elem-js#readme). -->
@@ -37,7 +37,8 @@ find(selector: string | (elem: HTMLElement, i: number) => HTMLElement[], filter?
 $be('ul').find('li');
 //returns list of <li>'s
 
-$be('ul').find('li', el => $be.static.hasClass(el,'foo')); 
+const bes = $be.static;
+$be('ul').find('li', el => bes.hasClass(el,'foo')); 
 //returns only <li> with .foo class
 
 $be('li').find(el => el.closest('ul'));
@@ -54,7 +55,7 @@ Finds elements matching the selector within the current elements and returns a n
 findBy(type: FindBy, selector: string, filter?: (elem: any, i: number) => boolean): BaseElem
 
 // Examples
-const $siteHeader = $be.findBy('id','site-header'); 
+const $siteHeader = $be('#site-header'); 
 //returns the <header id="site-header" /> element.
 
 $siteHeader.findBy('tag','li'); 
@@ -86,6 +87,21 @@ Returns a copy of the array of elements from the instance.
 each(fn: (elem: HTMLElement, i: number) => void): BaseElem
 ```
 Iterates over each element and applies the provided function.
+
+### map
+```typescript
+map<T>(fn: (el: HTMLElement, i: number) => T, unique: boolean = true): (T | HTMLElement)[];
+
+// Examples
+
+const ulsList = $be('li').map(el => $li.map(el => el.closest('ul')));
+// returns array of <ul>'s.
+
+const liNexts = $be('li').map(el => el.nextElementSibling as HTMLElement);
+//return's list of the next sibling <li>'s
+
+```
+The map method returns an array of the results of applying the function to each element. Optionally, it can ensure that the results are unique. This is designed to primarily return elements, so by default it filters out 'falsy' values, so be aware! If you need to filter an attribute or derive some value querying the elements, use the Array map method.
 
 ### css
 ```typescript
@@ -291,24 +307,6 @@ Finds elements by type (id, class, or tag) within the specified base element.
 findOne(selector: string, base: HTMLElement = document): HTMLElement
 ```
 Finds the first element matching the selector within the specified base element.
-
-### map
-```typescript
-map<T>(fn: (el: HTMLElement, i: number) => T, unique: boolean = true): (T | HTMLElement)[];
-
-// Examples
-
-const ulsList = $be('li').map(el => $li.map(el => el.closest('ul')));
-// returns array of <ul>'s.
-
-// do something more meaningful than this
-$(ulsList).addClass('some-neat-class');
-
-const liTextList = $be('li').map(el => el.textContent);
-//return's list of text of each <li>
-
-```
-The map method returns an array of the results of applying the function to each element. Optionally, it can ensure that the results are unique. This is designed to primarily return elements, so by default it filters out 'falsy' values, so be aware!
 
 ### addClass
 ```typescript
