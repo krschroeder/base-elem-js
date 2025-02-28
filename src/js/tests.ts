@@ -29,9 +29,14 @@ console.log(
 console.log('has "what" class',$ul.find('li').hasClass('what'));
 
 const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
-const $div = $be(div);
+const btn = bes.make('button#some-class-yo.yeah','Some <strong> Copy</strong>');
+const $div = $be(div).insert(btn);
 
-$be('#makep').on('click.makep', (ev: MouseEvent, elem: HTMLHeadingElement) => {
+const makep = bes.findOne('#makep');
+const makepBtn = bes.find('button', makep); 
+
+// console.log('make p btn', makepBtn)
+$be(makep).on('click.makep', (ev: MouseEvent, elem: HTMLHeadingElement) => {
     console.log(ev.type, elem.textContent, $pinput.attr('value'));
     $div.insert(`<p>Event: ${ev.type} <br /> ${$pinput.attr('value')}</p>`);
 }, 'button');
@@ -90,3 +95,5 @@ console.log($be.BaseElem, $be)
 
 $be(div).insert('<p>Some more copy</p>', 'before');
 $be(div).insert('<p>Copy Prepended</p>', 'prepend');
+
+console.log('div offset:',$div.elem[0], $div.offset());

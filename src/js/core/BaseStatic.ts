@@ -1,8 +1,9 @@
  import type {
-    FindBy,
+    HTMLElementSelector,
     ClassOrId,
     EventFn,
     EventName,
+    FindBy,
     CSSActionStates,
     CSSActionStatesObj,
     CSSProperties,
@@ -11,7 +12,6 @@
 
 import { af, body, d, isArr, isStr, oa } from './helpers';
 
- 
 
 type EventCache = Map<string,EventFn>;
 const eventFnCache:WeakMap<SelectorElem,EventCache> = new WeakMap();
@@ -135,21 +135,21 @@ const
     // 
     // Element Creation / Removal
     // 
-    make = <K extends keyof HTMLElementTagNameMap>(
-        selector: K | `${K}.${string}` | `${K}#${string}`, 
-        props: Partial<HTMLElementTagNameMap[K]> = {}, 
-        html?: string): HTMLElementTagNameMap[K] => {   
+    make = <T extends keyof HTMLElementTagNameMap>(
+        selector: HTMLElementSelector, 
+        propsOrHtml: Partial<HTMLElementTagNameMap[T]> | string = {}, 
+        html?: string): HTMLElementTagNameMap[T] => {   
         const
-            tagName = selector.split(/(\#|\.)/)[0],
-            className = getCssAttr(selector, '.', '#'),
-            id = getCssAttr(selector, '#', '.'),
-            baseObj = rmObjectNullVals({className, id}),
-            elem = oa(d.createElement(tagName), oa(baseObj, props)) as HTMLElementTagNameMap[K]
+            tagName     = selector.split(/(\#|\.)/)[0],
+            className   = getCssAttr(selector, '.', '#'),
+            id          = getCssAttr(selector, '#', '.'),
+            baseObj     = rmObjectNullVals({className, id}),
+            propsIsStr  = isStr(propsOrHtml),
+            elem        = oa(d.createElement(tagName), oa(baseObj, propsIsStr ? {} : propsOrHtml)) as HTMLElementTagNameMap[T],
+            htmlToUse   = propsIsStr && !html ? propsOrHtml : (html ? html : '')
         ;
 
-        if (html) {
-            elem.append(...htmlParse(html));
-        }
+        if (htmlToUse) elem.append(...htmlParse(htmlToUse));
     
         return elem;
     },
@@ -177,14 +177,14 @@ const
         baseEl: SelectorElem = body,
         evtName: EventName, 
         fn: EventFn, 
-        delegateEl: string = null,
+        delegateEl: string | HTMLElement[] = null,
         config: boolean | AddEventListenerOptions = false
     ): void => {
         const evt = evtName.split('.')[0];
         const evtFn = (e: Event) => {
             if (delegateEl && baseEl instanceof HTMLElement) {
                 
-                const delegateElems = find(delegateEl, baseEl);
+                const delegateElems = isStr(delegateEl) ? find(delegateEl, baseEl) : delegateEl;
                 // if isTrusted then its a native click
                 const elTarget = e.isTrusted ? e.target : (e['__synthTarget'] ?? e.target);
                 const delegateElem = getDelegatedElem(baseEl, delegateElems, elTarget);
@@ -246,6 +246,7 @@ const
             target.dispatchEvent(new Event(evtName));
         }
     },
+
     // 
     // Transition
     // 
@@ -357,23 +358,25 @@ const getDelegatedElem = (
     delegateElems: HTMLElement[] | null, 
     evtTarget: HTMLElement
 ): HTMLElement => {
-    if (delegateElems.length) {
-        for(let i = 0, l = delegateElems.length; i < l; i++) {
-            const rootEl = delegateElems[i] as HTMLElement;
-            if (evtTarget === rootEl) return rootEl;
-            let currentElement = evtTarget.parentElement;
-            
-            while (currentElement) {
-                if (currentElement === rootEl) return rootEl;
-                if (baseElem === currentElement) {
-                    currentElement = null;
-                    continue;
-                }
-            
-                currentElement = currentElement.parentElement;
+    let i = 0, rootEl = null;
+    // if (delegateElems.length) {
+    //     for(let i = 0, l = delegateElems.length; i < l; i++) {
+    while (rootEl = delegateElems[i++] as HTMLElement) {
+        // const rootEl = delegateElems[i] as HTMLElement;
+        if (evtTarget === rootEl) return rootEl;
+        let currentElement = evtTarget.parentElement;
+        
+        while (currentElement) {
+            if (currentElement === rootEl) return rootEl;
+            if (baseElem === currentElement) {
+                currentElement = null;
+                continue;
             }
+        
+            currentElement = currentElement.parentElement;
         }
     }
+    // }
 
     return null;
 }

@@ -25,6 +25,7 @@ const {
     findOne,
     hasClass,
     htmlParse,
+    offset,
     off,
     on,
     trigger,
@@ -190,6 +191,10 @@ class BaseElem {
         return this;
     }
 
+    offset() {
+        return offset(this.elem[0] as HTMLElement);
+    }
+
     // ------------------------------
     // Removal and Appending Elements
     // ------------------------------
@@ -244,7 +249,7 @@ class BaseElem {
     on(
         evtName: EventName | EventName[], 
         fn: EventFn, 
-        delegateEl: string = null,
+        delegateEl: string | HTMLElement[] = null,
         config: boolean | AddEventListenerOptions = false
     ): BaseElem {
 

@@ -101,7 +101,7 @@ const liNexts = $be('li').map(el => el.nextElementSibling as HTMLElement);
 //return's list of the next sibling <li>'s
 
 ```
-The map method returns an array of the results of applying the function to each element. Optionally, it can ensure that the results are unique. This is designed to primarily return elements, so by default it filters out 'falsy' values, so be aware! If you need to filter an attribute or derive some value querying the elements, use the Array map method.
+The map method returns an array of the results of applying the function to each element. Optionally, it can ensure that the results are unique. This is designed to primarily return elements, so by default it filters out 'falsy' values, so be aware! If you need to filter an attribute or derive some value querying the elements, use the Array map method instead.
 
 ### css
 ```typescript
@@ -198,8 +198,12 @@ export type WindowEvents = keyof WindowEventHandlersEventMap;
 export type DocEvents = keyof DocumentEventMap;
 export type EventName = `${NativeEvents | WindowEvents | DocEvents}.${string}` | NativeEvents | WindowEvents | DocEvents | SyntheticEvent;
  
-
-on(evtName: EventName | EventName[], fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false): BaseElem;
+on(
+    evtName: EventName | EventName[], 
+    fn: EventFn, 
+    delegateEl: string | HTMLElement[] = null, 
+    config: boolean | AddEventListenerOptions = false
+): BaseElem;
 
 // Examples
 const $div = $be(div);
@@ -261,14 +265,19 @@ $be.BaseElem.prototype.superbPlugin = superbPlugin();
 
 ### make
 ```typescript
-make(tag: string, attrs?: Record<string, any>, html?: string): HTMLElement;
+make(tag: string, propsOrHTML?: Record<string, any> | string, html?: string): HTMLElement;
 
 // Example
-const div = bes.make('div', { id: 'test', className: 'test' }, 
+const { make } = $be.static;
+
+const div = make('div', { id: 'test', className: 'test' }, 
     `<h2>Hello Make!</h2>
     <p>Some copy goes here</p>`
 );
-document.body.appendChild(div);
+// or no props
+const div2 = make('div.some-class-name#an-id-too', '<p>Some copy goes here!</p>');
+
+document.body.append(div);
 
 ```
 Creates a new HTML element with the specified tag, attributes, and inner HTML content.
@@ -383,7 +392,13 @@ Sets the inner text of the element.
 
 ### on
 ```typescript
-on(baseEl: EventElem, evtName: `${Event['type']}.${string}` | string, fn: EventFn, delegateEl: string = null, config: boolean | AddEventListenerOptions = false)
+on(
+    baseEl: EventElem, 
+    evtName: `${Event['type']}.${string}` | string, 
+    fn: EventFn, 
+    delegateEl: string | HTMLElement[] = null, 
+    config: boolean | AddEventListenerOptions = false
+);
 ```
 Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`.
 

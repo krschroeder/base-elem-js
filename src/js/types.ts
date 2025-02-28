@@ -2,6 +2,13 @@ export type FindBy = 'id' | 'class' | 'tag';
 export type AppendMethod = 'append' | 'prepend' | 'after' | 'before';
 // export type NearMethod = 'closest' | 'next' | 'prev' | 'parent';
 export type ClassOrId = '#' | '.';
+export type BaseElementTag = keyof HTMLElementTagNameMap;
+export type HTMLElementSelector = 
+    BaseElementTag 
+    | `${BaseElementTag}.${string}` 
+    | `${BaseElementTag}#${string}` 
+    | `${BaseElementTag}.${string}#${string}` 
+    | `${BaseElementTag}#${string}.${string}`;
 export type SelectorElem = HTMLElement | Document | Window;
 export type EventFn = <T extends HTMLElement>(ev: any, elem?: SelectorElem | T) => void;
 export type MapFn = <T extends HTMLElement>(elem: HTMLElement, i: number) => T | HTMLElement;
