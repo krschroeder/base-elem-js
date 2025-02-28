@@ -1,5 +1,4 @@
  import type {
-    HTMLElementSelector,
     ClassOrId,
     EventFn,
     EventName,
@@ -128,15 +127,15 @@ const
         return elem.classList.contains(cssNames);
     },
 
-    offset = (elem: HTMLElement) => {
-        return elem.getClientRects()[0];
+    elemRects = (elem: HTMLElement) => {
+        return elem.getBoundingClientRect();
     },
 
     // 
     // Element Creation / Removal
     // 
     make = <T extends keyof HTMLElementTagNameMap>(
-        selector: HTMLElementSelector, 
+        selector: T | `${T}.${string}` | `${T}#${string}`, 
         propsOrHtml: Partial<HTMLElementTagNameMap[T]> | string = {}, 
         html?: string): HTMLElementTagNameMap[T] => {   
         const
@@ -396,7 +395,7 @@ const BaseStatic = {
     isVisible,
     isHidden,
     make,
-    offset,
+    elemRects,
     off,
     on,
     trigger,

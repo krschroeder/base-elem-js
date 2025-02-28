@@ -96,4 +96,4 @@ console.log($be.BaseElem, $be)
 $be(div).insert('<p>Some more copy</p>', 'before');
 $be(div).insert('<p>Copy Prepended</p>', 'prepend');
 
-console.log('div offset:',$div.elem[0], $div.offset());
+console.log('div offset:',$div.elem[0]);

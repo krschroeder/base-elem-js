@@ -25,7 +25,6 @@ const {
     findOne,
     hasClass,
     htmlParse,
-    offset,
     off,
     on,
     trigger,
@@ -189,10 +188,6 @@ class BaseElem {
         const val = this.#strOrObj(attrs, attr);
         if (val) return val;
         return this;
-    }
-
-    offset() {
-        return offset(this.elem[0] as HTMLElement);
     }
 
     // ------------------------------

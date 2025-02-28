@@ -296,6 +296,11 @@ isVisible(elem: HTMLElement): boolean
 ```
 Checks if the specified element is visible (i.e., does not have display: none or visibility: hidden).
 
+### elemRects
+```typescript
+elemRects(elem: HTMLElement): DOMRect;
+```
+Small wrapper over `elem.getBoundingClientRect()` that returns the proportions and positioning of an element.
 
 ### find
 ```typescript

@@ -16,7 +16,7 @@ import typescript               from 'gulp-typescript';
 import rename                   from 'gulp-rename';
 import config                   from './gulpfile.config';
 import rollupEach               from 'gulp-rollup-each'; 
-import path, { format }                     from 'path';
+
 
 const PRODUCTION = config.PRODUCTION;
 
@@ -47,7 +47,7 @@ const buildModuleJS = (done) => {
             .pipe(sourcemaps.init())
             .pipe(rollupEach(config.rollupConfigModule))
             .pipe(rename({ extname: '.js' }))
-            .pipe(gulpif(!PRODUCTION, sourcemaps.write('.')))
+            .pipe(sourcemaps.write('.'))
             .pipe(dest(config.paths.dest.js))
         ;
     }
