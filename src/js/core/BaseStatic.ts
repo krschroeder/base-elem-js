@@ -15,6 +15,8 @@ import { af, body, d, isArr, isStr, oa } from './helpers';
 type EventCache = Map<string,EventFn>;
 const eventFnCache:WeakMap<SelectorElem,EventCache> = new WeakMap();
 
+const cssSplitRgx = /([\.\#][\w-_\s]+)/g;
+
 const 
     // Props
     CSS_ACTION_STATES = Object.freeze({
@@ -139,15 +141,13 @@ const
         propsOrHtml: Partial<HTMLElementTagNameMap[T]> | string = {}, 
         html?: string): HTMLElementTagNameMap[T] => {   
         const
-            tagName     = selector.split(/(\#|\.)/)[0],
-            className   = getCssAttr(selector, '.', '#'),
-            id          = getCssAttr(selector, '#', '.'),
-            baseObj     = rmObjectNullVals({className, id}),
+            [tag, ...attrs] = selector.split(cssSplitRgx),
+            baseAttrs = getTagAttrs (attrs),
             propsIsStr  = isStr(propsOrHtml),
-            elem        = oa(d.createElement(tagName), oa(baseObj, propsIsStr ? {} : propsOrHtml)) as HTMLElementTagNameMap[T],
+            elem        = oa(d.createElement(tag), oa(baseAttrs, propsIsStr ? {} : propsOrHtml)) as HTMLElementTagNameMap[T],
             htmlToUse   = propsIsStr && !html ? propsOrHtml : (html ? html : '')
         ;
-
+ 
         if (htmlToUse) elem.append(...htmlParse(htmlToUse));
     
         return elem;
@@ -333,24 +333,23 @@ const
 // Helpers
 // 
 
-const getCssAttr = (styleStr: string, find: ClassOrId, rm: ClassOrId): null | string => {
-    const styleProp = styleStr.indexOf(find) !== -1 ? styleStr.split(find)[1] : null;
+const getTagAttr = (attrList: string[], rm: '.' | '#') => attrList.filter(e => e.startsWith(rm)).map(e => e.substring(1));
+const getTagAttrs = (attrList: string[]) => {
+    
+    const 
+        attrs = {},
+        classes = getTagAttr(attrList, '.'),
+        id = getTagAttr(attrList, '#')
+    ;
 
-    if (!styleProp) return null;
-    const rmIndex = styleProp.indexOf(rm);
-    return rmIndex !== -1 ? styleProp.substring(0, rmIndex) : styleProp;
-}
-
-const rmObjectNullVals = (obj: Record<string, string>) => {
-    const retObj = {};
-
-    for (const key in obj) {
-        const val = obj[key];
-        if (val !== null) Object.assign(retObj, {[key]: val});
+    for (const val of attrList) {
+        if (classes.length) oa(attrs,{className: classes.join(' ')});
+        if (id.length) oa (attrs, {id: id[0]});
     }
-   
-    return retObj;
+    return attrs;
 }
+
+ 
 
 const getDelegatedElem = (
     baseElem: HTMLElement, 
@@ -358,10 +357,9 @@ const getDelegatedElem = (
     evtTarget: HTMLElement
 ): HTMLElement => {
     let i = 0, rootEl = null;
-    // if (delegateElems.length) {
-    //     for(let i = 0, l = delegateElems.length; i < l; i++) {
+   
     while (rootEl = delegateElems[i++] as HTMLElement) {
-        // const rootEl = delegateElems[i] as HTMLElement;
+         
         if (evtTarget === rootEl) return rootEl;
         let currentElement = evtTarget.parentElement;
         

@@ -26,11 +26,12 @@ console.log(
 
 // $behidden.css({display: null})
 
-console.log('has "what" class',$ul.find('li').hasClass('what'));
+console.log('has "what" class', $ul.find('li').hasClass('what'));
 
 const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
-const btn = bes.make('button#some-class-yo.yeah','Some <strong> Copy</strong>');
-const $div = $be(div).insert(btn);
+const btn = bes.make('button#some-id-yo.yeah_-123bar&.foo.bar baz','Some <strong> Copy</strong>');
+const btn2 = bes.make('button.whatt','Some <strong> Copy</strong>');
+const $div = $be(div).insert([btn,btn2]);
 
 const makep = bes.findOne('#makep');
 const makepBtn = bes.find('button', makep); 

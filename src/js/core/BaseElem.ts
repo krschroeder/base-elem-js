@@ -60,7 +60,6 @@ class BaseElem {
     }
 
     #strOrObj <T>(attrs: T, fn: (elem: HTMLElement, attrs: T) => string = () => ''): string {
-
         if (isStr(attrs)) {
             const elem = this.elem[0] as HTMLElement;
             return fn(elem, attrs);
