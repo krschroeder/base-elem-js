@@ -44,7 +44,9 @@ class BaseElem {
             this.elem = [...selector.elem];
         } else {
             //not checking type for HTMLElement[]
-            this.elem = isArr(selector) ? selector : [selector];
+            if (selector) {
+                this.elem = isArr(selector) ? selector : [selector];
+            }
         }
         return this;
     }
@@ -203,12 +205,12 @@ class BaseElem {
     }
 
     insert(
-        html: string | HTMLElement | HTMLElement[], 
+        html: string | HTMLElement | BaseElem | (BaseElem | HTMLElement)[], 
         method: AppendMethod = 'append'
     ): BaseElem {
         this.#iterate((elem: HTMLElement) => {
-            const elems = (isStr(html) ? htmlParse(html) : isArr(html) ? html : [html]) as HTMLElement[];
-           
+            const elems = (isArr(html) ? html.map(getElems).flat() : isStr(html) ? htmlParse(html) : getElems(html)) as HTMLElement[];
+ 
             if (method === 'append')    elem.append(...elems);
             if (method === 'prepend')   elem.prepend(...elems);
             if (method === 'after')     elem.after(...elems);
@@ -274,5 +276,11 @@ class BaseElem {
         return this;
     }
 }
+
+// 
+// Helper
+// 
+
+const getElems = (el:HTMLElement | BaseElem) => el instanceof BaseElem ? el.elem : [el];
 
 export default BaseElem;

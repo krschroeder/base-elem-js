@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.6.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.6.5"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -161,7 +161,10 @@ Removes the current elements from the DOM.
 
 ### insert
 ```typescript
-insert(html: string | HTMLElement | HTMLElement[], method: AppendMethod = 'append'): BaseElem
+insert(
+    html: string | HTMLElement | BaseElem | (BaseElem | HTMLElement)[], 
+    method: AppendMethod = 'append'
+): BaseElem
 
 // Examples
 const $body = $be.findOne(document.body);
@@ -373,15 +376,6 @@ Empties the content of the element.
 remove(elem: HTMLElement): void
 ```
 Removes the element from the DOM.
-
-### insert
-```typescript
-insert(elem: HTMLElement, html: string | HTMLElement | HTMLElement[], method: AppendMethod = 'append'): void;
-
-// Example
-bes.insert(div, '<p>Inserted content</p>', 'before');
-```
-Inserts HTML or elements into the specified element using the specified method (append, prepend, after, before).
 
 ### html
 ```typescript
