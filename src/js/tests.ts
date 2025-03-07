@@ -52,6 +52,10 @@ $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
 }).trigger('[syntheticEvent]')
  
 const $li = $ul.find('li');
+console.log('Are there <li> elements',$li.hasElems());
+
+console.log($ul.elemRects(0))
+// console.log('Are there <code> elements', $be('code').hasElems())
 const $liOne = $ul.find('li:first-child');
 console.log('first li',$liOne.find(el => el.nextElementSibling as HTMLLIElement));
 console.log('near: parent', $li.find((el) => el.closest('ul')));

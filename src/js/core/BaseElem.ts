@@ -19,6 +19,7 @@ const {
     addClass,
     attr,
     css,
+    elemRects,
     empty,
     find,
     findBy,
@@ -189,6 +190,18 @@ class BaseElem {
         const val = this.#strOrObj(attrs, attr);
         if (val) return val;
         return this;
+    }
+
+    elemRects(index: number = 0) {
+        const elem = this.elem[index] as HTMLElement;
+        if (elem) {
+            return elemRects(elem);
+        } else console.warn(`Element is not defined with index: ${index}.`);
+        // return elemRects(this.elem[0] as HTMLElement);
+    }
+
+    hasElems() {
+        return this.elem.length > 0;
     }
 
     // ------------------------------

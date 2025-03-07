@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.6.5"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.7.0"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -146,6 +146,19 @@ Checks if the current elements have the specified class(es).
 attr(attrs: Record<string, string> | string): BaseElem
 ```
 Sets or gets attributes for the current elements.
+
+### elemRects
+```typescript
+elemRects(index: number = 0): DOMRect;
+```
+Small wrapper over `elem.getBoundingClientRect()` that returns the proportions and positioning the first element if an index is not specified. Will return `undefined` if the index passed in is out of bounds of the `elem` array on the `BaseElem` object.
+
+### hasElems
+```typescript
+
+hasElems(): boolean;
+```
+Slightly easier way than determining if there are results than `$queryResult.elems.length`.
 
 ### empty
 ```typescript
