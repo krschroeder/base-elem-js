@@ -1,8 +1,10 @@
  import type {
-    ClassOrId,
     EventFn,
     EventName,
     FindBy,
+    GenericObj,
+    GetType,
+    MergeOptions,
     CSSActionStates,
     CSSActionStatesObj,
     CSSProperties,
@@ -18,7 +20,7 @@ const eventFnCache:WeakMap<SelectorElem,EventCache> = new WeakMap();
 const cssSplitRgx = /([\.\#][\w-_\s]+)/g;
 
 const 
-    // Props
+    // region Props
     CSS_ACTION_STATES = Object.freeze({
         active:     'active',
         starting:   'starting',
@@ -40,7 +42,7 @@ const
         return retObj as CSSActionStatesObj;
     },  
     // 
-    // Finding Elems
+    // region Finding Elems
     // 
     findBy = (type:FindBy, find: string, base: HTMLElement | Document = d) => {
 
@@ -60,7 +62,7 @@ const
     },
 
     // 
-    // CSS and Attrs
+    // region CSS and Attrs
     // 
     attr = (elem: HTMLElement, attrs: Record<string,string> | string) => {
 
@@ -134,7 +136,7 @@ const
     },
 
     // 
-    // Element Creation / Removal
+    // region Element Creation / Removal
     // 
     make = <T extends keyof HTMLElementTagNameMap>(
         selector: T | `${T}.${string}` | `${T}#${string}`, 
@@ -169,8 +171,43 @@ const
         }
     },
 
+    toType = (object: any): GetType => { 
+        return ({}).toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+    },
+    
+    merge = (configOrTarget: MergeOptions | MergeOptions[] | GenericObj, ...objects: GenericObj[]) => {
+        const options: MergeOptions[] = 
+            isArr(configOrTarget) ? configOrTarget : 
+            toType(configOrTarget) === 'string' || toType(configOrTarget) === 'boolean' ? [configOrTarget]: [];
+      
+        const 
+            hasOptions = options.length > 0,
+            deep = hasOptions ? options.some(opt => opt === 'deep' || opt === true): false,
+            noNull = options.some(opt => opt === 'noNull'),
+            noFalsy = options.some(opt => opt === 'noFalsy'),
+            target: GenericObj = deep ? objects.shift() : configOrTarget as GenericObj
+        ;
+        
+        let mergeObj: GenericObj, i = 0;
+    
+        while (mergeObj = objects[i++]) {
+            for (const key in mergeObj) {
+                const value = mergeObj[key];
+                if (toType(value) === 'object') merge(options, target[key], value);
+                else {
+                    oa(target,{[key]: value});
+                    
+                    if (noNull && value === null) delete target[key];
+                    if (noFalsy && !value) delete target[key];
+                }
+            }
+        }
+    
+        return target;
+    },
+
     // 
-    // Event
+    // region Event
     // 
     on = (
         baseEl: SelectorElem = body,
@@ -247,7 +284,7 @@ const
     },
 
     // 
-    // Transition
+    // region Transition
     // 
     useTransition = () => {
         let inTransition = false;
@@ -393,6 +430,8 @@ const BaseStatic = {
     isVisible,
     isHidden,
     make,
+    merge,
+    toType,
     elemRects,
     off,
     on,

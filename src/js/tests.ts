@@ -1,11 +1,45 @@
 import $be from './base-elem-js';
+// import { merge } from './extra';
+
 
 declare global {
     
     interface Window {
        $be: typeof $be;
+       merge: typeof merge;
     }
 }
+const {merge} = $be.static;
+window.merge = merge;
+
+
+console.log('Extend 1', merge({yeah:'buddy',foo:'bar'}, {foo:'baz'}));
+console.log('Extend 2',
+    merge([true,'noFalsy'], {
+        foo: '',
+        yeah:'buddy',
+        baz: {
+            buddy:'boo',
+            lvl3: {
+                foo: 'og foo',
+                bar: 'BARRR'
+            }
+        }
+    }, 
+    {
+        // foo:'yo bro he ride the 20" Momo!', 
+        foo: "",
+        baz: {
+            what:'light weight babayy',
+            buddy: '',
+            lvl3: {
+                foo: 'barrio',
+                bazzaro: 'bazzaro'
+            }
+        }
+    },
+    {yeah: '3rd object merge'})
+);
 
 const bes = $be.static;
 const $h1 = $be('h1');

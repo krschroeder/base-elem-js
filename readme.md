@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __~5.4kb__ which is about __93.7%__ smaller than jQuery 3.7.1! 
+`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __~6kb__ which is about __93%__ smaller than jQuery 3.7.1! 
 
 ## Usage
 To use the `base-elem-js` utility, you need to import it as follows:
@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.7.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.8.0"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -427,6 +427,76 @@ trigger( target: HTMLElement, evtName: string, delegateEl?: string, config?: boo
 ```
 Trigger native, synthetic and namespaced navtive events.
 
+## merge
+The `merge` function is a utility for combining multiple objects into a single target object. It supports options for deep merging, excluding null or falsy values.
+
+```typescript
+merge(
+    configOrTarget: MergeOptions | MergeOptions[] | GenericObj, 
+    ...objects: GenericObj[]
+): GenericObj
+```
+### Parameters
+1. configOrTarget
+    - Type: MergeOptions | MergeOptions[] | GenericObj  
+    - Description: The first parameter can either be:
+        - A configuration option or array of options ('deep', 'noNull', 'noFalsy').
+        - The target object to merge into.
+2. ...objects
+    - Type: `GenericObj[]`
+    - Description: One or more objects to merge into the target object.
+
+### Options
+The following options can be passed as part of configOrTarget:
+
+- 'deep': Enables deep merging of nested objects.
+- 'noNull': Excludes properties with null values from the merged result.
+- 'noFalsy': Excludes properties with falsy values (`null, undefined, false, 0, ''`) from the merged result.
+
+__note:__ Falsy or `null` values will not be removed from the base target object.
+
+### Examples
+
+#### Basic Merge
+```typescript
+const obj1 = { a: 1, b: 2 };
+const obj2 = { b: 3, c: 4 };
+
+const result = merge(obj1, obj2);
+console.log(result); // { a: 1, b: 3, c: 4 }
+```
+#### Deep Merge
+```typescript
+const obj1 = { a: { x: 1 }, b: 2 };
+const obj2 = { a: { y: 2 }, c: 3 };
+
+const result = merge(['deep'], obj1, obj2); // or could pass in `true` for first param
+console.log(result); // { a: { x: 1, y: 2 }, b: 2, c: 3 }
+```
+
+#### Exclude `null` or Falsy Values
+```typescript
+const obj1 = { a: 1, b: 'B', c: 'C', d: "D" };
+const obj2 = { b: 2, c: null, d: '' };
+
+const result = merge(['noNull'], obj1, obj2);
+console.log(result); // { a: 1, b: 2 }
+```
+
+### toType
+Fixes the `typeof` which isn't actually reliable in JS. Taken verbatim from [Angus Croll](https://goo.gl/pxwQGp) and is used internally in this prject.
+```typescript
+toType(object: any);
+```
+
+#### Examples
+```typescript
+toType([]) // returns 'array'
+toType('') // return 'string'
+toType(null) // returns 'null' (instead of 'object')
+
+// etc...
+```
 
 ## Animate/Transition Static Methods
 This library includes a couple extra functions to help with transitions and simple animations.

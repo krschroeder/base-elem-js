@@ -14,7 +14,15 @@ export type NativeEvents = keyof HTMLElementEventMap;
 export type WindowEvents = keyof WindowEventHandlersEventMap;
 export type DocEvents = keyof DocumentEventMap;
 export type EventName = `${NativeEvents | WindowEvents | DocEvents}.${string}` | NativeEvents | WindowEvents | DocEvents | SyntheticEvent;
- 
+export type PlainObject<T> = Record<string, T>;
+export type GenericObj = PlainObject<any>;
+export type GetType = 
+    "undefined" | "object" | "boolean" | 
+    "number" | "bigint" | "string" | 
+    "symbol" | "function" | "null"
+;
+  
+export type MergeOptions = boolean | 'deep' | 'noNull' | 'noFalsy';
 
 export interface CSSProperties extends CSSStyleDeclaration {
     [key: `--${string}`]: string | null;
