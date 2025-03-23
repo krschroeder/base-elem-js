@@ -427,7 +427,7 @@ trigger( target: HTMLElement, evtName: string, delegateEl?: string, config?: boo
 ```
 Trigger native, synthetic and namespaced navtive events.
 
-## merge
+### merge
 The `merge` function is a utility for combining multiple objects into a single target object. It supports options for deep merging, excluding null or falsy values.
 
 ```typescript
@@ -436,7 +436,7 @@ merge(
     ...objects: GenericObj[]
 ): GenericObj
 ```
-### Parameters
+#### Parameters
 1. configOrTarget
     - Type: MergeOptions | MergeOptions[] | GenericObj  
     - Description: The first parameter can either be:
@@ -446,7 +446,7 @@ merge(
     - Type: `GenericObj[]`
     - Description: One or more objects to merge into the target object.
 
-### Options
+#### Options
 The following options can be passed as part of configOrTarget:
 
 - 'deep': Enables deep merging of nested objects.
@@ -455,9 +455,9 @@ The following options can be passed as part of configOrTarget:
 
 __note:__ Falsy or `null` values will not be removed from the base target object.
 
-### Examples
+#### Examples
 
-#### Basic Merge
+##### Basic Merge
 ```typescript
 const obj1 = { a: 1, b: 2 };
 const obj2 = { b: 3, c: 4 };
@@ -465,7 +465,7 @@ const obj2 = { b: 3, c: 4 };
 const result = merge(obj1, obj2);
 console.log(result); // { a: 1, b: 3, c: 4 }
 ```
-#### Deep Merge
+##### Deep Merge
 ```typescript
 const obj1 = { a: { x: 1 }, b: 2 };
 const obj2 = { a: { y: 2 }, c: 3 };
@@ -474,7 +474,7 @@ const result = merge(['deep'], obj1, obj2); // or could pass in `true` for first
 console.log(result); // { a: { x: 1, y: 2 }, b: 2, c: 3 }
 ```
 
-#### Exclude `null` or Falsy Values
+##### Exclude `null` or Falsy Values
 ```typescript
 const obj1 = { a: 1, b: 'B', c: 'C', d: "D" };
 const obj2 = { b: 2, c: null, d: '' };
