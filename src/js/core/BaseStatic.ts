@@ -144,7 +144,7 @@ const
         html?: string): HTMLElementTagNameMap[T] => {   
         const
             [tag, ...attrs] = selector.split(cssSplitRgx),
-            baseAttrs = getTagAttrs (attrs),
+            baseAttrs   = getTagAttrs (attrs),
             propsIsStr  = isStr(propsOrHtml),
             elem        = oa(d.createElement(tag), oa(baseAttrs, propsIsStr ? {} : propsOrHtml)) as HTMLElementTagNameMap[T],
             htmlToUse   = propsIsStr && !html ? propsOrHtml : (html ? html : '')
@@ -171,21 +171,20 @@ const
         }
     },
 
-    toType = (object: any): GetType => { 
-        return ({}).toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
-    },
+    toType = (object: any): GetType => ({}).toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase(),
     
     merge = (configOrTarget: MergeOptions | MergeOptions[] | GenericObj, ...objects: GenericObj[]) => {
         const options: MergeOptions[] = 
             isArr(configOrTarget) ? configOrTarget : 
-            toType(configOrTarget) === 'string' || toType(configOrTarget) === 'boolean' ? [configOrTarget]: [];
-      
-        const 
-            hasOptions = options.length > 0,
-            deep = hasOptions ? options.some(opt => opt === 'deep' || opt === true): false,
-            noNull = options.some(opt => opt === 'noNull'),
-            noFalsy = options.some(opt => opt === 'noFalsy'),
-            target: GenericObj = deep ? objects.shift() : configOrTarget as GenericObj
+            toType(configOrTarget) === 'string' || toType(configOrTarget) === 'boolean' ? [configOrTarget]: [],
+            // end options;
+
+            hasOptions  = options.length > 0,
+            getOpt      = (configOpt) => hasOptions ? options.some(opt => opt === configOpt) : false,
+            deep        = getOpt('deep') || getOpt(true),
+            noNull      = getOpt('noNull'),
+            noFalsy     = getOpt('noFalsy'),
+            target      = hasOptions ? objects.shift() : configOrTarget as GenericObj
         ;
         
         let mergeObj: GenericObj, i = 0;
@@ -193,12 +192,13 @@ const
         while (mergeObj = objects[i++]) {
             for (const key in mergeObj) {
                 const value = mergeObj[key];
-                if (toType(value) === 'object') merge(options, target[key], value);
+                if (toType(value) === 'object' && deep) merge(options, target[key], value);
                 else {
-                    oa(target,{[key]: value});
+                    target[key] = value;
                     
-                    if (noNull && value === null) delete target[key];
-                    if (noFalsy && !value) delete target[key];
+                    if ((noNull && value === null) || (noFalsy && !value)) {
+                        delete target[key];
+                    }
                 }
             }
         }

@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.8.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.8.1"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -447,12 +447,12 @@ merge(
     - Description: One or more objects to merge into the target object.
 
 #### Options
-The following options can be passed as part of configOrTarget:
+The following options can be passed as part of configuration as the first paramenter:
 
-- 'deep': Enables deep merging of nested objects.
+- 'deep'/true: Enables deep merging of nested objects.
 - 'noNull': Excludes properties with null values from the merged result.
 - 'noFalsy': Excludes properties with falsy values (`null, undefined, false, 0, ''`) from the merged result.
-
+- Or an array of the above.
 __note:__ Falsy or `null` values will not be removed from the base target object.
 
 #### Examples
@@ -470,7 +470,8 @@ console.log(result); // { a: 1, b: 3, c: 4 }
 const obj1 = { a: { x: 1 }, b: 2 };
 const obj2 = { a: { y: 2 }, c: 3 };
 
-const result = merge(['deep'], obj1, obj2); // or could pass in `true` for first param
+const result = merge(['deep'], obj1, obj2); 
+const result2 = merge(true, obj1, obj2);// or could pass in `true` for first param
 console.log(result); // { a: { x: 1, y: 2 }, b: 2, c: 3 }
 ```
 
@@ -479,12 +480,12 @@ console.log(result); // { a: { x: 1, y: 2 }, b: 2, c: 3 }
 const obj1 = { a: 1, b: 'B', c: 'C', d: "D" };
 const obj2 = { b: 2, c: null, d: '' };
 
-const result = merge(['noNull'], obj1, obj2);
+const result = merge('noNull', obj1, obj2);
 console.log(result); // { a: 1, b: 2 }
 ```
 
 ### toType
-Fixes the `typeof` which isn't actually reliable in JS. Taken verbatim from [Angus Croll](https://goo.gl/pxwQGp) and is used internally in this prject.
+Fixes the `typeof` which isn't actually reliable in JS. Taken verbatim from [Angus Croll](https://goo.gl/pxwQGp) and is used internally in this project.
 ```typescript
 toType(object: any);
 ```

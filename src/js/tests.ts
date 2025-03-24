@@ -13,11 +13,12 @@ const {merge} = $be.static;
 window.merge = merge;
 
 
-console.log('Extend 1', merge({yeah:'buddy',foo:'bar'}, {foo:'baz'}));
+console.log('Extend 1', merge({yeah:'buddy',foo:'bar', baz: {buzzy:'yeahhh'}}, {foo:'baz', baz: {buddy:'RC', foob: 'magoob'}}));
 console.log('Extend 2',
-    merge([true,'noFalsy'], {
+    merge([true, 'noNull'], {
         foo: '',
         yeah:'buddy',
+        arr: 'z',
         baz: {
             buddy:'boo',
             lvl3: {
@@ -28,7 +29,8 @@ console.log('Extend 2',
     }, 
     {
         // foo:'yo bro he ride the 20" Momo!', 
-        foo: "",
+        foo: null,
+        arr: [1,2,3,4,5],
         baz: {
             what:'light weight babayy',
             buddy: '',
@@ -45,7 +47,7 @@ const bes = $be.static;
 const $h1 = $be('h1');
 const $pinput = $be('#pinput');
 
-$h1.css({color: 'green'});
+$h1.css({color: '#888'});
 
  
 
