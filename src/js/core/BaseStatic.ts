@@ -11,7 +11,7 @@
     SelectorElem
 } from '../types';
 
-import { af, body, d, isArr, isStr, oa } from './helpers';
+import { af, body, root, d, isArr, isStr, oa } from './helpers';
 
 
 type EventCache = Map<string,EventFn>;
@@ -59,6 +59,45 @@ const
     
     findOne = <T = HTMLElement>(el: string, base: HTMLElement | Document = d): T => {
         return base.querySelector(el) as T;
+    },
+
+    map = <T>(elems: HTMLElement[], fn: (el: HTMLElement, i:number) => T, unique: boolean = false): (HTMLElement | T)[] => {
+        let i = 0, elem, prevRes;
+        const retElems:(T | HTMLElement)[] = [];
+        while (elem = elems[i]) {
+            const res = fn(elem, i++);
+
+            if (!res) continue; // only truthy value
+           
+            if (unique) {
+                if (res !== prevRes || !elems.find(el => el === res)) retElems.push(res);
+                prevRes = res;
+            } else retElems.push(res);
+        }  
+        return retElems; 
+    },
+
+    parents = (elems: HTMLElement[], selector: string, untilElem?: HTMLElement | string): HTMLElement[] => {
+        const untilIsStr = isStr(untilElem);
+        const retElems: HTMLElement[] = [];
+        
+        map(elems as HTMLElement[], elem => {
+                while (elem = elem.parentElement) {
+                    if (elem.matches(selector)) {
+                        if (untilElem) retElems.unshift(elem);
+                        else return elem;
+                    }
+                    
+                    if ( untilElem &&
+                        untilIsStr ? elem.matches(untilElem) : elem === untilElem || 
+                        elem === root
+                    ) break;
+                }
+                return retElems;
+            }
+        );
+
+        return retElems;
     },
 
     // 
@@ -192,7 +231,7 @@ const
         while (mergeObj = objects[i++]) {
             for (const key in mergeObj) {
                 const value = mergeObj[key];
-                if (toType(value) === 'object' && deep) merge(options, target[key], value);
+                if (deep && toType(value) === 'object') merge(options, target[key], value);
                 else {
                     target[key] = value;
                     
@@ -430,7 +469,9 @@ const BaseStatic = {
     isVisible,
     isHidden,
     make,
+    map,
     merge,
+    parents,
     toType,
     elemRects,
     off,

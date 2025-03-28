@@ -121,6 +121,7 @@ setTimeout(() => {
 
 
 $be(document.body).insert(div);
+console.log('$uls', $be('ul'))
 const $ulSpan = $be('ul').findOne('span');
 
 $be(window).on('load.loaded', (ev, elem) => {
@@ -131,10 +132,14 @@ $be(document).on('DOMContentLoaded', (ev, elem) => {
     console.log('content loaded', ev)
 })
 
-console.log($ulSpan);
+console.log('$ulSpan',$ulSpan);
 console.log($be.BaseElem, $be)
 
 $be(div).insert('<p>Some more copy</p>', 'before');
 $be(div).insert('<p>Copy Prepended</p>', 'prepend');
 
 console.log('div offset:',$div.elem[0]);
+
+
+const $until = $be('.start-elem').parents('ul', '.until-elem').css({background: '#f00'});
+console.log('Until Elem', $until)

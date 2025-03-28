@@ -24,10 +24,12 @@ const {
     find,
     findBy,
     findOne,
+    map,
     hasClass,
     htmlParse,
     off,
     on,
+    parents,
     trigger,
     rmClass,
     tgClass
@@ -53,7 +55,7 @@ class BaseElem {
     }
 
     // ---------------
-    // Private Methods
+    // region Private Methods
     // ---------------
     #iterate(fn: (el: HTMLElement, i:number) => void): void {
         let i = 0, elem;
@@ -87,7 +89,7 @@ class BaseElem {
     }
 
     // ---------
-    // Selectors
+    // region Selectors
     // ---------
     find(selector: string | MapFn, filter?: FilterFn): BaseElem {
         if (isStr(selector)) {
@@ -108,7 +110,7 @@ class BaseElem {
 
     findOne(selector: string): BaseElem {
         
-        const elem = this.elem.map(elem => findOne(selector, elem));
+        const elem = this.elem.map(elem => findOne(selector, elem)).filter(Boolean);
         return new BaseElem(elem);
     }
 
@@ -118,26 +120,19 @@ class BaseElem {
     }
 
     // -------------------
-    // Array and iteration
+    // region Array and iteration
     // -------------------
     toArray() {
         return [...this.elem];
     }
 
     map <T>(fn: (el: HTMLElement, i:number) => T, unique: boolean = false): (HTMLElement | T)[] {
-        let i = 0, elem, prevRes;
-        const elems:(T | HTMLElement)[] = [];
-        while (elem = this.elem[i]) {
-            const res = fn(elem, i++);
+        return map (this.elem as HTMLElement[], fn, unique);
+    }
 
-            if (!res) continue; // only truthy value
-           
-            if (unique) {
-                if (res !== prevRes || !elems.find(el => el === res)) elems.push(res);
-                prevRes = res;
-            } else elems.push(res);
-        }  
-        return elems; 
+    parents(selector: string, untilElem?: HTMLElement | string): BaseElem {
+        const elems = parents(this.elem as HTMLElement[], selector, untilElem);
+        return new BaseElem(elems);
     }
 
     each(fn: (elem: HTMLElement, i: number) => void): BaseElem {
@@ -146,7 +141,7 @@ class BaseElem {
     }
 
     // ---------------------
-    // Attributes and styles
+    // region Attributes and styles
     // ---------------------
     css(attrs: string): string;
     css(attrs: Partial<CSSProperties>): BaseElem;
@@ -205,7 +200,7 @@ class BaseElem {
     }
 
     // ------------------------------
-    // Removal and Appending Elements
+    // region Removal and Appending Elements
     // ------------------------------
     empty(): BaseElem {
         this.#iterate(empty);
@@ -253,7 +248,7 @@ class BaseElem {
     }
 
     // ------
-    // Events
+    // region Events
     // ------
     on(
         evtName: EventName | EventName[], 

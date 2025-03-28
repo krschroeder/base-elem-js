@@ -3,6 +3,7 @@
 const 
     d       = document,
     body    = d.body,
+    root    = d.documentElement,
     oa      = Object.assign,
     af      = Array.from,
     isArr   = Array.isArray,
@@ -12,6 +13,7 @@ const
 export {
     d, 
     body,
+    root,
     oa, 
     af, 
     isArr, 
