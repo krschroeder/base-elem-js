@@ -35,6 +35,8 @@ const {
     tgClass
 } = BaseStatic
 
+const noElemMsg = 'Element is not defined with index: ';
+
 class BaseElem {
     elem: SelectorElems = [];
 
@@ -130,9 +132,16 @@ class BaseElem {
         return map (this.elem as HTMLElement[], fn, unique);
     }
 
-    parents(selector: string, untilElem?: HTMLElement | string): BaseElem {
+    parents(selector: string, untilElem?: HTMLElement | BaseElem | string): BaseElem {
+        if (untilElem instanceof BaseElem) untilElem = untilElem.elem[0] as HTMLElement;
         const elems = map(this.elem as HTMLElement[], (elem) => parents(elem, selector, untilElem));
         return new BaseElem(elems.flat());
+    }
+
+    get(index: number): BaseElem {
+        const elem = this.elem[index];
+        if (elem) return new BaseElem(elem);
+        else console.warn(noElemMsg + index);
     }
 
     each(fn: (elem: HTMLElement, i: number) => void): BaseElem {
@@ -191,8 +200,7 @@ class BaseElem {
         const elem = this.elem[index] as HTMLElement;
         if (elem) {
             return elemRects(elem);
-        } else console.warn(`Element is not defined with index: ${index}.`);
-        // return elemRects(this.elem[0] as HTMLElement);
+        } else console.warn(noElemMsg + index);
     }
 
     hasElems() {

@@ -140,6 +140,7 @@ $be(div).insert('<p>Copy Prepended</p>', 'prepend');
 
 console.log('div offset:',$div.elem[0]);
 
-
-const $until = $be('.start-elem').parents('ul', '.until-elem').css({background: '#f00'});
-console.log('Until Elem', $until)
+const $untilElem = $be('.until-elem');
+const $liAncestors = $be('.start-elem').parents('li', $untilElem).css({background: '#ccc'});
+$liAncestors.get(0).css({background: '#060'});
+console.log('Until Elem', $liAncestors); 

@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.8.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.9.0"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -88,6 +88,12 @@ each(fn: (elem: HTMLElement, i: number) => void): BaseElem
 ```
 Iterates over each element and applies the provided function.
 
+### get
+```typescript
+get(i: number): BaseElem
+```
+Gets an exact element in the collection of elements.
+
 ### map
 ```typescript
 map<T>(fn: (el: HTMLElement, i: number) => T, unique: boolean = true): (T | HTMLElement)[];
@@ -106,29 +112,45 @@ The map method returns an array of the results of using the callback function to
 
 ### parents
 ```typescript
-parents(selector: string, untilElem?: HTMLElement | string): BaseElem
+parents(selector: string, untilElem?: HTMLElement | BaseElem | string): BaseElem
 ```
 
 The `parents` method retrieves all ancestor elements of the current elements that match a given CSS selector. The top-most element is stored first.
 
-```typescript
+#### Examples
 
+```typescript
 const $childElem = $be('.child-element');
 
 // Get all ancestor elements matching the selector '.parent-class'
 const $parentElems = $childElem.parents('.parent-class');
 
-// Get all ancestor elements matching '.parent-class' until the element with class 'stop-here',
+// Get all ancestor elements matching '.parent-class' until the element with class '.stop-here',
 // alternatively an HTMLElement can be passed
 const $parentElemsUntil = $childElem.parents('.parent-class', '.stop-here');
+
+// Remove '.active' class, then focus on the first <a> tag if the Escape key is hit
+const $mainNav = $be('.main-nav');
+$mainNav.on('keydown.mainNav', 'a', (elem, e) => {
+
+    if (e.key === "Escape") {
+        const $elLiParents = $be(document.activeElement).parents('li', $mainNav);
+        // remove .active class from parent <li>
+        $elLiParents.rmClass('.active')
+        // focus on the first element
+        .get(0).find('a')[0].focus();
+    }
+});
 ```
 
 
 ### css
 ```typescript
 css(attrs: Partial<CSSProperties> | string): BaseElem | string;
+```
 
-// Examples
+#### Examples
+```typescript
 const $h1 = $be('h1');
 
 $h1.css({color: 'green'}); // set the color green
