@@ -101,7 +101,28 @@ const liNexts = $be('li').map(el => el.nextElementSibling as HTMLElement);
 //return's list of the next sibling <li>'s
 
 ```
-The map method returns an array of the results of applying the function to each element. Optionally, it can ensure that the results are unique. This is designed to primarily return elements, so by default it filters out 'falsy' values, so be aware! If you need to filter an attribute or derive some value querying the elements, use the Array map method instead.
+The map method returns an array of the results of using the callback function to each element. Optionally, it can ensure that the results are unique. This is designed to primarily return elements, so by default it filters out 'falsy' values. If you need to filter an attribute or derive some value querying the elements, use the Array map method instead.
+
+
+### parents
+```typescript
+parents(selector: string, untilElem?: HTMLElement | string): BaseElem
+```
+
+The `parents` method retrieves all ancestor elements of the current elements that match a given CSS selector. The top-most element is stored first.
+
+```typescript
+
+const $childElem = $be('.child-element');
+
+// Get all ancestor elements matching the selector '.parent-class'
+const $parentElems = $childElem.parents('.parent-class');
+
+// Get all ancestor elements matching '.parent-class' until the element with class 'stop-here',
+// alternatively an HTMLElement can be passed
+const $parentElemsUntil = $childElem.parents('.parent-class', '.stop-here');
+```
+
 
 ### css
 ```typescript
@@ -337,6 +358,38 @@ Finds elements by type (id, class, or tag) within the specified base element.
 findOne(selector: string, base: HTMLElement = document): HTMLElement
 ```
 Finds the first element matching the selector within the specified base element.
+
+### map
+
+The `map` function iterates over an array of HTML elements, applies a callback function to each element, and returns a new array containing the results. Optionally, it can ensure that the results are unique. The map function in this context is meant for DOM elements.
+
+```typescript
+map<T>(
+    elems: HTMLElement[], 
+    fn: (el: HTMLElement, i: number) => T, 
+    unique?: boolean
+): (HTMLElement | T)[]
+```
+
+#### Examples
+```typescript
+const paras = bes.find('p');
+
+const excellentP = map(paras, (el) => bes.hasClass('.excellent'));
+console.log(excellentP); // only <p> with the .excellent class
+
+const lis = bes.find('li');
+const uls = map(lis, (el) => el.closest('ul'));
+console.log(uls);// list of all the containing <ul> elements
+```
+
+### parents
+```typescript
+parents(elem: HTMLElement, selector: string, untilElem?: HTMLElement | string): BaseElem
+```
+
+Returns all the ancestor element of the target element.
+
 
 ### addClass
 ```typescript

@@ -131,8 +131,8 @@ class BaseElem {
     }
 
     parents(selector: string, untilElem?: HTMLElement | string): BaseElem {
-        const elems = parents(this.elem as HTMLElement[], selector, untilElem);
-        return new BaseElem(elems);
+        const elems = map(this.elem as HTMLElement[], (elem) => parents(elem, selector, untilElem));
+        return new BaseElem(elems.flat());
     }
 
     each(fn: (elem: HTMLElement, i: number) => void): BaseElem {

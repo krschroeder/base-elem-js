@@ -77,26 +77,13 @@ const
         return retElems; 
     },
 
-    parents = (elems: HTMLElement[], selector: string, untilElem?: HTMLElement | string): HTMLElement[] => {
+    parents = (elem: HTMLElement, selector: string, untilElem: HTMLElement | string = root): HTMLElement[] => {
         const untilIsStr = isStr(untilElem);
         const retElems: HTMLElement[] = [];
-        
-        map(elems as HTMLElement[], elem => {
-                while (elem = elem.parentElement) {
-                    if (elem.matches(selector)) {
-                        if (untilElem) retElems.unshift(elem);
-                        else return elem;
-                    }
-                    
-                    if ( untilElem &&
-                        untilIsStr ? elem.matches(untilElem) : elem === untilElem || 
-                        elem === root
-                    ) break;
-                }
-                return retElems;
-            }
-        );
-
+        while (elem = elem.parentElement) {
+            if (elem.matches(selector)) retElems.unshift(elem);
+            if (untilIsStr ? elem.matches(untilElem as string) : elem === untilElem) break;
+        }
         return retElems;
     },
 
@@ -131,7 +118,6 @@ const
                 if (key.startsWith('--')) {
                     elem.style.setProperty(key, val);
                 } else {
-                    
                     elem.style[key as any] = val;
                 }
             }
