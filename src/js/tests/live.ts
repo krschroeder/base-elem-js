@@ -1,4 +1,4 @@
-import $be from './base-elem-js';
+import $be from '../base-elem-js';
 // import { merge } from './extra';
 
 
@@ -88,7 +88,7 @@ $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
 }).trigger('[syntheticEvent]')
  
 const $li = $ul.find('li');
-console.log('Are there <li> elements',$li.hasElems());
+console.log('Are there <li> elements',$li.hasEls);
 
 console.log($ul.elemRects(0))
 // console.log('Are there <code> elements', $be('code').hasElems())

@@ -8,8 +8,11 @@ const args          = yargs(hideBin(process.argv)).argv;
 // Config
 //
 const PRODUCTION = args.production ;
-
 const tsInit = typescript();
+const jsPaths = PRODUCTION ? 
+    ['src/js/*.ts', '!src/js/tests/**/*.ts'] :
+    ['src/js/*.ts', 'src/js/tests/**/*.ts']
+;
 
 const config = {
     PRODUCTION,
@@ -20,8 +23,8 @@ const config = {
     paths: {
         src: {
             html:               'src/html/*.html',
-            js:                 ['src/js/*.ts', '!src/js/types.ts', PRODUCTION ? '!src/js/tests.ts' : null].filter(Boolean),
-            dts:                ['src/js/**/*.ts','!src/js/tests.ts'],
+            js:                 [...jsPaths, '!src/js/types.ts'],
+            dts:                ['src/js/**/*.ts','!src/js/tests/**/*.ts'],
             jswatch:            'src/js/**/*.ts'
         },
         dest: {

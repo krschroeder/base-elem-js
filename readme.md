@@ -196,12 +196,23 @@ elemRects(index: number = 0): DOMRect;
 ```
 Small wrapper over `elem.getBoundingClientRect()` that returns the proportions and positioning the first element if an index is not specified. Will return `undefined` if the index passed in is out of bounds of the `elem` array on the `BaseElem` object.
 
-### hasElems
+### hasElems / hasEls
 ```typescript
 
 hasElems(): boolean;
+hasEls: boolean //getter version
+
+//Example
+const $hashLinks = $be('a[href^="#"]');
+
+if ($hashLinks.hasEls) {
+    // do something
+}
+
 ```
 Slightly easier way than determining if there are results than `$queryResult.elems.length`.
+
+
 
 ### empty
 ```typescript
