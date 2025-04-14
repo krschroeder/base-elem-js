@@ -217,7 +217,10 @@ const
         while (mergeObj = objects[i++]) {
             for (const key in mergeObj) {
                 const value = mergeObj[key];
-                if (deep && toType(value) === 'object') merge(options, target[key], value);
+                if (deep && toType(value) === 'object') {
+                    const targetObj = target[key] ? target[key] : target[key] = {};
+                    merge(options, targetObj, value);
+                }
                 else {
                     target[key] = value;
                     
