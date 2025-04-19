@@ -30,6 +30,7 @@ const {
     off,
     on,
     parents,
+    siblings,
     trigger,
     rmClass,
     tgClass
@@ -136,6 +137,10 @@ class BaseElem {
         if (untilElem instanceof BaseElem) untilElem = untilElem.elem[0] as HTMLElement;
         const elems = map(this.elem as HTMLElement[], (elem) => parents(elem, selector, untilElem));
         return new BaseElem(elems.flat());
+    }
+
+    siblings(selector?: string, includeKeyEl: boolean = false, index: number = 0) : BaseElem {
+        return new BaseElem(siblings(this.elem[index] as HTMLElement, selector, includeKeyEl));
     }
 
     get(index: number): BaseElem {

@@ -90,7 +90,10 @@ $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
 const $li = $ul.find('li');
 console.log('Are there <li> elements',$li.hasEls);
 
-console.log($ul.elemRects(0))
+console.log($ul.elemRects(0));
+console.log('Li Siblings:', $li.get(1).siblings('li'));
+console.log('Li Siblings (no selector):', $li.get(1).siblings());
+console.log('Li et all siblings', $li.get(1).siblings('li', true))
 // console.log('Are there <code> elements', $be('code').hasElems())
 const $liOne = $ul.find('li:first-child');
 console.log('first li',$liOne.find(el => el.nextElementSibling as HTMLLIElement));

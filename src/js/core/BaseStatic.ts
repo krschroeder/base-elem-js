@@ -87,6 +87,17 @@ const
         return retElems;
     },
 
+    siblings = (elem: HTMLElement, selector?: string, includeKeyEl: boolean = false): HTMLElement[] => {
+        
+        const siblings = af(elem.parentElement.childNodes).filter(el => 
+            el instanceof HTMLElement && 
+            (selector ? el.matches(selector) : true) &&
+            (includeKeyEl ? true : el !== elem)
+        ) as HTMLElement[];
+
+        return siblings;
+    },
+
     // 
     // region CSS and Attrs
     // 
@@ -461,6 +472,7 @@ const BaseStatic = {
     map,
     merge,
     parents,
+    siblings,
     toType,
     elemRects,
     off,
