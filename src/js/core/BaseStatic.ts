@@ -180,7 +180,7 @@ const
         html?: string): HTMLElementTagNameMap[T] => {   
         const
             [tag, ...attrs] = selector.split(cssSplitRgx),
-            baseAttrs   = getTagAttrs (attrs),
+            baseAttrs   = getTagAttrs(attrs),
             propsIsStr  = isStr(propsOrHtml),
             elem        = oa(d.createElement(tag), oa(baseAttrs, propsIsStr ? {} : propsOrHtml)) as HTMLElementTagNameMap[T],
             htmlToUse   = propsIsStr && !html ? propsOrHtml : (html ? html : '')
@@ -481,7 +481,9 @@ const BaseStatic = {
     rmClass,
     tgClass,
     useTransition,
-    useCssAnimate
+    useCssAnimate,
+    //utils
+    af, isArr, isStr, oa
 };
 
 export default BaseStatic;

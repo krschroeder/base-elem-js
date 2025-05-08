@@ -216,6 +216,10 @@ class BaseElem {
         return this.elem.length > 0;
     }
 
+    get size():number {
+        return this.elem.length;
+    }
+
     // ------------------------------
     // region Removal and Appending Elements
     // ------------------------------

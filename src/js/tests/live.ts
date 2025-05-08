@@ -88,7 +88,7 @@ $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
 }).trigger('[syntheticEvent]')
  
 const $li = $ul.find('li');
-console.log('Are there <li> elements',$li.hasEls);
+console.log('Are there <li> elements',$li.hasEls, $li.size);
 
 console.log($ul.elemRects(0));
 console.log('Li Siblings:', $li.get(1).siblings('li'));

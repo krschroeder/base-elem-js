@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __~6kb__ which is about __93%__ smaller than jQuery 3.7.1! 
+`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __~6.5kb__ which is about __92%__ smaller than jQuery 3.7.1! 
 
 ## Usage
 To use the `base-elem-js` utility, you need to import it as follows:
@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.11.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.12.0"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -31,11 +31,45 @@ To come, in the meantime check the [Home Page](https://github.com/krschroeder/ba
 
 ## Base Elem Methods
 
+### Root Selector
+
+The root selector grabs all elements via the `querySelectorAll` underneath the hood. It initializes a new instance of the `BaseElem` class, which serves as a lightweight wrapper for DOM elements. It allows for easy manipulation, traversal, and interaction with HTML elements.
+
+
+```typescript
+$be(selector?: string | SelectorRoot | BaseElem, base?: HTMLElement): 
+```
+
+#### Examples
+```typescript
+// Example 1: Initialize with a CSS selector
+const $baseElem = $be('.my-class');
+
+// Example 2: Initialize with a base element
+const parent = document.getElementById('parent');
+const $scopedElem = $be('.child-class', parent);
+
+// Example 3: Initialize with an existing BaseElem instance
+const $copiedElem = $be($baseElem);
+
+// Example 4: Initialize with an array of elements
+const lis = $be.static.find('li');//documented below in 'Static' section, returns HTMLElement[];
+const $arrayElem = $be(lis);
+
+// Example 5: Initialize with no elements
+const emptyElem = $be();
+
+```
 ### find
+
+Finds elements via `querySelectorAll` within the current `BaseElem` instance and returns a new one based on the new selection.
+
 ```typescript
 find(selector: string | (elem: HTMLElement, i: number) => HTMLElement[], filter?: (elem: any, i: number) => boolean): BaseElem
+```
 
-// Examples
+#### Examples
+```typescript
 $be('ul').find('li');
 //returns list of <li>'s
 
@@ -52,7 +86,7 @@ $be('li:first-child').find(el => el.nextElementSibling as HTMLLIElement);
 ```
 
 ### findBy
-Finds elements by type (id, class, or tag) within the current elements and returns a new BaseElem instance.
+Finds elements by type (id, class, or tag) within the current elements and returns a new BaseElem instance. Choosing the type will select elements by `getElementById`, `getElementsByClassName` and `getElementsByTagName` underneath the hood.
 
 ```typescript
 findBy(type: FindBy, selector: string, filter?: (elem: any, i: number) => boolean): BaseElem
@@ -66,6 +100,13 @@ const $siteHeader = $be('#site-header');
 
 $siteHeader.findBy('tag','li'); 
 //returns all the <li> items in the $siteHeader
+
+$siteHeader.findBy('id', 'logo');
+//returns element with the id 'logo'
+
+$siteHeader.findBy('class', 'container');
+//returns all items with the class 'container'
+
 ```
 
 ### findOne
@@ -256,6 +297,14 @@ if ($hashLinks.hasElems()) {
 
 ```
 
+### size
+A slightly easier way to get the length of the elements rather than `$beQuery.elems.length`
+
+#### Example
+```typescript
+$be('li').size
+//returns the length of the li elements
+```
 
 
 ### empty
@@ -586,6 +635,31 @@ Sets the inner text of the element.
 text(elem: HTMLElement, text: string): void
 ```
 
+
+### htmlParse
+
+The `htmlParse` function parses a string of HTML into an array of DOM `ChildNode` objects. It ensures that any `<script>` tags in the input are removed for security and non-executability.
+
+```typescript
+htmlParse(htmlStr: string): ChildNode[];
+```
+
+#### Examples
+
+```typescript
+import $be from 'base-elem-js';
+
+const { htmlParse } = $be.static;
+
+// Example 1: Parse a simple HTML string
+const nodes = htmlParse('<h1>Light-weight Babbbyyyyy!</h1><p>Yeah buddy!</p>');
+console.log(nodes); // [HTMLHeadingElement, HTMLParagraphElement]
+
+// Example 2: Parse HTML with a script tag (script will be removed)
+const nodesWithScript = htmlParse('<div>Content</div><script>alert("Hi");</script>');
+console.log(nodesWithScript); // [HTMLDivElement]
+```
+
 ### on
 Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`.
 
@@ -671,6 +745,8 @@ const result = merge('noNull', obj1, obj2);
 console.log(result); // { a: 1, b: 2 }
 ```
 
+## Utils
+
 ### toType
 Fixes the `typeof` which isn't actually reliable in JS. Taken verbatim from [Angus Croll](https://goo.gl/pxwQGp) and is used internally in this project.
 
@@ -686,6 +762,20 @@ toType(null) // returns 'null' (instead of 'object')
 
 // etc...
 ```
+
+Few utility short-cuts used internally that are now available.
+
+### af
+Short-cut for `Array.from`.
+
+### isStr
+Short-cut function for `typeof someVar === 'string'`.
+
+### isArr
+Short-cut for `Array.isArray`.
+
+### oa
+Short-cut for `Object.assign`.
 
 ## Animate/Transition Static Methods
 This library includes a couple extra functions to help with transitions and simple animations.
