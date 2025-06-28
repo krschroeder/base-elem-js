@@ -29,6 +29,7 @@ export default $be as BaseElemFactory;
 export type { 
     AppendMethod,
     BaseElem, 
+    BaseElemStatic,
     CSSActionStates, 
     CSSActionStatesObj,
     SelectorElem as EventElem, 

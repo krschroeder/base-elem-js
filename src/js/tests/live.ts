@@ -50,7 +50,6 @@ const $pinput = $be('#pinput');
 
 $h1.css({color: '#888'});
 
- 
 
 const $behidden = $be('.hidden').css({display: 'flex', height: '40px'}).attr({hidden: null});
 const $ul = $be('ul');
