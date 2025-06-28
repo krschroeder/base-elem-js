@@ -6,16 +6,17 @@ declare global {
     
     interface Window {
        $be: typeof $be;
-       merge: typeof merge;
+       merge: typeof $be.merge;
     }
 }
-const {merge} = $be.static;
-window.merge = merge;
+ 
+window.merge = $be.merge;
+window.$be = $be;
 
 
-console.log('Extend 1', merge({yeah:'buddy',foo:'bar', baz: {buzzy:'yeahhh'}}, {foo:'baz', baz: {buddy:'RC', foob: 'magoob'}}));
+console.log('Extend 1', $be.merge({yeah:'buddy',foo:'bar', baz: {buzzy:'yeahhh'}}, {foo:'baz', baz: {buddy:'RC', foob: 'magoob'}}));
 console.log('Extend 2',
-    merge([true, 'noNull'], {
+    $be.merge([true, 'noNull'], {
         foo: '',
         yeah:'buddy',
         arr: 'z',
@@ -43,7 +44,7 @@ console.log('Extend 2',
     {yeah: '3rd object merge'})
 );
 
-const bes = $be.static;
+ 
 const $h1 = $be('h1');
 const $pinput = $be('#pinput');
 
@@ -55,7 +56,7 @@ const $behidden = $be('.hidden').css({display: 'flex', height: '40px'}).attr({hi
 const $ul = $be('ul');
 
 console.log(
-    bes.isHidden($behidden.elem[0] as HTMLElement),
+    $be.isHidden($behidden.elem[0] as HTMLElement),
     `css display: ${$behidden.css('display')}`, 
     `data attr: ${$behidden.attr('data-something')}`
 );
@@ -64,13 +65,13 @@ console.log(
 
 console.log('has "what" class', $ul.find('li').hasClass('what'));
 
-const div = bes.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
-const btn = bes.make('button#some-id-yo.yeah_-123bar&.foo.bar baz','Some <strong> Copy</strong>');
-const btn2 = bes.make('button.whatt','Some <strong> Copy</strong>');
+const div = $be.make('div', {id: 'test', className: 'test'}, '<h2>Hello Make!</h2><p>Some copy goes here</p>');
+const btn = $be.make('button#some-id-yo.yeah_-123bar&.foo.bar baz','Some <strong> Copy</strong>');
+const btn2 = $be.make('button.whatt','Some <strong> Copy</strong>');
 const $div = $be(div).insert([btn,btn2]);
 
-const makep = bes.findOne('#makep');
-const makepBtn = bes.find('button', makep); 
+const makep = $be.findOne('#makep');
+const makepBtn = $be.find('button', makep); 
 
 // console.log('make p btn', makepBtn)
 $be(makep).on('click.makep', (ev: MouseEvent, elem: HTMLHeadingElement) => {
@@ -88,6 +89,7 @@ $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
 }).trigger('[syntheticEvent]')
  
 const $li = $ul.find('li');
+
 console.log('Are there <li> elements',$li.hasEls, $li.size);
 
 console.log($ul.elemRects(0));
@@ -113,7 +115,7 @@ $ul.on('[syntheticEventName]', (ev, elem) => {
     console.log('synthetic event!', ev.type, elem)
 }).trigger('[syntheticEventName]');
 
-const $liWhat = $li.filter((elem, i) => bes.hasClass(elem, 'what'));
+const $liWhat = $li.filter((elem, i) => $be.hasClass(elem, 'what'));
 
 console.log('li with class "what"', $liWhat);
 

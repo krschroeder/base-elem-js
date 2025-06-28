@@ -15,6 +15,99 @@ import { af, body, root, d, isArr, isStr, oa } from './helpers';
 
 
 type EventCache = Map<string,EventFn>;
+
+export interface BaseElemStatic {
+    // Constants
+    CSS_ACTION_STATES: CSSActionStatesObj;
+    
+    // CSS and Class methods
+    addClass: (elem: HTMLElement, cssNames: string | string[]) => void;
+    rmClass: (elem: HTMLElement, cssNames: string | string[]) => void;
+    tgClass: (elem: HTMLElement, cssNames: string | string[], toggle?: boolean) => void;
+    hasClass: (elem: HTMLElement, cssNames: string | string[]) => boolean;
+    
+    // Attribute and CSS methods
+    attr: (elem: HTMLElement, attrs: Record<string, string> | string) => string | void;
+    css: (elem: HTMLElement, attrs: Partial<CSSProperties> | string) => string;
+    
+    // CSS Action States
+    cssActionStates: (nameSpace: string, baseObj?: CSSActionStatesObj) => CSSActionStatesObj;
+    
+    // Element manipulation
+    empty: (elem: HTMLElement) => void;
+    elemRects: (elem: HTMLElement) => DOMRect;
+    
+    // Element finding
+    find: <T extends HTMLElement>(el: string, base?: HTMLElement | Document) => T[];
+    findBy: (type: FindBy, find: string, base?: HTMLElement | Document) => HTMLElement[] | HTMLElement | null;
+    findOne: <T = HTMLElement>(el: string, base?: HTMLElement | Document) => T;
+    
+    // Element creation and parsing
+    make: <T extends keyof HTMLElementTagNameMap>(
+        selector: T | `${T}.${string}` | `${T}#${string}`, 
+        propsOrHtml?: Partial<HTMLElementTagNameMap[T]> | string, 
+        html?: string
+    ) => HTMLElementTagNameMap[T];
+    htmlParse: (htmlStr: string) => ChildNode[];
+    
+    // Visibility
+    isVisible: (el: HTMLElement) => boolean;
+    isHidden: (el: HTMLElement) => boolean;
+    
+    // Array and iteration
+    map: <T>(elems: HTMLElement[], fn: (el: HTMLElement, i: number) => T, unique?: boolean) => (HTMLElement | T)[];
+    
+    // Object utilities
+    merge: (configOrTarget: MergeOptions | MergeOptions[] | GenericObj, ...objects: GenericObj[]) => GenericObj;
+    
+    // DOM traversal
+    parents: (elem: HTMLElement, selector: string, untilElem?: HTMLElement | string) => HTMLElement[];
+    siblings: (elem: HTMLElement, selector?: string, includeKeyEl?: boolean) => HTMLElement[];
+    
+    // Type utility
+    toType: (object: any) => GetType;
+    
+    // Event methods
+    on: (
+        baseEl: SelectorElem,
+        evtName: EventName,
+        fn: EventFn,
+        delegateEl?: string | HTMLElement[],
+        config?: boolean | AddEventListenerOptions
+    ) => void;
+    off: (
+        target: SelectorElem,
+        evtName: EventName,
+        config?: boolean | AddEventListenerOptions
+    ) => void;
+    trigger: (
+        target: HTMLElement | Window | Document,
+        evtName: string,
+        delegateEl?: string,
+        config?: boolean | AddEventListenerOptions
+    ) => void;
+    
+    // Animation utilities
+    useTransition: () => (
+        startFn: (...args: any) => void,
+        endFn: (...args: any) => void,
+        duration?: number
+    ) => void;
+    useCssAnimate: (
+        elems: HTMLElement | HTMLElement[],
+        baseCss?: string
+    ) => [
+        (start: boolean, duration?: number, endFn?: () => void) => void,
+        CSSActionStates
+    ];
+    
+    // Utility functions
+    af: <T>(list: any) => T[];
+    isArr: (val: any) => val is any[];
+    isStr: (val: any) => val is string;
+    oa: <T extends Record<string, any>>(target: T, ...sources: Partial<T>[]) => T;
+}
+
 const eventFnCache:WeakMap<SelectorElem,EventCache> = new WeakMap();
 
 const cssSplitRgx = /([\.\#][\w-_\s]+)/g;
@@ -34,7 +127,7 @@ const
         for (const key in baseObj) {
             if (Object.hasOwn(baseObj, key)) {
 
-                Object.assign(retObj, {
+                oa(retObj, {
                     [key]: prefix + baseObj[key as keyof CSSActionStates]
                 });
             }
@@ -45,12 +138,11 @@ const
     // region Finding Elems
     // 
     findBy = (type:FindBy, find: string, base: HTMLElement | Document = d) => {
-
-        if (type === 'class') return af(base.getElementsByClassName(find)) as HTMLElement[];
-        if (type === 'id')    return d.getElementById(find) as HTMLElement;
-        if (type === 'tag')   return af(base.getElementsByTagName(find)) as HTMLElement[];
-
-        return null;
+        return  type === 'class' ? af(base.getElementsByClassName(find)) as HTMLElement[]:
+                type === 'id'    ? d.getElementById(find) as HTMLElement:
+                type === 'tag'   ? af(base.getElementsByTagName(find)) as HTMLElement[]:
+                null
+        ;
     },
 
     find = <T extends HTMLElement>(el: string, base: HTMLElement | Document = d): T[] =>  {
@@ -137,34 +229,33 @@ const
         return '';
     },
 
+    _cl = (elem: HTMLElement) => elem.classList,
+
     addClass = (elem: HTMLElement, cssNames: string | string[]) => {
-        isArr(cssNames) ?
-            elem.classList.add(...cssNames):
-            elem.classList.add(cssNames);
+        const cl = _cl(elem);
+        isArr(cssNames) ? cl.add(...cssNames) : cl.add(cssNames);
     },
 
     rmClass = (elem: HTMLElement, cssNames: string | string[]) => {
-        isArr(cssNames) ?
-            elem.classList.remove(...cssNames):
-            elem.classList.remove(cssNames);
+        const cl = _cl(elem);
+        isArr(cssNames) ? cl.remove(...cssNames) : cl.remove(cssNames);
     },
     
     tgClass = (elem: HTMLElement, cssNames: string | string[], toggle?: boolean) => {
+        const cl = _cl(elem);
         if (isArr(cssNames)) {
             for (const cssName of cssNames) {
-                elem.classList.toggle(cssName, toggle);
+                cl.toggle(cssName, toggle);
             }
         } else {
-            elem.classList.toggle(cssNames, toggle);
+            cl.toggle(cssNames, toggle);
         }
     },
 
     hasClass = (elem: HTMLElement, cssNames: string | string[]): boolean => {
-        if (isArr(cssNames)) {
-            return cssNames.every(cls => elem.classList.contains(cls));
-        }
+        const cl = _cl(elem);
 
-        return elem.classList.contains(cssNames);
+        return isArr(cssNames) ? cssNames.every(cls => cl.contains(cls)) : cl.contains(cssNames);
     },
 
     elemRects = (elem: HTMLElement) => {
@@ -485,5 +576,7 @@ const BaseStatic = {
     //utils
     af, isArr, isStr, oa
 };
+
+ 
 
 export default BaseStatic;

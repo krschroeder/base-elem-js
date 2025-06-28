@@ -208,10 +208,6 @@ class BaseElem {
         } else console.warn(noElemMsg + index);
     }
 
-    hasElems():boolean {
-        return this.elem.length > 0;
-    }
-
     get hasEls():boolean {
         return this.elem.length > 0;
     }

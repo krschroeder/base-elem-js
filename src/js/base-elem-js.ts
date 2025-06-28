@@ -12,15 +12,20 @@ import type {
     AppendMethod
 } from './types';
 
-import BaseStatic from './core/BaseStatic';
+import BaseStatic, {type BaseElemStatic } from './core/BaseStatic';
 import BaseElem from './core/BaseElem';
+import { oa } from './core/helpers';
  
+type BaseElemFactory = ((selector?: string | SelectorRoot | BaseElem, base?: HTMLElement) => BaseElem) & 
+    BaseElemStatic & 
+    { BaseElem: typeof BaseElem };
+
 const $be = (selector?: string | SelectorRoot | BaseElem, base?: HTMLElement) => new BaseElem(selector, base);
 
-$be.static = BaseStatic;
+oa($be, BaseStatic);
 $be.BaseElem = BaseElem;
 
-export default $be;
+export default $be as BaseElemFactory;
 export type { 
     AppendMethod,
     BaseElem, 
@@ -34,5 +39,6 @@ export type {
     Selector,
     SelectorElem,
     SelectorElems,
-    SelectorRoot
+    SelectorRoot,
+    BaseElemFactory
 };

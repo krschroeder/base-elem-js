@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __~6.5kb__ which is about __92%__ smaller than jQuery 3.7.1! 
+`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __~6.7kb__ which is about __92%__ smaller than jQuery 3.7.1! 
 
 ## Usage
 To use the `base-elem-js` utility, you need to import it as follows:
@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@1.12.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@2.0.0"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -53,7 +53,7 @@ const $scopedElem = $be('.child-class', parent);
 const $copiedElem = $be($baseElem);
 
 // Example 4: Initialize with an array of elements
-const lis = $be.static.find('li');//documented below in 'Static' section, returns HTMLElement[];
+const lis = $be.find('li');//documented below in 'Static' section, returns HTMLElement[];
 const $arrayElem = $be(lis);
 
 // Example 5: Initialize with no elements
@@ -73,8 +73,7 @@ find(selector: string | (elem: HTMLElement, i: number) => HTMLElement[], filter?
 $be('ul').find('li');
 //returns list of <li>'s
 
-const bes = $be.static;
-$be('ul').find('li', el => bes.hasClass(el,'foo')); 
+$be('ul').find('li', el => $be.hasClass(el,'foo')); 
 //returns only <li> with .foo class
 
 $be('li').find(el => el.closest('ul'));
@@ -188,7 +187,7 @@ $mainNav.on('keydown.mainNav', 'a', (elem, e) => {
         // remove .active class from parent <li>
         $elLiParents.rmClass('.active')
         // focus on the first element
-        .get(0).find('a')[0].focus();
+        .get(0).find('a').elem[0].focus();
     }
 });
 ```
@@ -275,11 +274,10 @@ Small wrapper over `elem.getBoundingClientRect()` that returns the proportions a
 elemRects(index: number = 0): DOMRect;
 ```
 
-### hasElems / hasEls
+### hasEls
 Slightly easier way than determining if there are results than `$queryResult.elems.length`.
 
 ```typescript
-hasElems(): boolean;
 hasEls: boolean //getter version
 ```
 #### Example
@@ -288,10 +286,6 @@ hasEls: boolean //getter version
 const $hashLinks = $be('a[href^="#"]');
 
 if ($hashLinks.hasEls) {
-    // do something
-}
-
-if ($hashLinks.hasElems()) {
     // do something
 }
 
@@ -433,23 +427,21 @@ $be.BaseElem.prototype.superbPlugin = superbPlugin();
 ```
 
 
-## Base Elem Static ($be.static)
+## Base Elem Static
 
 ### make
 Creates a new HTML element with the specified tag, attributes, and inner HTML content.
 
 ```typescript
-make(tag: string, propsOrHTML?: Record<string, any> | string, html?: string): HTMLElement;
+$be.make(tag: string, propsOrHTML?: Record<string, any> | string, html?: string): HTMLElement;
 
 // Example
-const { make } = $be.static;
-
-const div = make('div', { id: 'test', className: 'test' }, 
+const div = $be.make('div', { id: 'test', className: 'test' }, 
     `<h2>Hello Make!</h2>
     <p>Some copy goes here</p>`
 );
 // or no props
-const div2 = make('div.some-class-name#an-id-too', '<p>Some copy goes here!</p>');
+const div2 = $be.make('div.some-class-name#an-id-too', '<p>Some copy goes here!</p>');
 
 document.body.append(div);
 
@@ -459,7 +451,7 @@ document.body.append(div);
 Checks if the specified element is hidden (i.e., has display: none or visibility: hidden).
 
 ```typescript
-isHidden(elem: HTMLElement): boolean
+$be.isHidden(elem: HTMLElement): boolean
 ```
 
 
@@ -467,21 +459,21 @@ isHidden(elem: HTMLElement): boolean
 Checks if the specified element is visible (i.e., does not have display: none or visibility: hidden).
 
 ```typescript
-isVisible(elem: HTMLElement): boolean
+$be.isVisible(elem: HTMLElement): boolean
 ```
 
 ### elemRects
 Small wrapper over `elem.getBoundingClientRect()` that returns the proportions and positioning of an element.
 
 ```typescript
-elemRects(elem: HTMLElement): DOMRect;
+$be.elemRects(elem: HTMLElement): DOMRect;
 ```
 
 ### find
 Finds elements matching the selector within the specified base element.
 
 ```typescript
-find(selector: string, base: HTMLElement = document): HTMLElement[]
+$be.find(selector: string, base: HTMLElement = document): HTMLElement[]
 ```
 
 
@@ -489,7 +481,7 @@ find(selector: string, base: HTMLElement = document): HTMLElement[]
 Finds elements by type (id, class, or tag) within the specified base element.
 
 ```typescript
-findBy(type: FindBy, selector: string, base: HTMLElement = document): HTMLElement[]
+$be.findBy(type: FindBy, selector: string, base: HTMLElement = document): HTMLElement[]
 ```
 
 
@@ -497,14 +489,14 @@ findBy(type: FindBy, selector: string, base: HTMLElement = document): HTMLElemen
 Finds the first element matching the selector within the specified base element.
 
 ```typescript
-findOne(selector: string, base: HTMLElement = document): HTMLElement
+$be.findOne(selector: string, base: HTMLElement = document): HTMLElement
 ```
 
 ### map
 The `map` function iterates over an array of HTML elements, applies a callback function to each element, and returns a new array containing the results. Optionally, it can ensure that the results are unique. The map function in this context is meant for DOM elements.
 
 ```typescript
-map<T>(
+$be.map<T>(
     elems: HTMLElement[], 
     fn: (el: HTMLElement, i: number) => T, 
     unique?: boolean
@@ -513,13 +505,13 @@ map<T>(
 
 #### Examples
 ```typescript
-const paras = bes.find('p');
+const paras = $be.find('p');
 
-const excellentP = map(paras, (el) => bes.hasClass('.excellent'));
+const excellentP = $be.map(paras, (el) => $be.hasClass('.excellent'));
 console.log(excellentP); // only <p> with the .excellent class
 
-const lis = bes.find('li');
-const uls = map(lis, (el) => el.closest('ul'));
+const lis = $be.find('li');
+const uls = $be.map(lis, (el) => el.closest('ul'));
 console.log(uls);// list of all the containing <ul> elements
 ```
 
@@ -527,7 +519,7 @@ console.log(uls);// list of all the containing <ul> elements
 Returns all the ancestor element of the target element.
 
 ```typescript
-parents(elem: HTMLElement, selector: string, untilElem?: HTMLElement | string): BaseElem
+$be.parents(elem: HTMLElement, selector: string, untilElem?: HTMLElement | string): BaseElem
 ```
 
 
@@ -536,7 +528,7 @@ parents(elem: HTMLElement, selector: string, untilElem?: HTMLElement | string): 
 The `siblings` function retrieves all sibling elements of a given element. Optionally, it can filter the siblings by a CSS selector and include the original element in the results.
 
 ```typescript
-siblings(
+$be.siblings(
     elem: HTMLElement, 
     selector?: string, 
     includeKeyEl?: boolean
@@ -547,18 +539,17 @@ siblings(
 ```typescript
 import $be from 'base-elem-js';
 
-const bes = $be.static;
 // Example 1: Get all siblings of an element
-const element = bes.findOne('.my-element');
-const allSiblings = siblings(element);
+const element = $be.findOne('.my-element');
+const allSiblings = $be.siblings(element);
 console.log(allSiblings); // [<div>, <span>, <p>, ...]
 
 // Example 2: Get siblings that match a selector
-const filteredSiblings = siblings(element, '.filter-class');
+const filteredSiblings = $be.siblings(element, '.filter-class');
 console.log(filteredSiblings); // [<div.filter-class>, <span.filter-class>, ...]
 
 // Example 3: Include the reference element in the results
-const siblingsWithKeyEl = siblings(element, null, true);
+const siblingsWithKeyEl = $be.siblings(element, null, true);
 console.log(siblingsWithKeyEl); // [<div>, <span>, <p>, <.my-element>, ...]
 ```
 
@@ -566,16 +557,16 @@ console.log(siblingsWithKeyEl); // [<div>, <span>, <p>, <.my-element>, ...]
 Adds the specified class(es) to the element.
 
 ```typescript
-addClass(elem: HTMLElement, cssNames: string | string[]): void;
+$be.addClass(elem: HTMLElement, cssNames: string | string[]): void;
 
 // Examples
-const div = bes.findOne('div');
+const div = $be.findOne('div');
 
 // add a single class
-bes.addClass(div, 'new-class');
+$be.addClass(div, 'new-class');
 
 // add multiple
-bes.addClass(div, ['new-class', 'another']);
+$be.addClass(div, ['new-class', 'another']);
 
 ```
 
@@ -583,56 +574,56 @@ bes.addClass(div, ['new-class', 'another']);
 Removes the specified class(es) from the element.
 
 ```typescript
-rmClass(elem: HTMLElement, cssNames: string | string[]): void
+$be.rmClass(elem: HTMLElement, cssNames: string | string[]): void
 ```
 
 ### tgClass
 Toggles the specified class(es) on the element.
 
 ```typescript
-tgClass(elem: HTMLElement, cssNames: string | string[], toggle?: boolean): void
+$be.tgClass(elem: HTMLElement, cssNames: string | string[], toggle?: boolean): void
 ```
 
 ### hasClass
 Checks if the element has the specified class(es).
 
 ```typescript
-hasClass(elem: HTMLElement, cssNames: string | string[], method: 'some' | 'every' = 'some'): boolean
+$be.hasClass(elem: HTMLElement, cssNames: string | string[], method: 'some' | 'every' = 'some'): boolean
 ```
 
 ### attr
 Sets or gets attributes for the element.
 
 ```typescript
-attr(elem: HTMLElement, attrs: Record<string, string> | string): void
+$be.attr(elem: HTMLElement, attrs: Record<string, string> | string): void
 ```
 
 ### empty
 Empties the content of the element.
 
 ```typescript
-empty(elem: HTMLElement): void
+$be.empty(elem: HTMLElement): void
 ```
 
 ### remove
 Removes the element from the DOM.
 
 ```typescript
-remove(elem: HTMLElement): void
+$be.remove(elem: HTMLElement): void
 ```
 
 ### html
 Sets the inner HTML of the element.
 
 ```typescript
-html(elem: HTMLElement, html: string): void
+$be.html(elem: HTMLElement, html: string): void
 ```
 
 ### text
 Sets the inner text of the element.
 
 ```typescript
-text(elem: HTMLElement, text: string): void
+$be.text(elem: HTMLElement, text: string): void
 ```
 
 
@@ -641,7 +632,7 @@ text(elem: HTMLElement, text: string): void
 The `htmlParse` function parses a string of HTML into an array of DOM `ChildNode` objects. It ensures that any `<script>` tags in the input are removed for security and non-executability.
 
 ```typescript
-htmlParse(htmlStr: string): ChildNode[];
+$be.htmlParse(htmlStr: string): ChildNode[];
 ```
 
 #### Examples
@@ -649,14 +640,12 @@ htmlParse(htmlStr: string): ChildNode[];
 ```typescript
 import $be from 'base-elem-js';
 
-const { htmlParse } = $be.static;
-
 // Example 1: Parse a simple HTML string
-const nodes = htmlParse('<h1>Light-weight Babbbyyyyy!</h1><p>Yeah buddy!</p>');
+const nodes = $be.htmlParse('<h1>Light-weight Babbbyyyyy!</h1><p>Yeah buddy!</p>');
 console.log(nodes); // [HTMLHeadingElement, HTMLParagraphElement]
 
 // Example 2: Parse HTML with a script tag (script will be removed)
-const nodesWithScript = htmlParse('<div>Content</div><script>alert("Hi");</script>');
+const nodesWithScript = $be.htmlParse('<div>Content</div><script>alert("Hi");</script>');
 console.log(nodesWithScript); // [HTMLDivElement]
 ```
 
@@ -664,7 +653,7 @@ console.log(nodesWithScript); // [HTMLDivElement]
 Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`.
 
 ```typescript
-on(
+$be.on(
     baseEl: EventElem, 
     evtName: `${Event['type']}.${string}` | string, 
     fn: EventFn, 
@@ -678,21 +667,21 @@ on(
 Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name.
 
 ```typescript
-off(evtName: string, config: boolean | AddEventListenerOptions = false);
+$be.off(evtName: string, config: boolean | AddEventListenerOptions = false);
 ```
 
 ### trigger
 Trigger native, synthetic and namespaced navtive events.
 
 ```typescript
-trigger( target: HTMLElement, evtName: string, delegateEl?: string, config?: boolean | AddEventListenerOptions);
+$be.trigger( target: HTMLElement, evtName: string, delegateEl?: string, config?: boolean | AddEventListenerOptions);
 ```
 
 ### merge
 The `merge` function is a utility for combining multiple objects into a single target object. It supports options for deep merging, excluding null or falsy values.
 
 ```typescript
-merge(
+$be.merge(
     configOrTarget: MergeOptions | MergeOptions[] | GenericObj, 
     ...objects: GenericObj[]
 ): GenericObj
@@ -723,7 +712,7 @@ __note:__ Falsy or `null` values will not be removed from the base target object
 const obj1 = { a: 1, b: 2 };
 const obj2 = { b: 3, c: 4 };
 
-const result = merge(obj1, obj2);
+const result = $be.merge(obj1, obj2);
 console.log(result); // { a: 1, b: 3, c: 4 }
 ```
 ##### Deep Merge
@@ -731,8 +720,8 @@ console.log(result); // { a: 1, b: 3, c: 4 }
 const obj1 = { a: { x: 1 }, b: 2 };
 const obj2 = { a: { y: 2 }, c: 3 };
 
-const result = merge(['deep'], obj1, obj2); 
-const result2 = merge(true, obj1, obj2);// or could pass in `true` for first param
+const result = $be.merge(['deep'], obj1, obj2); 
+const result2 = $be.merge(true, obj1, obj2);// or could pass in `true` for first param
 console.log(result); // { a: { x: 1, y: 2 }, b: 2, c: 3 }
 ```
 
@@ -741,7 +730,7 @@ console.log(result); // { a: { x: 1, y: 2 }, b: 2, c: 3 }
 const obj1 = { a: 1, b: 'B', c: 'C', d: "D" };
 const obj2 = { b: 2, c: null, d: '' };
 
-const result = merge('noNull', obj1, obj2);
+const result = $be.merge('noNull', obj1, obj2);
 console.log(result); // { a: 1, b: 2 }
 ```
 
@@ -751,14 +740,14 @@ console.log(result); // { a: 1, b: 2 }
 Fixes the `typeof` which isn't actually reliable in JS. Taken verbatim from [Angus Croll](https://goo.gl/pxwQGp) and is used internally in this project.
 
 ```typescript
-toType(object: any);
+$be.toType(object: any);
 ```
 
 #### Examples
 ```typescript
-toType([]) // returns 'array'
-toType('') // return 'string'
-toType(null) // returns 'null' (instead of 'object')
+$be.toType([]) // returns 'array'
+$be.toType('') // return 'string'
+$be.toType(null) // returns 'null' (instead of 'object')
 
 // etc...
 ```
@@ -785,7 +774,7 @@ The `useCssAnimate` function is a utility for handling CSS animations on HTML el
 
 
 ```typescript
-const [cssAnimate, cssState] = useCssAnimate(elems: HTMLElement | HTMLElement[], baseCss: string = '');
+const [cssAnimate, cssState] = $be.useCssAnimate(elems: HTMLElement | HTMLElement[], baseCss: string = '');
 ```
 Adds the following CSS classes to and element or elements
 
@@ -798,15 +787,15 @@ Adds the following CSS classes to and element or elements
 
 #### Example
 ```typescript
-const [cssAnimate, cssState] = useCssAnimate(element, 'my-animation');
+const [cssAnimate, cssState] = $be.useCssAnimate(element, 'my-animation');
 
 // To start the animation
-cssAnimate(true, 500, () => {
+$be.cssAnimate(true, 500, () => {
     console.log('Animation started');
 });
 
 // To end the animation
-cssAnimate(false, 500, () => {
+$be.cssAnimate(false, 500, () => {
     console.log('Animation ended');
 });
 
@@ -825,7 +814,7 @@ Function: A function that takes three parameters:
 `duration (number, optional)`: The duration of the transition in milliseconds. Default is 300ms.
 
 ```typescript
-const transition = useTransition();
+const transition = $be.useTransition();
 
 const startTransition = () => {
     console.log('Transition started');
@@ -836,7 +825,7 @@ const endTransition = () => {
 };
 
 // Start the transition with a duration of 400ms
-transition(startTransition, endTransition, 400);
+$be.transition(startTransition, endTransition, 400);
 ```
 
 #### Internal Functionality
