@@ -81,7 +81,8 @@ export interface BaseElemStatic {
     // DOM traversal
     parents: (elem: HTMLElement, selector: string, untilElem?: HTMLElement | string) => HTMLElement[];
     siblings: (elem: HTMLElement, selector?: string, includeKeyEl?: boolean) => HTMLElement[];
-    
+    next: (elem: HTMLElement, selector?: string) => HTMLElement;
+    prev: (elem: HTMLElement, selector?: string) => HTMLElement;
     // Type utility
     toType: (object: any) => GetType;
     

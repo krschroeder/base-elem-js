@@ -99,7 +99,7 @@ const
         return siblings;
     },
 
-    next = (elem: HTMLElement, selector?: string) => {
+    next = (elem: HTMLElement, selector?: string): HTMLElement => {
         let nextElem = elem.nextElementSibling;
 
         if (selector) while (nextElem) {
@@ -107,10 +107,10 @@ const
             nextElem = nextElem.nextElementSibling;
         }
         // always return an element
-        return nextElem ?? elem;
+        return (nextElem ?? elem) as HTMLElement;
     },
 
-    prev = (elem: HTMLElement, selector?: string) => {
+    prev = (elem: HTMLElement, selector?: string): HTMLElement => {
          let prevElem = elem.previousElementSibling;
 
         if (selector) while (prevElem) {
@@ -118,7 +118,7 @@ const
             prevElem = prevElem.previousElementSibling;
         }
         // always return an element
-        return prevElem ?? elem;
+        return (prevElem ?? elem) as HTMLElement;
     },
 
     // 
