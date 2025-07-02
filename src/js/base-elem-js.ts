@@ -1,18 +1,19 @@
 import type { 
+    AppendMethod,
+    BaseElemStatic,
+    CSSActionStates, 
+    CSSActionStatesObj,
+    EventFn, 
+    EventName, 
+    FindBy,
     Selector, 
     SelectorElem, 
     SelectorElems,
     SelectorRoot,
-    EventFn, 
-    EventName, 
-    SyntheticEvent, 
-    CSSActionStates, 
-    CSSActionStatesObj,
-    FindBy,
-    AppendMethod
+    SyntheticEvent 
 } from './types';
 
-import BaseStatic, {type BaseElemStatic } from './core/BaseStatic';
+import BaseStatic from './core/BaseStatic';
 import BaseElem from './core/BaseElem';
 import { oa } from './core/helpers';
  
@@ -29,17 +30,17 @@ export default $be as BaseElemFactory;
 export type { 
     AppendMethod,
     BaseElem, 
+    BaseElemFactory,
     BaseElemStatic,
     CSSActionStates, 
     CSSActionStatesObj,
-    SelectorElem as EventElem, 
     EventFn, 
     EventName, 
     FindBy,
-    SyntheticEvent, 
     Selector,
+    SelectorElem as EventElem, 
     SelectorElem,
     SelectorElems,
     SelectorRoot,
-    BaseElemFactory
-};
+    SyntheticEvent
+}

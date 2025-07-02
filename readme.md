@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __~6.7kb__ which is about __92%__ smaller than jQuery 3.7.1! 
+`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __7kb__ which is about __92%__ smaller than jQuery 3.7.1! 
 
 ## Usage
 To use the `base-elem-js` utility, you need to import it as follows:
@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@2.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@2.1.0"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -196,8 +196,6 @@ $mainNav.on('keydown.mainNav', 'a', (elem, e) => {
 
 The `siblings` method retrieves the sibling elements of a specific element in the current `BaseElem` instance. Optionally, it can filter the siblings by a CSS selector, include the reference element itself, and specify which element in the collection to use as the reference.
 
-#### Syntax
-
 ```typescript
 siblings(
     selector?: string, 
@@ -213,6 +211,25 @@ const $li = $be('ul li');
 const $siblingLis = $li.siblings('li'); //returns all siblings
 const $siblings = $li.siblings();// just returns all sibling elements
 const $siblingsIncludingKeyEl = $li.siblings('li', true);// include the siblings with the key/starting element;
+```
+
+
+### prev
+The `prev` method retrieves the `previousElementSibling`, or if passing in a selector it can find the previous sibling that matches that criteria. If there is not a match available, the method will simply return the same element.
+
+```typescript
+const $li = $be('ul li:last-child');
+const $prevLi = $li.prev('li'); // or just $li.prev()
+
+```
+
+### next
+The `next` does the same as the `prev` method, except of course it retrieves the `nextElementSibling`. It also behaves the same as the `prev` method if there is no match or next sibling.
+
+```typescript
+const $li = $be('ul li');
+const $nextLi = $li.next('li'); // or just $li.next()
+
 ```
 
 ### css
@@ -551,6 +568,24 @@ console.log(filteredSiblings); // [<div.filter-class>, <span.filter-class>, ...]
 // Example 3: Include the reference element in the results
 const siblingsWithKeyEl = $be.siblings(element, null, true);
 console.log(siblingsWithKeyEl); // [<div>, <span>, <p>, <.my-element>, ...]
+```
+
+
+### prev
+The `prev` function retrieves the `previousElementSibling`, or if passing in a selector it can find the previous sibling that matches that criteria. If there is not a match available, the function will simply return the same element.
+
+```typescript
+const lastLi = $be.findOne('li:last-child');
+const prevLi = $be.prev(lastLi,'li'); // or just $be.prev(lastLi) to get previous sibling
+
+```
+
+### next
+The `next` does the same as the `prev` function, but retrieves the `nextElementSibling`. It also behaves the same if there is no match or next sibling.
+
+```typescript
+const firstLi = $be.findOne('li');
+const $nextLi = $be.next(firstLi, 'li'); // or just $be.next(firstLi)
 ```
 
 ### addClass

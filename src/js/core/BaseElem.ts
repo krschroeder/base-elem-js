@@ -25,6 +25,8 @@ const {
     findBy,
     findOne,
     map,
+    next,
+    prev,
     hasClass,
     htmlParse,
     off,
@@ -141,6 +143,14 @@ class BaseElem {
 
     siblings(selector?: string, includeKeyEl: boolean = false, index: number = 0) : BaseElem {
         return new BaseElem(siblings(this.elem[index] as HTMLElement, selector, includeKeyEl));
+    }
+
+    next (selector?: string): BaseElem {
+        return new BaseElem(next(this.elem[0] as HTMLElement, selector) as HTMLElement);
+    }
+
+    prev (selector?: string): BaseElem {
+        return new BaseElem(prev(this.elem[0] as HTMLElement, selector) as HTMLElement);
     }
 
     get(index: number): BaseElem {

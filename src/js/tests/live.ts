@@ -45,6 +45,8 @@ console.log('Extend 2',
 );
 
  
+
+ 
 const $h1 = $be('h1');
 const $pinput = $be('#pinput');
 
@@ -54,8 +56,10 @@ $h1.css({color: '#888'});
 const $behidden = $be('.hidden').css({display: 'flex', height: '40px'}).attr({hidden: null});
 const $ul = $be('ul');
 
+console.log('prev',$ul.find('li:last-child').prev('li').css({color: 'red'}));
+console.log('next',$ul.find('li').next('li').css({color: 'hotpink'}));
 console.log(
-    $be.isHidden($behidden.elem[0] as HTMLElement),
+    $be.isHidden($behidden.elem[0] as HTMLElement), 
     `css display: ${$behidden.css('display')}`, 
     `data attr: ${$behidden.attr('data-something')}`
 );
@@ -70,7 +74,6 @@ const btn2 = $be.make('button.whatt','Some <strong> Copy</strong>');
 const $div = $be(div).insert([btn,btn2]);
 
 const makep = $be.findOne('#makep');
-const makepBtn = $be.find('button', makep); 
 
 // console.log('make p btn', makepBtn)
 $be(makep).on('click.makep', (ev: MouseEvent, elem: HTMLHeadingElement) => {
@@ -79,6 +82,7 @@ $be(makep).on('click.makep', (ev: MouseEvent, elem: HTMLHeadingElement) => {
 }, 'button');
 
  
+
 // synthetic event
 
 $div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
