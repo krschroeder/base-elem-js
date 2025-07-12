@@ -20,6 +20,7 @@ const {
     attr,
     css,
     elemRects,
+    offset,
     empty,
     find,
     findBy,
@@ -211,11 +212,22 @@ class BaseElem {
         return this;
     }
 
-    elemRects(index: number = 0) {
+    #getOne<T>(index: number = 0, fn: (elem: HTMLElement) => T): T | undefined {
         const elem = this.elem[index] as HTMLElement;
         if (elem) {
-            return elemRects(elem);
-        } else console.warn(noElemMsg + index);
+            return fn(elem);
+        } else {
+            console.warn(noElemMsg + index);
+            return undefined;
+        }
+    }
+
+    elemRects(index: number = 0) {
+        return this.#getOne(index, elemRects);
+    }
+
+    offset(index: number = 0) {
+        return this.#getOne(index, offset);
     }
 
     get hasEls():boolean {
@@ -245,7 +257,7 @@ class BaseElem {
     ): BaseElem {
         this.#iterate((elem: HTMLElement) => {
             const elems = (isArr(html) ? html.map(getElems).flat() : isStr(html) ? htmlParse(html) : getElems(html)) as HTMLElement[];
- 
+            
             if (method === 'append')    elem.append(...elems);
             if (method === 'prepend')   elem.prepend(...elems);
             if (method === 'after')     elem.after(...elems);
@@ -294,8 +306,8 @@ class BaseElem {
         return this;
     }
 
-    trigger(evtName: string, delgateEl?: string): BaseElem {
-        this.#iterate((elem: SelectorElem) => trigger(elem, evtName, delgateEl));
+    trigger(evtName: string, delgateEl?: string, data?: any[]): BaseElem {
+        this.#iterate((elem: SelectorElem) => trigger(elem, evtName, delgateEl, data));
         return this;
     }
 

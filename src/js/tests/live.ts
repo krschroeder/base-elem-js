@@ -85,11 +85,11 @@ $be(makep).on('click.makep', (ev: MouseEvent, elem: HTMLHeadingElement) => {
 
 // synthetic event
 
-$div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement) => {
-    console.log(ev);
+$div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement, one, two) => {
+    console.log(`[syntheticEvent] triggered ${one}, ${two}`, ev);
     $div.insert(`<p>Some HTML inserted by a synthetic event (${elem.nodeName})</p>`);
   
-}).trigger('[syntheticEvent]')
+}).trigger('[syntheticEvent]', null, ['one',2])
  
 const $li = $ul.find('li');
 
@@ -122,9 +122,19 @@ const $liWhat = $li.filter((elem, i) => $be.hasClass(elem, 'what'));
 
 console.log('li with class "what"', $liWhat);
 
+$div.on('click.div', (ev, elem) => {
+    console.log('div click yo',ev )
+});
+
+$div.on('click.div2', (ev, elem) => {
+    console.log('another div click yo', ev)
+});
 setTimeout(() => {
-    $div.trigger('click.div', 'h2');
-    console.log('set time out on click')
+    console.log('Trigger "native" click');
+    $div.trigger('click', null, ['h2']);
+    console.log('Trigger "namespaced" clicks');
+    $div.trigger('click.div', null, ['h2']);
+    $div.trigger('click.div2', null, ['h2']);
 }, 1000)
 
 

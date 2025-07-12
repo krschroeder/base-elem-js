@@ -291,6 +291,13 @@ Small wrapper over `elem.getBoundingClientRect()` that returns the proportions a
 elemRects(index: number = 0): DOMRect;
 ```
 
+### offset
+Retrieves the `top` and `left` values of an element relative to the document.
+
+```typescript
+offset(index: number = 0): {top: number, left: number};
+```
+
 ### hasEls
 Slightly easier way than determining if there are results than `$queryResult.elems.length`.
 
@@ -486,6 +493,12 @@ Small wrapper over `elem.getBoundingClientRect()` that returns the proportions a
 $be.elemRects(elem: HTMLElement): DOMRect;
 ```
 
+### offset
+Retrieves the `top` and `left` values of an element relative to the document.
+
+```typescript
+$be.offset(elem: HTMLElement): {top: number, left: number};
+```
 ### find
 Finds elements matching the selector within the specified base element.
 
@@ -709,7 +722,13 @@ $be.off(evtName: string, config: boolean | AddEventListenerOptions = false);
 Trigger native, synthetic and namespaced navtive events.
 
 ```typescript
-$be.trigger( target: HTMLElement, evtName: string, delegateEl?: string, config?: boolean | AddEventListenerOptions);
+$be.trigger( 
+    target: HTMLElement, 
+    evtName: string, 
+    delegateEl?: string | null, 
+    data?: any[], 
+    config?: boolean | AddEventListenerOptions
+);
 ```
 
 ### merge

@@ -1,6 +1,7 @@
 
 // Dom shortcuts
 const 
+    w       = window,
     d       = document,
     body    = d.body,
     root    = d.documentElement,
@@ -11,6 +12,7 @@ const
 ;
 
 export {
+    w,
     d, 
     body,
     root,

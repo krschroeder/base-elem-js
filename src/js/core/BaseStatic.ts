@@ -11,7 +11,7 @@
     SelectorElem
 } from '../types';
 
-import { af, body, root, d, isArr, isStr, oa } from './helpers';
+import { af, body, root, d, isArr, isStr, oa, w } from './helpers';
 
 
 type EventCache = Map<string,EventFn>;
@@ -78,7 +78,7 @@ const
         return retElems; 
     },
 
-    parents = (elem: HTMLElement, selector: string, untilElem: HTMLElement | string = root): HTMLElement[] => {
+    parents = (elem: HTMLElement, selector: string | null, untilElem: HTMLElement | string = root): HTMLElement[] => {
         const untilIsStr = isStr(untilElem);
         const retElems: HTMLElement[] = [];
         while (elem = elem.parentElement) {
@@ -193,6 +193,14 @@ const
         return elem.getBoundingClientRect();
     },
 
+    offset = (elem: HTMLElement) => {
+        const rects = elemRects(elem);
+        return {
+            top: rects.top + w.pageYOffset,
+            left: rects.left + w.pageXOffset
+        }
+    },
+
     // 
     // region Element Creation / Removal
     // 
@@ -279,16 +287,19 @@ const
     ): void => {
         const evt = evtName.split('.')[0];
         const evtFn = (e: Event) => {
+            
+            const data = e['___cdata'] || [];
+
             if (delegateEl && baseEl instanceof HTMLElement) {
                 
                 const delegateElems = isStr(delegateEl) ? find(delegateEl, baseEl) : delegateEl;
                 // if isTrusted then its a native click
-                const elTarget = e.isTrusted ? e.target : (e['__synthTarget'] ?? e.target);
-                const delegateElem = getDelegatedElem(baseEl, delegateElems, elTarget);
-                
-                if (delegateElem) fn(e, delegateElem);
+                const elTarget = e.isTrusted ? e.target : (e['___synthTarget'] ?? e.target);
+                // const delegateElem = getDelegatedElem(baseEl, delegateElems, elTarget);
+                const delegateElem = delegateElems.find(elem => elem === elTarget || elem.contains(elTarget));
+                if (delegateElem) fn(e, delegateElem, ...data);
             } else {
-                fn(e, baseEl);
+                fn(e, baseEl, ...data);
             }
         };
 
@@ -322,26 +333,42 @@ const
         target: HTMLElement | Window | Document = body,
         evtName: string,
         delegateEl: string = null,
+        data: any[] = [],
         config: boolean | AddEventListenerOptions = false
     ) => {
+        evtName = evtName.trim();
         const delegateEls = delegateEl ? find(delegateEl, target instanceof Window ? body : target) : null; 
+        
         if (delegateEls && delegateEls.length === 0) return;
         
+        const 
+            elTarget = delegateEls ? delegateEls[0] : target,
+            [evt, nameSpace = ''] = evtName.split('.'),
+            evtIsSynthetic = /^\[.+\]$/.test(evtName),
+            elEvt = new Event(evtIsSynthetic ? evtName : evt)
+        ;
 
-        const [evt, nameSpace = ''] = evtName.split('.');
-        if (nameSpace && eventFnCache.has(target)) {
-            const fn = eventFnCache.get(target).get(evtName);
+        if (data.length) oa(elEvt, {___cdata: data});  
+        
+        if (nameSpace || evtIsSynthetic) {
+
+            const cache = eventFnCache.get(target);
+            if (!cache) return;
+
+            const fn = cache.get(evtName);
+            oa(elEvt, {___synthTarget: elTarget });
+
             if (fn) {
-                const evt = new Event(evtName);
-                oa(evt, {__synthTarget: delegateEls[0]});
-                target.addEventListener(evtName, fn, config);
-                target.dispatchEvent(evt);
-                target.removeEventListener(evtName, fn, config)
+                if (evtIsSynthetic) {
+                 
+                    target.addEventListener(evtName, fn , config);
+                    target.dispatchEvent(elEvt);
+                    target.removeEventListener(evtName, fn, config);
+
+                } else fn(elEvt, elTarget);
             }
             
-        } else {
-            target.dispatchEvent(new Event(evtName));
-        }
+        } else target.dispatchEvent(elEvt);
     },
 
     // 
@@ -349,7 +376,7 @@ const
     // 
     useTransition = () => {
         let inTransition = false;
-        let tto: ReturnType<typeof window.setTimeout> = null;
+        let tto: ReturnType<typeof w.setTimeout> = null;
         let currEndTransitionFn = () => {};
     
         return (
@@ -447,35 +474,6 @@ const getTagAttrs = (attrList: string[]) => {
     return attrs;
 }
 
- 
-
-const getDelegatedElem = (
-    baseElem: HTMLElement, 
-    delegateElems: HTMLElement[] | null, 
-    evtTarget: HTMLElement
-): HTMLElement => {
-    let i = 0, rootEl = null;
-   
-    while (rootEl = delegateElems[i++] as HTMLElement) {
-         
-        if (evtTarget === rootEl) return rootEl;
-        let currentElement = evtTarget.parentElement;
-        
-        while (currentElement) {
-            if (currentElement === rootEl) return rootEl;
-            if (baseElem === currentElement) {
-                currentElement = null;
-                continue;
-            }
-        
-            currentElement = currentElement.parentElement;
-        }
-    }
-    // }
-
-    return null;
-}
-
 const BaseStatic = {
     CSS_ACTION_STATES,
     addClass,
@@ -499,6 +497,7 @@ const BaseStatic = {
     siblings,
     toType,
     elemRects,
+    offset,
     off,
     on,
     trigger,

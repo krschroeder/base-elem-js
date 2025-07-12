@@ -3,7 +3,7 @@ export type AppendMethod = 'append' | 'prepend' | 'after' | 'before';
 // export type NearMethod = 'closest' | 'next' | 'prev' | 'parent';
 export type ClassOrId = '#' | '.';
 export type SelectorElem = HTMLElement | Document | Window;
-export type EventFn = <T extends HTMLElement>(ev: any, elem?: SelectorElem | T) => void;
+export type EventFn = <T extends HTMLElement>(ev: any, elem?: SelectorElem | T, ...args: any[]) => void;
 export type MapFn = <T extends HTMLElement>(elem: HTMLElement, i: number) => T | HTMLElement;
 export type FilterFn = (elem: HTMLElement, i: number) => boolean;
 export type SelectorElems = [Window | Document | HTMLElement] | HTMLElement[];
