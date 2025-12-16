@@ -156,9 +156,30 @@ console.log($be.BaseElem, $be)
 $be(div).insert('<p>Some more copy</p>', 'before');
 $be(div).insert('<p>Copy Prepended</p>', 'prepend');
 
-console.log('div offset:',$div.elem[0]);
+console.log('div offset:',$div.offset());
 
 const $untilElem = $be('.until-elem');
 const $liAncestors = $be('.start-elem').parents('li', $untilElem).css({background: '#ccc'});
 $liAncestors.get(0).css({background: '#060'});
 console.log('Until Elem', $liAncestors); 
+
+
+// Counter
+let animateCount = 10;
+
+const $counter = $be($be.make('div.counter','Countdown: ' + animateCount)).css({fontSize: '24px', marginTop: '20px'});
+
+$be(document.body).insert($counter);
+
+$be.animateByFrame((cancel) => {
+     
+    $counter.text(`Countdown: ${animateCount}`);
+    
+    if (animateCount <= 0) {
+        $counter.css({color: 'red'}).insert($be.make('p','Done!')).css({fontWeight: 'bold'});
+        cancel();
+    }
+
+
+    animateCount--;
+}, 1);

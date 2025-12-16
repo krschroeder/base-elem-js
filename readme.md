@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __7kb__ which is about __92%__ smaller than jQuery 3.7.1! 
+`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __7.382kb__ which is about __92%__ smaller than jQuery 3.7.1! 
 
 ## Usage
 To use the `base-elem-js` utility, you need to import it as follows:
@@ -21,7 +21,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@2.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@2.3.0"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->
@@ -892,3 +892,91 @@ When the returned function is called:
 - It sets a timeout to call the provided endFn after the specified duration, marking the transition as complete.
 
 This ensures that transitions are properly managed and do not overlap.
+
+### animateByFrame
+The `animateByFrame` function is a utility for creating frame-based animations with customizable frame rates. It provides a way to run animation logic at a specified frames per second (FPS) while optimizing performance using `requestAnimationFrame`.
+
+```typescript
+$be.animateByFrame(fn: CancelAnimateFn, fps: number = 60): () => void
+```
+
+#### Parameters
+
+1. **`fn`** *(CancelAnimateFn)*:  
+   A callback function that contains the animation logic. This function receives a `cancelAnimation` function as its parameter, which can be called to stop the animation.
+   
+2. **`fps`** *(number, optional)*:  
+   The target frames per second for the animation. Defaults to `60`.
+
+#### Returns
+
+**`() => void`**: A function that when called, cancels the animation by stopping the `requestAnimationFrame` loop.
+
+#### Behavior
+
+The function uses `requestAnimationFrame` to create a smooth animation loop while throttling the frame rate to the specified FPS. This is useful when you need precise control over animation timing or want to reduce CPU usage by running animations at lower frame rates.
+
+1. The animation function (`fn`) is called immediately once.
+2. A recursive `requestAnimationFrame` loop is initiated.
+3. On each frame, the elapsed time is checked against the target frame duration.
+4. The animation function is only called when enough time has passed to match the target FPS.
+5. The loop continues until the returned cancel function is called.
+
+#### Examples
+
+```typescript
+import $be from 'base-elem-js';
+
+// Example 1: Create a simple animation at 30 FPS
+const element = $be.findOne('.animated-element');
+let position = 0;
+
+const cancelAnimation = $be.animateByFrame((cancel) => {
+    position += 2;
+    element.style.left = position + 'px';
+    
+    // Stop animation when position reaches 500
+    if (position >= 500) {
+        cancel();
+    }
+}, 30);
+
+// Example 2: Animation with manual cancellation
+let rotation = 0;
+const spinElement = $be.findOne('.spinner');
+
+const stopSpin = $be.animateByFrame((cancel) => {
+    rotation += 5;
+    spinElement.style.transform = `rotate(${rotation}deg)`;
+}, 60);
+
+// Stop the animation after 3 seconds
+setTimeout(() => {
+    stopSpin();
+    console.log('Animation stopped');
+}, 3000);
+
+// Example 3: Counter animation at 10 FPS
+const counter = $be.findOne('.counter');
+let count = 0;
+
+const stopCounter = $be.animateByFrame((cancel) => {
+    count++;
+    counter.textContent = count;
+    
+    if (count >= 100) {
+        cancel();
+    }
+}, 10); // Lower FPS for slower counting
+```
+
+#### Notes
+
+- The function optimizes performance by only executing the animation callback when the target frame time has elapsed.
+- FPS is clamped between 1-60 frames.
+- Lower FPS values (e.g., 10-30) can reduce CPU usage for animations that don't require high frame rates.
+- The animation function receives a `cancel` parameter that should be called when you want to stop the animation from within the callback.
+- You can also cancel the animation from outside by calling the returned function.
+- Excess time from frame calculations is carried over to prevent frame drift.
+
+

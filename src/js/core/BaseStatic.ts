@@ -8,7 +8,8 @@
     CSSActionStates,
     CSSActionStatesObj,
     CSSProperties,
-    SelectorElem
+    SelectorElem,
+    CancelAnimateFn
 } from '../types';
 
 import { af, body, root, d, isArr, isStr, oa, w } from './helpers';
@@ -441,6 +442,33 @@ const
             cssState
         ];
     },
+
+    animateByFrame = (fn: CancelAnimateFn, fps: number = 60): () => void => {
+        fps = Math.min(Math.max(1, fps), 60); // clamp fps between 1 and 60
+        let requestAnimate: number = null;
+        let msPrev = performance.now();
+        const msPerFrame = 1000 / fps;
+
+        const cancelAnimation = () => cancelAnimationFrame(requestAnimate);
+        const refresh = (msNow: number) => {
+            requestAnimate = window.requestAnimationFrame(refresh);
+            const msPassed = msNow - msPrev;
+            if (msPassed < msPerFrame) return;
+            const excessTime = msPassed % msPerFrame;
+            msPrev = msNow - excessTime;
+
+            fn(cancelAnimation);
+        };
+
+        // Initial call
+        fn(cancelAnimation);
+
+        refresh(msPrev);
+
+        return cancelAnimation;
+    },
+
+    // region visibility
     isVisible = (el: HTMLElement): boolean => {
         const vis = 
             el.offsetParent !== null ||
@@ -505,6 +533,7 @@ const BaseStatic = {
     tgClass,
     useTransition,
     useCssAnimate,
+    animateByFrame,
     //utils
     af, isArr, isStr, oa
 };

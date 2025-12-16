@@ -34,6 +34,8 @@ export interface CSSActionStates {
     ending: string;
 }
 
+export type CancelAnimateFn = (cancel: () => void) => void;
+
 export interface BaseElemStatic {
     // Constants
     CSS_ACTION_STATES: CSSActionStatesObj;
@@ -119,6 +121,7 @@ export interface BaseElemStatic {
         (start: boolean, duration?: number, endFn?: () => void) => void,
         CSSActionStates
     ];
+    animateByFrame: (fn: CancelAnimateFn, fps: number) => () => void;
     
     // Utility functions
     af: <T>(list: any) => T[];
