@@ -1,6 +1,133 @@
 # Base Elem Js
 
-`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __7.382kb__ which is about __92%__ smaller than jQuery 3.7.1! 
+`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __7.382kb__ which is about __92%__ smaller than jQuery 3.7.1!
+
+## Method Reference
+
+### BaseElem Instance Methods (`$be()`)
+
+#### DOM Querying & Traversal
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`find(selector, filter?)`](#be-find) | Find elements within current selection via querySelectorAll | `BaseElem` |
+| [`findBy(type, selector, filter?)`](#be-findby) | Find elements by type (id, class, tag) | `BaseElem` |
+| [`findOne(selector)`](#be-findone) | Find first matching element | `BaseElem` |
+| [`filter(fn)`](#be-filter) | Filter elements based on callback function | `BaseElem` |
+| [`parents(selector, untilElem?)`](#be-parents) | Get all ancestor elements matching selector | `BaseElem` |
+| [`siblings(selector?, includeKeyEl?, index?)`](#be-siblings) | Get sibling elements | `BaseElem` |
+| [`next(selector?)`](#be-next) | Get next sibling element | `BaseElem` |
+| [`prev(selector?)`](#be-prev) | Get previous sibling element | `BaseElem` |
+| [`get(index)`](#be-get) | Get element at specific index | `BaseElem` |
+
+#### Array & Iteration
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`toArray()`](#be-toarray) | Convert elements to array | `HTMLElement[]` |
+| [`map(fn, unique?)`](#be-map) | Map over elements with callback | `(HTMLElement \| T)[]` |
+| [`each(fn)`](#be-each) | Iterate over each element | `BaseElem` |
+| [`hasEls`](#be-hasels) | Check if collection has elements (getter) | `boolean` |
+| [`size`](#be-size) | Get number of elements (getter) | `number` |
+
+#### CSS & Styling
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`addClass(cssNames)`](#be-addclass) | Add CSS class(es) | `BaseElem` |
+| [`rmClass(cssNames)`](#be-rmclass) | Remove CSS class(es) | `BaseElem` |
+| [`tgClass(cssNames, toggle?)`](#be-tgclass) | Toggle CSS class(es) | `BaseElem` |
+| [`hasClass(cssNames, method?)`](#be-hasclass) | Check if has CSS class(es) | `boolean` |
+| [`css(attrs)`](#be-css) | Get/set CSS properties | `BaseElem \| string` |
+
+#### Attributes & Properties
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`attr(attrs)`](#be-attr) | Get/set element attributes | `BaseElem \| string` |
+| [`elemRects(index?)`](#be-elemrects) | Get element bounding rectangle | `DOMRect \| undefined` |
+| [`offset(index?)`](#be-offset) | Get element offset relative to document | `{top, left} \| undefined` |
+
+#### DOM Manipulation
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`empty()`](#be-empty) | Remove all child nodes | `BaseElem` |
+| [`remove()`](#be-remove) | Remove elements from DOM | `BaseElem` |
+| [`insert(html, method?)`](#be-insert) | Insert HTML/elements (append, prepend, after, before) | `BaseElem` |
+| [`html(html?)`](#be-html) | Get/set inner HTML | `BaseElem \| string` |
+| [`text(text?)`](#be-text) | Get/set text content | `BaseElem \| string` |
+
+#### Event Handling
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`on(evtName, fn, delegateEl?, config?)`](#be-on) | Add event listener(s) | `BaseElem` |
+| [`off(evtName, config?)`](#be-off) | Remove event listener(s) | `BaseElem` |
+| [`trigger(evtName, delegateEl?, data?)`](#be-trigger) | Trigger event | `BaseElem` |
+
+### Static Methods (`$be.methodName()`)
+
+#### DOM Querying & Selection
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`find(selector, base?)`](#static-find) | Find elements via querySelectorAll | `HTMLElement[]` |
+| [`findBy(type, selector, base?)`](#static-findby) | Find elements by type (id, class, tag) | `HTMLElement \| HTMLElement[] \| null` |
+| [`findOne(selector, base?)`](#static-findone) | Find first matching element | `HTMLElement` |
+| [`map(elems, fn, unique?)`](#static-map) | Map over elements with callback | `(HTMLElement \| T)[]` |
+| [`parents(elem, selector, untilElem?)`](#static-parents) | Get ancestor elements | `HTMLElement[]` |
+| [`siblings(elem, selector?, includeKeyEl?)`](#static-siblings) | Get sibling elements | `HTMLElement[]` |
+| [`next(elem, selector?)`](#static-next) | Get next sibling | `HTMLElement` |
+| [`prev(elem, selector?)`](#static-prev) | Get previous sibling | `HTMLElement` |
+
+#### CSS & Styling
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`addClass(elem, cssNames)`](#static-addclass) | Add CSS class(es) to element | `void` |
+| [`rmClass(elem, cssNames)`](#static-rmclass) | Remove CSS class(es) from element | `void` |
+| [`tgClass(elem, cssNames, toggle?)`](#static-tgclass) | Toggle CSS class(es) on element | `void` |
+| [`hasClass(elem, cssNames)`](#static-hasclass) | Check if element has CSS class(es) | `boolean` |
+| `css(elem, attrs)` | Get/set CSS properties | `string \| void` |
+| `cssActionStates(nameSpace, baseObj?)` | Generate CSS action state class names | `CSSActionStatesObj` |
+| `CSS_ACTION_STATES` | Frozen object with default action states | `CSSActionStatesObj` |
+
+#### Attributes & Properties
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`attr(elem, attrs)`](#static-attr) | Get/set element attributes | `string \| void` |
+| [`elemRects(elem)`](#static-elemrects) | Get element bounding rectangle | `DOMRect` |
+| [`offset(elem)`](#static-offset) | Get element offset relative to document | `{top, left}` |
+
+#### Element Creation & Manipulation
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`make(selector, propsOrHtml?, html?)`](#static-make) | Create new HTML element with properties | `HTMLElement` |
+| [`htmlParse(htmlStr)`](#static-htmlparse) | Parse HTML string to ChildNode array | `ChildNode[]` |
+| [`empty(elem)`](#static-empty) | Remove all child nodes from element | `void` |
+
+#### Visibility
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`isVisible(elem)`](#static-isvisible) | Check if element is visible | `boolean` |
+| [`isHidden(elem)`](#static-ishidden) | Check if element is hidden | `boolean` |
+
+#### Event Handling
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`on(baseEl, evtName, fn, delegateEl?, config?)`](#static-on) | Add event listener | `void` |
+| [`off(target, evtName, config?)`](#static-off) | Remove event listener | `void` |
+| [`trigger(target, evtName, delegateEl?, data?, config?)`](#static-trigger) | Trigger event | `void` |
+
+#### Animation & Transitions
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`useTransition()`](#static-usetransition) | Create transition manager | `(startFn, endFn, duration?) => void` |
+| [`useCssAnimate(elems, baseCss?)`](#static-usecssanimate) | Create CSS animation handler | `[animateFn, cssState]` |
+| [`animateByFrame(fn, fps?)`](#static-animatebyframe) | Create frame-based animation | `() => void` |
+
+#### Utilities
+| Method | Description | Returns |
+|--------|-------------|---------|
+| [`toType(object)`](#static-totype) | Get accurate type of object | `string` |
+| [`merge(configOrTarget, ...objects)`](#static-merge) | Merge objects with options | `GenericObj` |
+| [`af`](#static-af) | Shortcut for Array.from | `typeof Array.from` |
+| [`isStr`](#static-isstr) | Check if value is string | `boolean` |
+| [`isArr`](#static-isarr) | Shortcut for Array.isArray | `typeof Array.isArray` |
+| [`oa`](#static-oa) | Shortcut for Object.assign | `typeof Object.assign` | 
 
 ## Usage
 To use the `base-elem-js` utility, you need to import it as follows:
@@ -60,7 +187,7 @@ const $arrayElem = $be(lis);
 const emptyElem = $be();
 
 ```
-### find
+### <a id="be-find"></a>find
 
 Finds elements via `querySelectorAll` within the current `BaseElem` instance and returns a new one based on the new selection.
 
@@ -84,7 +211,7 @@ $be('li:first-child').find(el => el.nextElementSibling as HTMLLIElement);
 
 ```
 
-### findBy
+### <a id="be-findby"></a>findBy
 Finds elements by type (id, class, or tag) within the current elements and returns a new BaseElem instance. Choosing the type will select elements by `getElementById`, `getElementsByClassName` and `getElementsByTagName` underneath the hood.
 
 ```typescript
@@ -108,42 +235,42 @@ $siteHeader.findBy('class', 'container');
 
 ```
 
-### findOne
+### <a id="be-findone"></a>findOne
 Finds the first element matching the selector within the current elements and returns a new BaseElem instance.
 
 ```typescript
 findOne(selector: string): BaseElem
 ```
 
-### filter
+### <a id="be-filter"></a>filter
 Finds elements based on the filtering function within the current elements and returns a new BaseElem instance.
 
 ```typescript
 filter(fn: (elem: HTMLElement, i: number) => boolean): BaseElem
 ```
 
-### toArray
+### <a id="be-toarray"></a>toArray
 Returns a copy of the array of elements from the instance.
 
 ```typescript
 toArray(): HTMLElement[]
 ```
 
-### each
+### <a id="be-each"></a>each
 Iterates over each element and applies the provided function.
 
 ```typescript
 each(fn: (elem: HTMLElement, i: number) => void): BaseElem
 ```
 
-### get
+### <a id="be-get"></a>get
 Gets an exact element in the collection of elements.
 
 ```typescript
 get(i: number): BaseElem
 ```
 
-### map
+### <a id="be-map"></a>map
 The map method returns an array of the results of using the callback function to each element. Optionally, it can ensure that the results are unique. This is designed to primarily return elements, so by default it filters out 'falsy' values. If you need to filter an attribute or derive some value querying the elements, use the Array map method instead.
 
 ```typescript
@@ -160,7 +287,7 @@ const liNexts = $be('li').map(el => el.nextElementSibling as HTMLElement);
 ```
 
 
-### parents
+### <a id="be-parents"></a>parents
 The `parents` method retrieves all ancestor elements of the current elements that match a given CSS selector. The top-most element is stored first.
 
 ```typescript
@@ -192,7 +319,7 @@ $mainNav.on('keydown.mainNav', 'a', (elem, e) => {
 });
 ```
 
-### siblings
+### <a id="be-siblings"></a>siblings
 
 The `siblings` method retrieves the sibling elements of a specific element in the current `BaseElem` instance. Optionally, it can filter the siblings by a CSS selector, include the reference element itself, and specify which element in the collection to use as the reference.
 
@@ -214,7 +341,7 @@ const $siblingsIncludingKeyEl = $li.siblings('li', true);// include the siblings
 ```
 
 
-### prev
+### <a id="be-prev"></a>prev
 The `prev` method retrieves the `previousElementSibling`, or if passing in a selector it can find the previous sibling that matches that criteria. If there is not a match available, the method will simply return the same element.
 
 ```typescript
@@ -223,7 +350,7 @@ const $prevLi = $li.prev('li'); // or just $li.prev()
 
 ```
 
-### next
+### <a id="be-next"></a>next
 The `next` does the same as the `prev` method, except of course it retrieves the `nextElementSibling`. It also behaves the same as the `prev` method if there is no match or next sibling.
 
 ```typescript
@@ -232,7 +359,7 @@ const $nextLi = $li.next('li'); // or just $li.next()
 
 ```
 
-### css
+### <a id="be-css"></a>css
 Sets or gets CSS properties for the current elements. If only passing a string, will return the property value.
 
 ```typescript
@@ -248,21 +375,21 @@ $h1.css('color'); //returns the color 'green'
 
 ```
 
-### addClass
+### <a id="be-addclass"></a>addClass
 Adds the specified class(es) to the current elements.
 
 ```typescript
 addClass(cssNames: string | string[]): BaseElem
 ```
 
-### rmClass
+### <a id="be-rmclass"></a>rmClass
 Removes the specified class(es) from the current elements.
 
 ```typescript
 rmClass(cssNames: string | string[]): BaseElem
 ```
 
-### tgClass
+### <a id="be-tgclass"></a>tgClass
 Toggles the specified class(es) on the current elements.
 
 ```typescript
@@ -270,35 +397,35 @@ tgClass(cssNames: string | string[], toggle?: boolean): BaseElem
 ```
 
 
-### hasClass
+### <a id="be-hasclass"></a>hasClass
 Checks if the current elements have the specified class(es).
 
 ```typescript
 hasClass(cssNames: string | string[], method: 'some' | 'every' = 'some'): boolean
 ```
 
-### attr
+### <a id="be-attr"></a>attr
 Sets or gets attributes for the current elements.
 
 ```typescript
 attr(attrs: Record<string, string> | string): BaseElem
 ```
 
-### elemRects
+### <a id="be-elemrects"></a>elemRects
 Small wrapper over `elem.getBoundingClientRect()` that returns the proportions and positioning the first element if an index is not specified. Will return `undefined` if the index passed in is out of bounds of the `elem` array on the `BaseElem` object.
 
 ```typescript
 elemRects(index: number = 0): DOMRect;
 ```
 
-### offset
+### <a id="be-offset"></a>offset
 Retrieves the `top` and `left` values of an element relative to the document.
 
 ```typescript
 offset(index: number = 0): {top: number, left: number};
 ```
 
-### hasEls
+### <a id="be-hasels"></a>hasEls
 Slightly easier way than determining if there are results than `$queryResult.elems.length`.
 
 ```typescript
@@ -315,7 +442,7 @@ if ($hashLinks.hasEls) {
 
 ```
 
-### size
+### <a id="be-size"></a>size
 A slightly easier way to get the length of the elements rather than `$beQuery.elems.length`
 
 #### Example
@@ -325,21 +452,21 @@ $be('li').size
 ```
 
 
-### empty
+### <a id="be-empty"></a>empty
 Empties the content of the current elements.
 
 ```typescript
 empty(): BaseElem
 ```
 
-### remove
+### <a id="be-remove"></a>remove
 Removes the current elements from the DOM.
 
 ```typescript
 remove(): BaseElem
 ```
 
-### insert
+### <a id="be-insert"></a>insert
 Inserts HTML or elements into the current elements using the specified method (append, prepend, after, before).
 
 ```typescript
@@ -356,7 +483,7 @@ $body.insert('<p>Copy Prepended</p>', 'prepend');
 
 ```
 
-### html
+### <a id="be-html"></a>html
 Sets the inner HTML of the current elements. Left blank it will return the innerHTML.
 
 ```typescript
@@ -369,14 +496,14 @@ $h1.html('<em>Light Weight Babbbbay</em>!');
 
 ```
 
-### text
+### <a id="be-text"></a>text
 Sets the inner text of the current elements. Left blank it will return the textContent.
 
 ```typescript
 text(text?: string): BaseElem | string;
 ```
 
-### on
+### <a id="be-on"></a>on
 
 Adds an event listener to the current elements. It's recommended to namespace the events with a '.', for example `click.myClickName`. This method is not designed to keep track of multiple events of the same name, so namespacing is important if you seek to potentially remove an event. Pass in an array or single value for the `evtName` parameter. For a __synthetic event__ pass it in `[]`, so `[syntheticEventName]`, this is essentially for the best Typescript support (otherwise string would invalidate the type checking of the event name).
 
@@ -413,7 +540,7 @@ $div.on('[syntheticEventName]', (ev, elem) => {
 
 ```
 
-### off
+### <a id="be-off"></a>off
 Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name. Can also pass in an array of strings for the `evtName` param.
 
 ```typescript
@@ -430,7 +557,7 @@ $div.off(['mousemove.myMoveName', 'click.myClickName']);
 ```
 
 
-### trigger
+### <a id="be-trigger"></a>trigger
 Triggers native events as well as synthetic events. Can also trigger namespaced events such as `click.myClickName`. 
 
 ```typescript
@@ -453,7 +580,7 @@ $be.BaseElem.prototype.superbPlugin = superbPlugin();
 
 ## Base Elem Static
 
-### make
+### <a id="static-make"></a>make
 Creates a new HTML element with the specified tag, attributes, and inner HTML content.
 
 ```typescript
@@ -471,7 +598,7 @@ document.body.append(div);
 
 ```
 
-### isHidden
+### <a id="static-ishidden"></a>isHidden
 Checks if the specified element is hidden (i.e., has display: none or visibility: hidden).
 
 ```typescript
@@ -479,27 +606,27 @@ $be.isHidden(elem: HTMLElement): boolean
 ```
 
 
-### isVisible
+### <a id="static-isvisible"></a>isVisible
 Checks if the specified element is visible (i.e., does not have display: none or visibility: hidden).
 
 ```typescript
 $be.isVisible(elem: HTMLElement): boolean
 ```
 
-### elemRects
+### <a id="static-elemrects"></a>elemRects
 Small wrapper over `elem.getBoundingClientRect()` that returns the proportions and positioning of an element.
 
 ```typescript
 $be.elemRects(elem: HTMLElement): DOMRect;
 ```
 
-### offset
+### <a id="static-offset"></a>offset
 Retrieves the `top` and `left` values of an element relative to the document.
 
 ```typescript
 $be.offset(elem: HTMLElement): {top: number, left: number};
 ```
-### find
+### <a id="static-find"></a>find
 Finds elements matching the selector within the specified base element.
 
 ```typescript
@@ -507,7 +634,7 @@ $be.find(selector: string, base: HTMLElement = document): HTMLElement[]
 ```
 
 
-### findBy
+### <a id="static-findby"></a>findBy
 Finds elements by type (id, class, or tag) within the specified base element.
 
 ```typescript
@@ -515,14 +642,14 @@ $be.findBy(type: FindBy, selector: string, base: HTMLElement = document): HTMLEl
 ```
 
 
-### findOne
+### <a id="static-findone"></a>findOne
 Finds the first element matching the selector within the specified base element.
 
 ```typescript
 $be.findOne(selector: string, base: HTMLElement = document): HTMLElement
 ```
 
-### map
+### <a id="static-map"></a>map
 The `map` function iterates over an array of HTML elements, applies a callback function to each element, and returns a new array containing the results. Optionally, it can ensure that the results are unique. The map function in this context is meant for DOM elements.
 
 ```typescript
@@ -545,7 +672,7 @@ const uls = $be.map(lis, (el) => el.closest('ul'));
 console.log(uls);// list of all the containing <ul> elements
 ```
 
-### parents
+### <a id="static-parents"></a>parents
 Returns all the ancestor element of the target element.
 
 ```typescript
@@ -554,7 +681,7 @@ $be.parents(elem: HTMLElement, selector: string, untilElem?: HTMLElement | strin
 
 
 
-### siblings
+### <a id="static-siblings"></a>siblings
 The `siblings` function retrieves all sibling elements of a given element. Optionally, it can filter the siblings by a CSS selector and include the original element in the results.
 
 ```typescript
@@ -584,7 +711,7 @@ console.log(siblingsWithKeyEl); // [<div>, <span>, <p>, <.my-element>, ...]
 ```
 
 
-### prev
+### <a id="static-prev"></a>prev
 The `prev` function retrieves the `previousElementSibling`, or if passing in a selector it can find the previous sibling that matches that criteria. If there is not a match available, the function will simply return the same element.
 
 ```typescript
@@ -593,7 +720,7 @@ const prevLi = $be.prev(lastLi,'li'); // or just $be.prev(lastLi) to get previou
 
 ```
 
-### next
+### <a id="static-next"></a>next
 The `next` does the same as the `prev` function, but retrieves the `nextElementSibling`. It also behaves the same if there is no match or next sibling.
 
 ```typescript
@@ -601,7 +728,7 @@ const firstLi = $be.findOne('li');
 const $nextLi = $be.next(firstLi, 'li'); // or just $be.next(firstLi)
 ```
 
-### addClass
+### <a id="static-addclass"></a>addClass
 Adds the specified class(es) to the element.
 
 ```typescript
@@ -618,35 +745,35 @@ $be.addClass(div, ['new-class', 'another']);
 
 ```
 
-### rmClass
+### <a id="static-rmclass"></a>rmClass
 Removes the specified class(es) from the element.
 
 ```typescript
 $be.rmClass(elem: HTMLElement, cssNames: string | string[]): void
 ```
 
-### tgClass
+### <a id="static-tgclass"></a>tgClass
 Toggles the specified class(es) on the element.
 
 ```typescript
 $be.tgClass(elem: HTMLElement, cssNames: string | string[], toggle?: boolean): void
 ```
 
-### hasClass
+### <a id="static-hasclass"></a>hasClass
 Checks if the element has the specified class(es).
 
 ```typescript
 $be.hasClass(elem: HTMLElement, cssNames: string | string[], method: 'some' | 'every' = 'some'): boolean
 ```
 
-### attr
+### <a id="static-attr"></a>attr
 Sets or gets attributes for the element.
 
 ```typescript
 $be.attr(elem: HTMLElement, attrs: Record<string, string> | string): void
 ```
 
-### empty
+### <a id="static-empty"></a>empty
 Empties the content of the element.
 
 ```typescript
@@ -675,7 +802,7 @@ $be.text(elem: HTMLElement, text: string): void
 ```
 
 
-### htmlParse
+### <a id="static-htmlparse"></a>htmlParse
 
 The `htmlParse` function parses a string of HTML into an array of DOM `ChildNode` objects. It ensures that any `<script>` tags in the input are removed for security and non-executability.
 
@@ -697,7 +824,7 @@ const nodesWithScript = $be.htmlParse('<div>Content</div><script>alert("Hi");</s
 console.log(nodesWithScript); // [HTMLDivElement]
 ```
 
-### on
+### <a id="static-on"></a>on
 Adds an event listener to the current elements. Namespace the events with a '.', for example `click.myClickName`.
 
 ```typescript
@@ -711,14 +838,14 @@ $be.on(
 ```
 
 
-### off
+### <a id="static-off"></a>off
 Removes an event listener from the current elements. Pass in the same string value as the 'on' method. Namespace with '.', or `click.myClickName` as the function name.
 
 ```typescript
 $be.off(evtName: string, config: boolean | AddEventListenerOptions = false);
 ```
 
-### trigger
+### <a id="static-trigger"></a>trigger
 Trigger native, synthetic and namespaced navtive events.
 
 ```typescript
@@ -731,7 +858,7 @@ $be.trigger(
 );
 ```
 
-### merge
+### <a id="static-merge"></a>merge
 The `merge` function is a utility for combining multiple objects into a single target object. It supports options for deep merging, excluding null or falsy values.
 
 ```typescript
@@ -790,7 +917,7 @@ console.log(result); // { a: 1, b: 2 }
 
 ## Utils
 
-### toType
+### <a id="static-totype"></a>toType
 Fixes the `typeof` which isn't actually reliable in JS. Taken verbatim from [Angus Croll](https://goo.gl/pxwQGp) and is used internally in this project.
 
 ```typescript
@@ -808,22 +935,22 @@ $be.toType(null) // returns 'null' (instead of 'object')
 
 Few utility short-cuts used internally that are now available.
 
-### af
+### <a id="static-af"></a>af
 Short-cut for `Array.from`.
 
-### isStr
+### <a id="static-isstr"></a>isStr
 Short-cut function for `typeof someVar === 'string'`.
 
-### isArr
+### <a id="static-isarr"></a>isArr
 Short-cut for `Array.isArray`.
 
-### oa
+### <a id="static-oa"></a>oa
 Short-cut for `Object.assign`.
 
 ## Animate/Transition Static Methods
 This library includes a couple extra functions to help with transitions and simple animations.
 
-### useCssAnimate
+### <a id="static-usecssanimate"></a>useCssAnimate
 The `useCssAnimate` function is a utility for handling CSS animations on HTML elements. It provides a way to start and end CSS animations with a specified duration and optional callback function.
 
 
@@ -858,7 +985,7 @@ console.log(cssState.ending) // returns the name of the ending class
 console.log(cssState.active) // returns the name of the active class
 ```
 
-### useTransition
+### <a id="static-usetransition"></a>useTransition
 The `useTransition` function is a utility for managing transitions. It provides a way to handle the start and end of transitions with a specified duration.
 
 #### Returns
@@ -893,7 +1020,7 @@ When the returned function is called:
 
 This ensures that transitions are properly managed and do not overlap.
 
-### animateByFrame
+### <a id="static-animatebyframe"></a>animateByFrame
 The `animateByFrame` function is a utility for creating frame-based animations with customizable frame rates. It provides a way to run animation logic at a specified frames per second (FPS) while optimizing performance using `requestAnimationFrame`.
 
 ```typescript
