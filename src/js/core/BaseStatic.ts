@@ -207,17 +207,22 @@ const
     // 
     make = <T extends keyof HTMLElementTagNameMap>(
         selector: T | `${T}.${string}` | `${T}#${string}`, 
-        propsOrHtml: Partial<HTMLElementTagNameMap[T]> | string = {}, 
-        html?: string): HTMLElementTagNameMap[T] => {   
+        propsOrHtml: Partial<HTMLElementTagNameMap[T]> | string | HTMLElement | HTMLElement[] = {}, 
+        html?: string | HTMLElement | HTMLElement[]
+    ): HTMLElementTagNameMap[T] => {   
         const
             [tag, ...attrs] = selector.split(cssSplitRgx),
             baseAttrs   = getTagAttrs(attrs),
-            propsIsStr  = isStr(propsOrHtml),
-            elem        = oa(d.createElement(tag), oa(baseAttrs, propsIsStr ? {} : propsOrHtml)) as HTMLElementTagNameMap[T],
-            htmlToUse   = propsIsStr && !html ? propsOrHtml : (html ? html : '')
+            propsIsHtml = isArr(propsOrHtml) || propsOrHtml instanceof HTMLElement,
+            propsIsContent  = isStr(propsOrHtml) || propsIsHtml,
+            elem        = oa(d.createElement(tag), oa(baseAttrs, propsIsContent ? {} : propsOrHtml)) as HTMLElementTagNameMap[T],
+            htmlToUse   = propsIsContent && !html ? propsOrHtml : (html ? html : '')
         ;
  
-        if (htmlToUse) elem.append(...htmlParse(htmlToUse));
+        if (htmlToUse) elem.append(...(
+            isStr(htmlToUse) ? htmlParse(htmlToUse as string) : 
+            isArr(htmlToUse) ? htmlToUse : [htmlToUse as HTMLElement]
+        ));
     
         return elem;
     },

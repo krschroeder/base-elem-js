@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __7.382kb__ which is about __92%__ smaller than jQuery 3.7.1!
+`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __7.434kb__ which is about __92%__ smaller than jQuery 3.7.1!
 
 ## Method Reference
 
@@ -584,7 +584,11 @@ $be.BaseElem.prototype.superbPlugin = superbPlugin();
 Creates a new HTML element with the specified tag, attributes, and inner HTML content.
 
 ```typescript
-$be.make(tag: string, propsOrHTML?: Record<string, any> | string, html?: string): HTMLElement;
+$be.make(
+    tag: string, 
+    propsOrHTML?: Record<string, any> | string | HTMLElement | HTMLElement[], 
+    html?: string | HTMLElement | HTMLElement[]
+): HTMLElement;
 
 // Example
 const div = $be.make('div', { id: 'test', className: 'test' }, 
@@ -594,6 +598,8 @@ const div = $be.make('div', { id: 'test', className: 'test' },
 // or no props
 const div2 = $be.make('div.some-class-name#an-id-too', '<p>Some copy goes here!</p>');
 
+// or more html elements array
+const div3 = $be.make('div.a-cool-div',[$be.make('p','Some copy goes here')])
 document.body.append(div);
 
 ```

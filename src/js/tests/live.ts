@@ -169,8 +169,15 @@ let animateCount = 10;
 
 const $counter = $be($be.make('div.counter','Countdown: ' + animateCount)).css({fontSize: '24px', marginTop: '20px'});
 
-$be(document.body).insert($counter);
+$be(document.body).insert([
+    $counter,
+    $be.make('div.cool-class',{title: 'Animation description'},[
+        $be.make('p','Animation via requestAnimationFrame:'), 
+        $be.make('p','(cancels when countdown reaches 0)')
+    ])
+]);
 
+ 
 $be.animateByFrame((cancel) => {
      
     $counter.text(`Countdown: ${animateCount}`);
