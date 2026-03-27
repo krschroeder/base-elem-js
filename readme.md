@@ -1,6 +1,8 @@
 # Base Elem Js
 
-`base-elem-js` is a light-weight utility for DOM manipulation, including querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. This package takes advantage of many the modern features of JavaScript, which has evolved greatly over the years. The minified package comes in at __7.434kb__ which is about __92%__ smaller than jQuery 3.7.1!
+`base-elem-js` is small but powerful utility for DOM manipulation. It includes querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. The minified package comes in at __7.434kb__ which is about __92%__ smaller than jQuery 3.7.1! Your project will be larger without it!
+
+
 
 ## Method Reference
 
@@ -148,7 +150,7 @@ Or you can simply add to your project via a CDN.
 <script src="https://cdn.jsdelivr.net/npm/base-elem-js/dist/js/base-elem-js.js"></script>
 
 <!-- by version -->
-<script src="https://cdn.jsdelivr.net/npm/base-elem-js@2.3.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/base-elem-js@2.4.1"></script>
 ```
  
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/base-elem-js/badge)](https://www.jsdelivr.com/package/npm/base-elem-js) -->

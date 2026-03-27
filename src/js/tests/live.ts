@@ -162,7 +162,7 @@ const $untilElem = $be('.until-elem');
 const $liAncestors = $be('.start-elem').parents('li', $untilElem).css({background: '#ccc'});
 $liAncestors.get(0).css({background: '#060'});
 console.log('Until Elem', $liAncestors); 
-
+  
 
 // Counter
 let animateCount = 10;
@@ -171,7 +171,7 @@ const $counter = $be($be.make('div.counter','Countdown: ' + animateCount)).css({
 
 $be(document.body).insert([
     $counter,
-    $be.make('div.cool-class',{title: 'Animation description'},[
+    $be.make('div.cool-class',{title: 'Animation description', style:{color: 'green'}  },[
         $be.make('p','Animation via requestAnimationFrame:'), 
         $be.make('p','(cancels when countdown reaches 0)')
     ])

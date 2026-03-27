@@ -27,6 +27,11 @@ export type MergeOptions = boolean | 'deep' | 'noNull' | 'noFalsy';
 export interface CSSProperties extends CSSStyleDeclaration {
     [key: `--${string}`]: string | null;
 }
+
+export type MakeProps<T extends keyof HTMLElementTagNameMap> =
+    Partial<Omit<HTMLElementTagNameMap[T], 'style'>> & {
+        style?: Partial<CSSProperties>;
+    };
  
 export interface CSSActionStates {
     active: string;
@@ -65,7 +70,7 @@ export interface BaseElemStatic {
     // Element creation and parsing
     make: <T extends keyof HTMLElementTagNameMap>(
         selector: T | `${T}.${string}` | `${T}#${string}`, 
-        propsOrHtml?: Partial<HTMLElementTagNameMap[T]> | string | HTMLElement | HTMLElement[], 
+        propsOrHtml?: MakeProps<T> | string | HTMLElement | HTMLElement[], 
         html?: string | HTMLElement | HTMLElement[]
     ) => HTMLElementTagNameMap[T];
     htmlParse: (htmlStr: string) => ChildNode[];

@@ -5,6 +5,7 @@
     GenericObj,
     GetType,
     MergeOptions,
+    MakeProps,
     CSSActionStates,
     CSSActionStatesObj,
     CSSProperties,
@@ -207,7 +208,7 @@ const
     // 
     make = <T extends keyof HTMLElementTagNameMap>(
         selector: T | `${T}.${string}` | `${T}#${string}`, 
-        propsOrHtml: Partial<HTMLElementTagNameMap[T]> | string | HTMLElement | HTMLElement[] = {}, 
+        propsOrHtml: MakeProps<T> | string | HTMLElement | HTMLElement[] = {}, 
         html?: string | HTMLElement | HTMLElement[]
     ): HTMLElementTagNameMap[T] => {   
         const
@@ -215,9 +216,15 @@ const
             baseAttrs   = getTagAttrs(attrs),
             propsIsHtml = isArr(propsOrHtml) || propsOrHtml instanceof HTMLElement,
             propsIsContent  = isStr(propsOrHtml) || propsIsHtml,
-            elem        = oa(d.createElement(tag), oa(baseAttrs, propsIsContent ? {} : propsOrHtml)) as HTMLElementTagNameMap[T],
+            makeProps   = propsIsContent ? {} : propsOrHtml,
+            props       = oa(baseAttrs, makeProps),
+            elem        = oa(d.createElement(tag), props) as HTMLElementTagNameMap[T],
             htmlToUse   = propsIsContent && !html ? propsOrHtml : (html ? html : '')
         ;
+
+        if (!propsIsContent && propsOrHtml.style && toType(propsOrHtml.style) === 'object') {
+            css(elem, propsOrHtml.style);
+        }
  
         if (htmlToUse) elem.append(...(
             isStr(htmlToUse) ? htmlParse(htmlToUse as string) : 
