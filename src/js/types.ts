@@ -132,6 +132,7 @@ export interface BaseElemStatic {
     af: <T>(list: any) => T[];
     isArr: (val: any) => val is any[];
     isStr: (val: any) => val is string;
+    isObj: (val: any) => val is object;
     oa: <T extends Record<string, any>>(target: T, ...sources: Partial<T>[]) => T;
 }
 

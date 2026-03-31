@@ -171,7 +171,7 @@ const $counter = $be($be.make('div.counter','Countdown: ' + animateCount)).css({
 
 $be(document.body).insert([
     $counter,
-    $be.make('div.cool-class',{title: 'Animation description', style:{color: 'green'}  },[
+    $be.make('div.cool-class',{ title: 'Animation description', style: { fontStyle: 'italic', fontSize:'1.25em' }},[
         $be.make('p','Animation via requestAnimationFrame:'), 
         $be.make('p','(cancels when countdown reaches 0)')
     ])
@@ -186,7 +186,6 @@ $be.animateByFrame((cancel) => {
         $counter.css({color: 'red'}).insert($be.make('p','Done!')).css({fontWeight: 'bold'});
         cancel();
     }
-
-
+    
     animateCount--;
 }, 1);

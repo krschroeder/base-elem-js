@@ -3,7 +3,6 @@
     EventName,
     FindBy,
     GenericObj,
-    GetType,
     MergeOptions,
     MakeProps,
     CSSActionStates,
@@ -13,7 +12,7 @@
     CancelAnimateFn
 } from '../types';
 
-import { af, body, root, d, isArr, isStr, oa, w } from './helpers';
+import { af, body, root, d, isArr, isObj, isStr, oa, toType, w } from './helpers';
 
 
 type EventCache = Map<string,EventFn>;
@@ -217,14 +216,13 @@ const
             propsIsHtml = isArr(propsOrHtml) || propsOrHtml instanceof HTMLElement,
             propsIsContent  = isStr(propsOrHtml) || propsIsHtml,
             makeProps   = propsIsContent ? {} : propsOrHtml,
-            props       = oa(baseAttrs, makeProps),
-            elem        = oa(d.createElement(tag), props) as HTMLElementTagNameMap[T],
+            props       = oa(baseAttrs, makeProps) as MakeProps<T>,
+            { style }   = props,
+            elem        = oa(d.createElement(tag), props) as unknown as HTMLElementTagNameMap[T],
             htmlToUse   = propsIsContent && !html ? propsOrHtml : (html ? html : '')
         ;
 
-        if (!propsIsContent && propsOrHtml.style && toType(propsOrHtml.style) === 'object') {
-            css(elem, propsOrHtml.style);
-        }
+        if (style && isObj(style)) css(elem, style);
  
         if (htmlToUse) elem.append(...(
             isStr(htmlToUse) ? htmlParse(htmlToUse as string) : 
@@ -250,7 +248,6 @@ const
         }
     },
 
-    toType = (object: any): GetType => ({}).toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase(),
     
     merge = (configOrTarget: MergeOptions | MergeOptions[] | GenericObj, ...objects: GenericObj[]) => {
         const options: MergeOptions[] = 
@@ -271,7 +268,7 @@ const
         while (mergeObj = objects[i++]) {
             for (const key in mergeObj) {
                 const value = mergeObj[key];
-                if (deep && toType(value) === 'object') {
+                if (deep && isObj(value)) {
                     const targetObj = target[key] ? target[key] : target[key] = {};
                     merge(options, targetObj, value);
                 }
@@ -535,7 +532,6 @@ const BaseStatic = {
     parents,
     prev,
     siblings,
-    toType,
     elemRects,
     offset,
     off,
@@ -547,7 +543,7 @@ const BaseStatic = {
     useCssAnimate,
     animateByFrame,
     //utils
-    af, isArr, isStr, oa
+    af, isArr, isStr, isObj, oa, toType
 };
 
  
