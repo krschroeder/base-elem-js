@@ -252,7 +252,7 @@ class BaseElem {
     }
 
     insert(
-        html: string | HTMLElement | BaseElem | (BaseElem | HTMLElement)[], 
+        html: string | HTMLElement | BaseElem | (BaseElem | HTMLElement | Text)[], 
         method: AppendMethod = 'append'
     ): BaseElem {
         this.#iterate((elem: HTMLElement) => {
@@ -328,6 +328,6 @@ class BaseElem {
 // Helper
 // 
 
-const getElems = (el:HTMLElement | BaseElem) => el instanceof BaseElem ? el.elem : [el];
+const getElems = (el:HTMLElement | BaseElem | Text) => el instanceof BaseElem ? el.elem : [el];
 
 export default BaseElem;
