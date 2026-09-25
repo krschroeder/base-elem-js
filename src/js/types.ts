@@ -1,9 +1,12 @@
+import { BaseElem } from "./base-elem-js";
+
 export type FindBy = 'id' | 'class' | 'tag';
 export type AppendMethod = 'append' | 'prepend' | 'after' | 'before';
+export type InsertElem = string | Element | NodeList | Text | BaseElem | (BaseElem | Element | Text)[];
 // export type NearMethod = 'closest' | 'next' | 'prev' | 'parent';
 export type ClassOrId = '#' | '.';
 export type SelectorElem = HTMLElement | Document | Window;
-export type EventFn = <T extends HTMLElement>(ev: any, elem?: SelectorElem | T, ...args: any[]) => void;
+export type EventFn<T extends SelectorElem = SelectorElem> = (ev: any, elem?: T, ...args: any[]) => void;
 export type MapFn = <T extends HTMLElement>(elem: HTMLElement, i: number) => T | HTMLElement;
 export type FilterFn = (elem: HTMLElement, i: number) => boolean;
 export type SelectorElems = [Window | Document | HTMLElement] | HTMLElement[];
@@ -94,10 +97,10 @@ export interface BaseElemStatic {
     toType: (object: any) => GetType;
     
     // Event methods
-    on: (
-        baseEl: SelectorElem,
+    on: <T extends SelectorElem = SelectorElem>(
+        baseEl: T,
         evtName: EventName,
-        fn: EventFn,
+        fn: EventFn<T>,
         delegateEl?: string | HTMLElement[],
         config?: boolean | AddEventListenerOptions
     ) => void;

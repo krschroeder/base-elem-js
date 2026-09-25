@@ -920,7 +920,10 @@ const obj1 = { a: 1, b: 'B', c: 'C', d: "D" };
 const obj2 = { b: 2, c: null, d: '' };
 
 const result = $be.merge('noNull', obj1, obj2);
-console.log(result); // { a: 1, b: 2 }
+console.log(result); // { a: 1, b: 2, d: '' }
+
+const result2 = $be.merge('noFalsy', obj1, obj2);
+console.log(result2); // { a: 1, b: 2 }
 ```
 
 ## Utils

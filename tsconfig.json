@@ -2,8 +2,8 @@
     "include": ["src/js/**/*.ts"],
     // "exclude": ["src/js/tests.ts"],
     "compilerOptions": {
-        "module": "esnext",
-        "moduleResolution": "node",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "target": "esnext",
         "jsx": "preserve",
         "resolveJsonModule": true,

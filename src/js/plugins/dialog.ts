@@ -1,60 +1,64 @@
-import $be, { type AppendMethod } from "../base-elem-js";
+import type { AppendMethod, InsertElem } from "../types";
+import $be  from "../base-elem-js";
 
-
-const { make: el, useCssAnimate } = $be;
-
+type DialgShowType = 'show' | 'showModal';
 interface DialogConfig {
+    className?: string | null;
     animateDur: number;
     appendTo: HTMLElement;
     useWrap: boolean;
     appendMethod: AppendMethod;
     removeWithClose?: boolean;
+    closeBtnLabel: string;
 }
+
+const { make: el, useCssAnimate } = $be;
 
 const defaultDialogConfig: DialogConfig = {
     animateDur: 600,
-    appendTo: document.body,
-    useWrap: true,
     appendMethod: 'append',
-    removeWithClose: false
+    appendTo: document.body,
+    className: null,
+    closeBtnLabel: 'Close',
+    removeWithClose: false,
+    useWrap: true,
 }
 
 const dialog = (
-    className: string, 
-    html: HTMLElement | HTMLElement[] | string, 
+    html: InsertElem, 
     config: Partial<DialogConfig> = {}
 ) => {
 
     const 
         opts            = {...defaultDialogConfig, ...config},
-        dialogEl        = el(`dialog.dialog ${className}`),
-        dialogWrap      = el(`div.dialog-wrap dialog-wrap--${className}`),
-        dialogElInner   = el('div.dialog__inner'),
-        [ cssAnimate ]  = useCssAnimate([opts.appendTo, dialogEl, dialogWrap], 'dialog-'),
+        dialog          = el(`dialog.dialog${opts.className ? ' ' + opts.className : ''}`),
+        dialogWrap      = el(`div.dialog-wrap${opts.className ? ' dialog-wrap--' + opts.className : ''}`),
+        dialogContent   = el('div.dialog__content'),
+        [ cssAnimate ]  = useCssAnimate([opts.appendTo, dialog, dialogWrap], 'dialog-'),
         btnClose        = el('button', {
             className: 'dialog__btn-close', 
-            ariaLabel: 'Close'
+            ariaLabel: opts.closeBtnLabel
         }),
-        $dialog         = $be(dialogEl),
-        $dialogInner    = $be(dialogElInner),
+        $dialog         = $be(dialog),
+        $dialogContent  = $be(dialogContent),
         $btnClose       = $be(btnClose),
-        dialogAppendEl  = opts.useWrap ? dialogWrap : dialogEl
+        dialogAppendEl  = opts.useWrap ? dialogWrap : dialog
     ;
 
     if (opts.useWrap) {
-        dialogWrap.append(dialogEl);
+        dialogWrap.append(dialog);
     }
 
-    $dialogInner.insert(btnClose).insert(html);
+    $dialogContent.insert(btnClose).insert(html);
     $dialog
-        .addClass(className)
-        .css({'--dialog-tg-dur': opts.animateDur + 'ms'})
-        .insert(dialogElInner)
+        .addClass(opts.className)
+        .css({'--dialog-dur': opts.animateDur + 'ms'})
+        .insert(dialogContent)
     ;
 
     const closeEvt = () => {
         cssAnimate(false,opts.animateDur,() => {
-            dialogEl.close();
+            dialog.close();
             if (opts.removeWithClose) {
                 dialogAppendEl.remove();
             }
@@ -67,7 +71,7 @@ const dialog = (
     // Event handlers
     $btnClose.on('click.dialog', closeEvt);
     $dialog.on('click', (ev: MouseEvent) => {
-        if (ev.target === dialogEl) {
+        if (ev.target === dialog) {
             // if its the same element, its an outside click so close
             // yes that is how it works, which is why we have an 'inner' div
             closeEvt();
@@ -80,22 +84,26 @@ const dialog = (
         }
     });
 
+    const openCore = (openType: DialgShowType = 'show', cb?: () => void) => {
+        if (openType === 'showModal') {
+            dialog.showModal();
+        } else {
+            dialog.show();
+        }
+        cssAnimate(true, opts.animateDur);
+        if (cb && typeof cb === 'function') cb();
+    }
+
     return {
         $dialog,
-        $dialogInner,
-        dialogEl,
+        $dialogContent,
+        dialog,
         closeEvt,
         showModal: (cb?: () => void) => {
-            
-            dialogEl.showModal();
-            cssAnimate(true, opts.animateDur);
-           
-            if (cb && typeof cb === 'function') cb();
+            openCore('showModal',cb)
         },
         show: (cb?: () => void) => {
-            dialogEl.show();
-            cssAnimate(true, opts.animateDur);
-            if (cb && typeof cb === 'function') cb();
+            openCore('show', cb);
         }
     }
 }

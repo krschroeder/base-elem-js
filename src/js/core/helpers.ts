@@ -6,7 +6,7 @@ const
     d       = document,
     body    = d.body,
     root    = d.documentElement,
-    toType = (object: any): GetType => ({}).toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase(),
+    toType = (object: any): GetType => ({}).toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase() as GetType,
     oa      = Object.assign,
     af      = Array.from,
     isArr   = Array.isArray,

@@ -256,7 +256,7 @@ const
             // end options;
 
             hasOptions  = options.length > 0,
-            getOpt      = (configOpt) => hasOptions ? options.some(opt => opt === configOpt) : false,
+            getOpt      = (configOpt: MergeOptions) => hasOptions ? options.some(opt => opt === configOpt) : false,
             deep        = getOpt('deep') || getOpt(true),
             noNull      = getOpt('noNull'),
             noFalsy     = getOpt('noFalsy'),
@@ -298,13 +298,13 @@ const
         const evt = evtName.split('.')[0];
         const evtFn = (e: Event) => {
             
-            const data = e['___cdata'] || [];
+            const data = (e as any)['___cdata'] || [];
 
             if (delegateEl && baseEl instanceof HTMLElement) {
                 
                 const delegateElems = isStr(delegateEl) ? find(delegateEl, baseEl) : delegateEl;
                 // if isTrusted then its a native click
-                const elTarget = e.isTrusted ? e.target : (e['___synthTarget'] ?? e.target);
+                const elTarget = e.isTrusted ? e.target : ((e as any)['___synthTarget'] ?? e.target);
                 // const delegateElem = getDelegatedElem(baseEl, delegateElems, elTarget);
                 const delegateElem = delegateElems.find(elem => elem === elTarget || elem.contains(elTarget));
                 if (delegateElem) fn(e, delegateElem, ...data);

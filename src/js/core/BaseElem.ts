@@ -5,6 +5,7 @@ import type {
     EventFn,
     FilterFn,
     FindBy,
+    InsertElem,
     MapFn,
     SelectorElems,
     SelectorElem,
@@ -66,7 +67,7 @@ class BaseElem {
     #iterate(fn: (el: HTMLElement, i:number) => void): void {
         let i = 0, elem;
         while (elem = this.elem[i]) {
-            fn(elem, i++);
+            fn(elem as HTMLElement, i++);
         }   
     }
 
@@ -100,23 +101,23 @@ class BaseElem {
     find(selector: string | MapFn, filter?: FilterFn): BaseElem {
         if (isStr(selector)) {
 
-            const elems = this.elem.map(elem => find(selector, elem)).flat();
+            const elems = this.elem.map(elem => find(selector, elem as HTMLElement)).flat();
             return new BaseElem(filter ? elems.filter(filter) : elems);
         } else {
            
-            return new BaseElem(this.map<ReturnType<typeof selector>>(selector, true))
+            return new BaseElem(this.map(selector, true))
         }
     }
 
     findBy(type: FindBy, selector: string, filter?: (elem: any, i: number) => boolean): BaseElem {
       
-        const elems = this.elem.map(elem => findBy(type, selector, elem )).flat();
+        const elems = this.elem.map(elem => findBy(type, selector, elem as HTMLElement )).flat();
         return new BaseElem(filter ? elems.filter(filter) : elems);
     }
 
     findOne(selector: string): BaseElem {
         
-        const elem = this.elem.map(elem => findOne(selector, elem)).filter(Boolean);
+        const elem = this.elem.map(elem => findOne(selector, elem as HTMLElement)).filter(Boolean);
         return new BaseElem(elem);
     }
 
@@ -252,11 +253,11 @@ class BaseElem {
     }
 
     insert(
-        html: string | HTMLElement | BaseElem | (BaseElem | HTMLElement | Text)[], 
+        html: InsertElem, 
         method: AppendMethod = 'append'
     ): BaseElem {
         this.#iterate((elem: HTMLElement) => {
-            const elems = (isArr(html) ? html.map(getElems).flat() : isStr(html) ? htmlParse(html) : getElems(html)) as HTMLElement[];
+            const elems = (isArr(html) ? html.map(getElems).flat() : isStr(html) ? htmlParse(html) : getElems(html)) as Element[];
             
             if (method === 'append')    elem.append(...elems);
             if (method === 'prepend')   elem.prepend(...elems);
@@ -289,19 +290,19 @@ class BaseElem {
     // ------
     // region Events
     // ------
-    on(
+    on<T extends SelectorElem = SelectorElem>(
         evtName: EventName | EventName[], 
-        fn: EventFn, 
+        fn: EventFn<T>, 
         delegateEl: string | HTMLElement[] = null,
         config: boolean | AddEventListenerOptions = false
     ): BaseElem {
 
         if (isArr(evtName)) {
             for (const evName of evtName) {
-                this.#iterate((elem: SelectorElem) => on(elem, evName, fn, delegateEl, config));
+                this.#iterate((elem: SelectorElem) => on(elem, evName, fn as EventFn, delegateEl, config));
             }
         } else {
-            this.#iterate((elem: SelectorElem) => on(elem, evtName, fn, delegateEl, config));
+            this.#iterate((elem: SelectorElem) => on(elem, evtName, fn as EventFn, delegateEl, config));
         }
         return this;
     }
@@ -328,6 +329,6 @@ class BaseElem {
 // Helper
 // 
 
-const getElems = (el:HTMLElement | BaseElem | Text) => el instanceof BaseElem ? el.elem : [el];
+const getElems = (el: InsertElem) => el instanceof BaseElem ? el.elem : [el];
 
 export default BaseElem;

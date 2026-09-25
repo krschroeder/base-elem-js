@@ -1,7 +1,8 @@
 const yargs         = require('yargs');
 const { hideBin }   = require('yargs/helpers');
 const typescript    = require('@rollup/plugin-typescript');
-const {minify}      = require('rollup-plugin-esbuild-minify');
+const { minify }    = require('rollup-plugin-esbuild-minify');
+
 const args          = yargs(hideBin(process.argv)).argv;
  
 //
@@ -24,12 +25,17 @@ const config = {
         src: {
             html:               'src/html/*.html',
             js:                 [...jsPaths, '!src/js/types.ts'],
+            scss:               {
+                all: 'src/scss/**/*.scss',
+                main: 'src/scss/main.scss'
+            },
             dts:                ['src/js/**/*.ts','!src/js/tests/**/*.ts'],
             jswatch:            'src/js/**/*.ts'
         },
         dest: {
             html:               'dist',
-            js:                 'dist/js' 
+            js:                 'dist/js',
+            scss:               'dist/css'
         }
     },
     rollupConfigLib: {

@@ -1,0 +1,97 @@
+:root {
+    --dialog-dur: 400ms;
+    --dialog-close-btn-bg: #555;
+    --dialog-close-btn-hover:#333;
+    --dialog-close-btn-color: #fff;
+    --dialog-close-btn-size: 2rem;
+}
+
+body.dialog--starting,
+body.dialog--ending,
+body.dialog--active {
+    overflow: hidden;
+    //position: fixed;//Safari IOS scroll fix
+} 
+
+
+.dialog-wrap {
+    position: fixed;
+    inset: auto auto auto -200vw;
+    visibility: hidden;
+    z-index: 2010;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--col-gutter-full);
+ 
+    &.dialog--starting,
+    &.dialog--active,
+    &.dialog--ending {
+        inset: 0;
+        visibility: visible;
+    }
+}
+
+.dialog:modal {
+    // fix for full width/height 
+    max-width: 100vw;
+    max-height: 100vh;
+    max-height: 100dvh;
+    cursor: pointer; //Safari
+} 
+
+.dialog {
+    opacity: 0;
+    border: 0;
+    width: min(var(--dialog-max-width), 100vw);
+    border-radius: 0.625rem;
+    transition: opacity var(--dialog-dur) ease;
+    // keeps the page from scrolling 
+    // the when modal is open
+    overscroll-behavior: contain;
+
+    &__inner {
+        cursor: default;
+        background-color: var(--white);
+    }
+    
+    &::backdrop {
+        opacity: 0;
+        transition: opacity var(--dialog-dur) ease;
+        background-color: var(--dialog-backdrop-bg);
+        backdrop-filter: blur(2px);
+    }
+
+    &__btn-close {
+        position: absolute;
+        inset: 1.5rem 1.5rem auto auto;
+        z-index: 100;
+        color: var(--dialog-close-btn-color);
+        font-size: 1.25rem;
+        width: var(--dialog-close-btn-size);
+        height: var(--dialog-close-btn-size);
+        background-color: var(--dialog-close-btn-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 1;
+        border-radius:50%;
+
+        &:before {
+            content: '\00d7';  // Unicode for multiplication sign (×) as a close icon
+        }
+    }
+
+    &.dialog--starting,
+    &.dialog--active {
+        opacity: 1;
+
+        &::backdrop {
+            opacity: 1;
+        }
+    }
+}

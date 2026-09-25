@@ -10,12 +10,16 @@ import {
     watch
 } from 'gulp';
 import gulpif                   from 'gulp-if';
-
+import tap                      from 'gulp-tap';
 import sourcemaps               from 'gulp-sourcemaps';
 import typescript               from 'gulp-typescript';
 import rename                   from 'gulp-rename';
 import config                   from './gulpfile.config';
 import rollupEach               from 'gulp-rollup-each'; 
+
+import sass                     from 'sass';
+import gulpSass                 from 'gulp-sass';
+import autoprefixer             from 'gulp-autoprefixer';
 
 
 const PRODUCTION = config.PRODUCTION;
@@ -23,7 +27,8 @@ const PRODUCTION = config.PRODUCTION;
 //
 // Build
 //
- 
+
+const sassCompiler = gulpSass(sass);
 
 const buildHTML = (done) => {
     if (!PRODUCTION) {
@@ -69,6 +74,32 @@ const buildJsDeclarations = (done) => {
 	}
 	done();
 }
+
+
+const buildCSS = () =>
+    src(config.paths.src.scss.all)
+    .pipe(sourcemaps.init())
+    .pipe(sassCompiler({
+        importers: [
+            new sass.NodePackageImporter()
+        ],
+        quietDeps: true
+    })
+    .on('error', sassCompiler.logError))
+    .pipe(autoprefixer())
+    .pipe(gulpif(config.PRODUCTION, tap(cleanCss)))
+    .pipe(gulpif(!config.PRODUCTION, sourcemaps.write('.'))) 
+    // .pipe(flatten({ includeParents: -1 }))
+    .pipe(dest(config.paths.dest.scss))
+    .pipe(browser.reload({ stream: true }))
+;
+
+const cleanCss = (file) => {
+    const contents = Buffer.from(file.contents).toString("utf8");
+    const minifiedCss = new CleanCss({ compatibility: "*" }).minify(contents);
+
+    file.contents = Buffer.from(minifiedCss.styles);
+}
  
 
 const clean = () => rimraf(config.paths.dest.html);
@@ -98,6 +129,7 @@ const mainTask = series(
     clean,
     series(   
         buildHTML,
+        buildCSS,
         buildJsDeclarations,
         buildModuleJS,
         buildJS
@@ -110,7 +142,7 @@ const watchTask = (done) => {
     if (!PRODUCTION) {
         watch(config.paths.src.html, series(buildHTML, reload));
         watch(config.paths.src.jswatch, series(buildJS, reload));
-       
+        watch(config.paths.src.scss.all, series(buildCSS, reload));
     }
 
     done();

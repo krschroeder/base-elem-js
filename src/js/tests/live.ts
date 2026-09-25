@@ -1,6 +1,6 @@
 import $be from '../base-elem-js';
 // import { merge } from './extra';
-
+import plg from '../plugins';
 
 declare global {
     
@@ -76,7 +76,7 @@ const $div = $be(div).insert([btn,btn2]);
 const makep = $be.findOne('#makep');
 
 // console.log('make p btn', makepBtn)
-$be(makep).on('click.makep', (ev: MouseEvent, elem: HTMLHeadingElement) => {
+$be(makep).on('click.makep', (ev: MouseEvent, elem: HTMLElement) => {
     console.log(ev.type, elem.textContent, $pinput.attr('value'));
     $div.insert(`<p>Event: ${ev.type} <br /> ${$pinput.attr('value')}</p>`);
 }, 'button');
@@ -85,7 +85,7 @@ $be(makep).on('click.makep', (ev: MouseEvent, elem: HTMLHeadingElement) => {
 
 // synthetic event
 
-$div.on('[syntheticEvent]', (ev: Event, elem: HTMLDivElement, one, two) => {
+$div.on('[syntheticEvent]', (ev: Event, elem: HTMLElement, one, two) => {
     console.log(`[syntheticEvent] triggered ${one}, ${two}`, ev);
     $div.insert(`<p>Some HTML inserted by a synthetic event (${elem.nodeName})</p>`);
   
@@ -189,3 +189,16 @@ $be.animateByFrame((cancel) => {
     
     animateCount--;
 }, 1);
+
+
+// Plugin
+
+const dialogInstance = plg.dialog($be.make('div.dialog-contents', 
+    `
+    <h2>Dialog content here</h2>
+    <p>Some paragraph content here.</p>
+    `
+));
+
+dialogInstance.showModal();
+console.log('dialogInstance', dialogInstance);
