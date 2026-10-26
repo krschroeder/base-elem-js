@@ -1,8 +1,7 @@
 import $be from '../base-elem-js';
 // import { merge } from './extra';
-import plg from '../plugins';
 
-declare global {
+declare global { 
     
     interface Window {
        $be: typeof $be;
@@ -189,16 +188,3 @@ $be.animateByFrame((cancel) => {
     
     animateCount--;
 }, 1);
-
-
-// Plugin
-
-const dialogInstance = plg.dialog($be.make('div.dialog-contents', 
-    `
-    <h2>Dialog content here</h2>
-    <p>Some paragraph content here.</p>
-    `
-));
-
-dialogInstance.showModal();
-console.log('dialogInstance', dialogInstance);

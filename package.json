@@ -1,6 +1,6 @@
 {
   "name": "base-elem-js",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "keywords": [
     "DOM manipulation",
     "DOM traversal",
@@ -37,7 +37,7 @@
     "@babel/preset-typescript": "^7.26.0",
     "@babel/register": "^7.25.9",
     "@rollup/plugin-typescript": "^12.1.2",
-    "@types/node": "^22.14.0",
+    "@types/node": "^22.20.4",
     "babel-loader": "^9.2.1",
     "browser-sync": "^3.0.3",
     "gulp": "^5.0.0",

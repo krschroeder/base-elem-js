@@ -1,9 +1,8 @@
 {
-    "include": ["src/js/**/*.ts"],
+    "include": ["src/js/**/*.ts", "src/js/tests/live.ts"],
     // "exclude": ["src/js/tests.ts"],
     "compilerOptions": {
-        "module": "nodenext",
-        "moduleResolution": "nodenext",
+        "moduleResolution": "bundler",
         "target": "esnext",
         "jsx": "preserve",
         "resolveJsonModule": true,
