@@ -40,6 +40,7 @@
     "@types/node": "^22.20.4",
     "babel-loader": "^9.2.1",
     "browser-sync": "^3.0.3",
+    "clean-css": "^5.3.3",
     "gulp": "^5.0.0",
     "gulp-autoprefixer": "^10.0.0",
     "gulp-babel": "^8.0.0",

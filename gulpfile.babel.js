@@ -20,7 +20,7 @@ import rollupEach               from 'gulp-rollup-each';
 import sass                     from 'sass';
 import gulpSass                 from 'gulp-sass';
 import autoprefixer             from 'gulp-autoprefixer';
-
+import CleanCss                 from 'clean-css';
 
 const PRODUCTION = config.PRODUCTION;
 
@@ -76,23 +76,28 @@ const buildJsDeclarations = (done) => {
 }
 
 
-const buildCSS = () =>
-    src(config.paths.src.scss.all)
-    .pipe(sourcemaps.init())
-    .pipe(sassCompiler({
-        importers: [
-            new sass.NodePackageImporter()
-        ],
-        quietDeps: true
-    })
-    .on('error', sassCompiler.logError))
-    .pipe(autoprefixer())
-    .pipe(gulpif(config.PRODUCTION, tap(cleanCss)))
-    .pipe(gulpif(!config.PRODUCTION, sourcemaps.write('.'))) 
-    // .pipe(flatten({ includeParents: -1 }))
-    .pipe(dest(config.paths.dest.scss))
-    .pipe(browser.reload({ stream: true }))
-;
+const buildCSS = (done) => {
+
+    if (!PRODUCTION) {
+        src(config.paths.src.scss.all)
+            .pipe(sourcemaps.init())
+            .pipe(sassCompiler({
+                importers: [
+                    new sass.NodePackageImporter()
+                ],
+                quietDeps: true
+            })
+            .on('error', sassCompiler.logError))
+            .pipe(autoprefixer())
+            .pipe(gulpif(config.PRODUCTION, tap(cleanCss)))
+            .pipe(gulpif(!config.PRODUCTION, sourcemaps.write('.'))) 
+            // .pipe(flatten({ includeParents: -1 }))
+            .pipe(dest(config.paths.dest.scss))
+            .pipe(browser.reload({ stream: true }))
+        ;
+    }
+    done();
+};
 
 const cleanCss = (file) => {
     const contents = Buffer.from(file.contents).toString("utf8");

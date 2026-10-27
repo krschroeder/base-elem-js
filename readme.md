@@ -1,6 +1,6 @@
 # Base Elem Js
 
-`base-elem-js` is small but powerful utility for DOM manipulation. It includes querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. The minified package comes in at __7.434kb__ which is about __92%__ smaller than jQuery 3.7.1! Your project will be larger without it!
+`base-elem-js` is small but powerful utility for DOM manipulation. It includes querying elements, adding/removing classes, setting/removing attributes, transitions and handling events. The minified package comes in at __7.490kb__!
 
 
 
